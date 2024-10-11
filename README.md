@@ -10,6 +10,14 @@ Ceci est le compte-rendu du tp de bus et réseau
 
 Mise en oeuvre du BMP280 
 
+
+
+
+
+
+
+
+
 1. Quelles sont les adresses I²C possibles pour ce composant.
 
    On peut lire en page 28 de la datasheet (link ) que l'équipement possède une adresse sur 7 bits qui est '111011x' . Les 6 premiers bits, ceux de poids fort, sont différents de 'x'. Le caractère 'x' sert à indiquer que le bit de poids faible n'est pas fixé et que l'utilisateur doit le fixer et le configurer en l'adressant avec une adresse personalisée. 
@@ -17,7 +25,9 @@ Mise en oeuvre du BMP280
 
    
 
-   
+   Toutes les communications avec l'équipement sont réalisées en lisant et en écrivant dans des registres. Ces registres sont sur une largeur de 8 bits et sont décrits dans le tableau suivant. 
+
+   ![tab_registres](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tab_registres.png)
 
    
 
