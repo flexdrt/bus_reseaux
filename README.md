@@ -72,6 +72,37 @@ UART ? :
 
 D'un CAN 
 
+*****************Problèmes cube ide****************************
+
+```bash
+sudo apt-get install libncurses5
+Lecture des listes de paquets... Fait
+Construction de l'arbre des dépendances... Fait
+Lecture des informations d'état... Fait      
+Les paquets supplémentaires suivants seront installés : 
+  libtinfo5
+Les NOUVEAUX paquets suivants seront installés :
+  libncurses5 libtinfo5
+0 mis à jour, 2 nouvellement installés, 0 à enlever et 6 non mis à jour.
+Il est nécessaire de prendre 207 ko dans les archives.
+Après cette opération, 883 ko d'espace disque supplémentaires seront utilisés.
+Souhaitez-vous continuer ? [O/n] o
+Réception de :1 http://fr.archive.ubuntu.com/ubuntu jammy-updates/universe amd64 libtinfo5 amd64 6.3-2ubuntu0.1 [100 kB]
+Réception de :2 http://fr.archive.ubuntu.com/ubuntu jammy-updates/universe amd64 libncurses5 amd64 6.3-2ubuntu0.1 [107 kB]
+207 ko réceptionnés en 0s (974 ko/s)   
+Sélection du paquet libtinfo5:amd64 précédemment désélectionné.
+(Lecture de la base de données... 283299 fichiers et répertoires déjà installés.)
+Préparation du dépaquetage de .../libtinfo5_6.3-2ubuntu0.1_amd64.deb ...
+Dépaquetage de libtinfo5:amd64 (6.3-2ubuntu0.1) ...
+Sélection du paquet libncurses5:amd64 précédemment désélectionné.
+Préparation du dépaquetage de .../libncurses5_6.3-2ubuntu0.1_amd64.deb ...
+Dépaquetage de libncurses5:amd64 (6.3-2ubuntu0.1) ...
+Paramétrage de libtinfo5:amd64 (6.3-2ubuntu0.1) ...
+Paramétrage de libncurses5:amd64 (6.3-2ubuntu0.1) ...
+Traitement des actions différées (« triggers ») pour libc-bin (2.35-0ubuntu3.8) ...
+
+```
+
 
 
 *************************************
@@ -113,6 +144,29 @@ PUTCHAR_PROTOTYPE
 *********************************************
 
 ##### **Test de la chaîne de compilation et communication UART sur USB**
+
+Utiliser la commande suivante pour lancer `minicom` sur le bon port :
+
+```bash
+sudo minicom -D /dev/ttyACM0
+```
+
+![image-20241011102221878](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/capture_envoie_liaison_serie.png)
+
+L'affichage est décalé car il manquait le \r pour le retour chariot 
+
+```c
+printf("Hello from STM32!\r\n");
+```
+
+Maintenant l'affichage est centré à gauche comme on peut le voir : 
+
+
+![test echo avec retour](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/test echo avec retour.png)
+
+
+
+#### 2.3. Communication I²C
 
 
 

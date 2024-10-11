@@ -21,6 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdio.h"
+
 
 /* USER CODE END Includes */
 
@@ -90,7 +92,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  //printf("ceci est un test \n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -98,7 +100,11 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+	  // Transmettre un message via l'UART2
+	  //printf("Hello from STM32!\r\n");
 
+	  // Attendre un peu avant de renvoyer le message (sinon ça va être trop rapide)
+	  //HAL_Delay(1000);  // Délai de 1 seconde
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
