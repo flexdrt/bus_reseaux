@@ -4,19 +4,19 @@
 
 Ceci est le compte-rendu du tp de bus et réseau
 
+
+
+[TOC]
+
+------
+
+
+
 #### 2. TP1- Bus I2C
 
 ##### 2.1 Capteur BMP280
 
-Mise en oeuvre du BMP280 
-
-
-
-
-
-
-
-
+Mise en œuvre du BMP280 
 
 1. Quelles sont les adresses I²C possibles pour ce composant.
 
@@ -27,27 +27,48 @@ Mise en oeuvre du BMP280
 
    Toutes les communications avec l'équipement sont réalisées en lisant et en écrivant dans des registres. Ces registres sont sur une largeur de 8 bits et sont décrits dans le tableau suivant. 
 
-   ![tab_registres](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tab_registres.png)
+   ![](C:\Users\gfjk\Downloads\bus_reseaux-main\bus_reseaux-main\Capture d'écran 2024-10-11 114528.png)
 
-   
-
-2. Identifier le registre et la valeur permettant d'identifier ce composant
-
-3. Identifier  le registre et la valeur permettant de placer le composant en mode normal
-
-4. Identifier  les registres contenant l'étalonnage du composant
-
-5. Identifier  les registres contenant la température (ainsi que le format)
-
-6. Identifier  les registres contenant la pression (ainsi que le format)
-
-7. Identifier les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits.
-
-   edszadsxzs
-
-dsdzs
+2. Identifier le registre et la valeur permettant d'identifier ce composant 
 
 
+Le registre d'identification (ID) est à l'adresse 0xD0, et sa valeur est 0x58 pour le BMP280. 
+
+
+
+3. Identifier le registre et la valeur permettant de placer le composant en mode normal 
+
+​	Le registre de contrôle ctrl_meas (adresse 0xF4) permet de définir le mode de fonctionnement. Les bits 	mode[1:0] doivent être configurés à 11 pour le mode normal. 
+
+ 
+
+4. Identifier les registres contenant l'étalonnage du composant 
+
+Les données d'étalonnage sont stockées dans les registres de 0x88 à 0xA1 
+
+ 
+
+5. Identifier les registres contenant la température (ainsi que le format) 
+
+Les données de température sont réparties sur trois registres : 0xFA (MSB), 0xFB (LSB), et 0xFC (XLSB). 
+
+Le format est une valeur non signée de 20 bits : le MSB contient les bits [19:12], le LSB les bits [11:4], et le XLSB les bits [3:0]. 
+
+ 
+
+6. Identifier les registres contenant la pression (ainsi que le format) 
+
+Les données de pression sont également réparties sur trois registres : 0xF7 (MSB), 0xF8 (LSB), et 0xF9 (XLSB). 
+
+Le format est une valeur non signée de 20 bits, similaire à celui des données de température. 
+
+ 
+
+7. Identifier les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits. 
+
+La fonction pour la compensation de la température est bmp280_compensate_T_int32 et celle pour la pression est bmp280_compensate_P_int64. Ces fonctions utilisent des entiers 32 bits pour les calculs de compensation. 
+
+ 
 
 
 
