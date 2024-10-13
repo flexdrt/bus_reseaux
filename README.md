@@ -77,6 +77,7 @@ La fonction pour la compensation de la température est bmp280_compensate_T_int3
 Carte : STM32 NUCLEO-F446RE
 
 Page 35 datasheet : https://moodle.ensea.fr/pluginfile.php/5789/mod_resource/content/1/dm00105823-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf
+![Capture d’écran](./docs_annexes/img/Capture%20d’écran%20du%202024-10-11%2009-05-37.png)
 
 ![](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/Capture d’écran du 2024-10-11 09-05-37.png)
 
