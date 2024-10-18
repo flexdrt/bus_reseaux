@@ -200,7 +200,7 @@ Maintenant l'affichage est centré à gauche comme on peut le voir :
 
 #### 2.3. Communication I²C
 
- 
+
 On va ajouter tout le code nécessaire pour manipuler le composant dans des fonctions dont la syntaxe pour rédiger leurs signatures sera BMP280_fonction_a_coder(). Elle seront déclarer dans le fichier header driver.h et implémenter dans le fichier qui sera appelé driver.c. 
 
  
@@ -313,26 +313,26 @@ On va choisir le mot binaire ‘010’ qui correspond à oversampling x2, ce que
 Il faut écrire dans les bits 7 à 5 du registre le mot binaire ’010’ qu’on notera dans le code C “0b010”. 
 
 On va ajouter tout le code nécessaire pour configurer le composant dans une fonction BMP280_config() qui sera dans le fichier driver.c qui sera accompagné de son fichier driver.h 
- 
 
- 
 
- 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
+
+
+
 
 En I²C, l'écriture dans un registre se déroule de la manière suivante : 
 
 1. envoyer l'adresse du registre à écrire, suivi de la valeur du registre 
 2. si on reçoit immédiatement, la valeur reçu, lorsque l’on essaie de lire le bus, sera la nouvelle valeur du registre 
 
-************************** 
+**************************
 
 Code bpm  
 
@@ -441,3 +441,143 @@ retour = HAL_I2C_Master_Receive(&hi2c1,BMP280_address, buf, 2, HAL_MAX_DELAY);
 ​    return 1; 
 ```
 
+
+
+### 3. TP2 - Interfaçage STM32 - Raspberry
+
+#### 3.1. Mise en route du Raspberry PI Zéro
+
+#### Premier démarrage
+
+on flash la carte pour installer pi os lite 32 bits avec l'outil pi imager en précisant comme user (pi0) et comme mdp (password).
+
+Pour le réseau, on configure ESE_Bus_Network pour le ssid et ilovelinux pour le mdp.
+L'adresse IP est attribuée par le routeur : 192.168.88.237.
+
+#### 2.1 Loopback
+
+On modifie les fichiers suivant pour pouvoir accèder à ce port série sur la pi zero :
+
+-/boot/firmware/config.txt 
+Pour activer le port série sur connecteur GPIO, sur la partition boot, modifiez le fichier config.txt pour ajouter à la fin les lignes suivantes:
+
+```txt
+enable_uart=1
+dtoverlay=disable-bt
+```
+
+-/boot/firmware/cmdline.txt
+
+```
+console=serial0,115200
+```
+
+dans minicom il faut configurer les paramètre suivants en appuyant sur ctrl+A puis O
+
+
+
+
+
+![minicom_options](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/minicom_options.png)
+
+
+
+​							Serial port setup>F - Hardware Flow Control : no> il faut appuyer sur la touche F
+
+
+
+
+
+Puis appuyer sur ctrl+A puis Z
+
+![minicom ctrl z](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/minicom ctrl z.png)
+
+Il faut appuyer sur E pour activer le local Echo on/off, ainsi lorsque l'on appuyer sur une touche elle est automatiquement renvoyé dans le terminal à la suite du caractère qu'on vient de taper comme montré ci-dessous dans la figure 'loopback test'
+
+![minicom ctrl z](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/minicom ctrl z.png)
+
+
+
+
+
+![loopback proof test](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/loopback proof test.png)
+
+​											figure loopback test
+
+Par exemple, en tapant t il se réaffiche grâce au echo qui affiche les caractères du rx sur le terminal.
+
+
+
+#### Communication avec la STM32	
+
+
+
+
+
+On a besoin d'un autre port UART, nous avons activé l'UART3 :
+
+pin PC5 USART3_RX
+
+pin PB10 USART3_TX
+
+
+
+![Capture d’écran du 2024-10-18 10-38-24](/home/vincent/Images/Captures d’écran/Capture d’écran du 2024-10-18 10-38-24.png)
+
+
+
+
+
+
+
+
+
+Afin de pouvoir facilement déboguer votre programme STM32, faites en  sorte que la fonction printf renvoie bien ses chaînes de caractères sur  la liaison UART sur USB, en ajoutant le code suivant au fichier  stm32f4xx_hal_msp.c: 
+
+On va modifier la fonction **printf** pour quelle affiche sur les 2 ports série en même temps. On part de code : 
+
+```c
+/* USER CODE BEGIN PV */
+extern UART_HandleTypeDef huart2;
+/* USER CODE END PV */
+/* USER CODE BEGIN Macro */
+#ifdef __GNUC__ /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf    set to 'Yes') calls __io_putchar() */
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+/* USER CODE END Macro */
+/* USER CODE BEGIN 1 */
+/**
+  * @brief  Retargets the C library printf function to the USART.
+  * @param  None
+  * @retval None
+  */
+PUTCHAR_PROTOTYPE
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the USART2 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
+
+  return ch;
+}
+/* USER CODE END 1 */
+```
+
+On rajoute l'écriture dans l'USART3 avec la fonction Transmit dans stm32f4xx_hal_msp.c:
+
+```c
+  HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 0xFFFF);
+```
+
+
+
+
+
+
+
+
+
+
+
+*********************************************
