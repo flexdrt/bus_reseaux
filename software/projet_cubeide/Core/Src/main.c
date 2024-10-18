@@ -104,14 +104,14 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  //printf("ceci est un test \n");
+  printf("ceci est un dernier test \n\r");
 
   //envoyer une trame avec l'adresse du registre à l'aide de la fonction HAL_I2C_Master_Transmit().
-  buf[0]=BMP_ID_REG;
-  HAL_I2C_Master_Transmit(&hi2c1, BMP_ADDR, buf, 1, -1);
+  //buf[0]=BMP_ID_REG;
+  //HAL_I2C_Master_Transmit(&hi2c1, BMP_ADDR, buf, 1, -1);
 
-  HAL_I2C_Master_Receive(&hi2c1, BMP_ADDR, buf, 1, -1);
-  printf("Idreg: 0x%x\r\n", buf[0]);
+  //HAL_I2C_Master_Receive(&hi2c1, BMP_ADDR, buf, 1, -1);
+  //printf("Idreg: 0x%x\r\n", buf[0]);
 
 
   /* USER CODE END 2 */
