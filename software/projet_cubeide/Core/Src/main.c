@@ -111,8 +111,12 @@ int main(void)
   //HAL_I2C_Master_Transmit(&hi2c1, BMP_ADDR, buf, 1, -1);
 
   //HAL_I2C_Master_Receive(&hi2c1, BMP_ADDR, buf, 1, -1);
-  //printf("Idreg: 0x%x\r\n", buf[0]);
 
+  BMP280_checkID();
+  printf("Idreg: 0x%x\r\n", buf[0]);
+
+  int ret_conf=BMP280_config();
+  BMP280_calib();
 
   /* USER CODE END 2 */
 
@@ -120,6 +124,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  BMP280_S32_t temp_uncompen;
+	  BMP280_S32_t pres_uncompen;
+
+	  temp_uncompen= BMP280_get_temperature(); //récupérer la température
+	  pres_uncompen=BMP280_get_pressure(); //récupérer la pression
+
+	  printf("valeur non compensée de la température %d \n\ valeur non compensée de la pression %d",temp_uncompen,pres_uncompen);
+
+	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
