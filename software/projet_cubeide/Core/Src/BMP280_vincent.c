@@ -5,6 +5,16 @@
 #include "BMP280_vincent.h"
 
 extern I2C_HandleTypeDef hi2c1;
+HAL_StatusTypeDef retour; //Permet de verifier si les fonctions I2C s'exécutent correctement
+uint8_t RxBuff[RX_BUFF_SIZE]={0};
+int K_pid=0;
+int A_pid=0;
+
+BMP280_S32_t temp_uncompen;
+BMP280_S32_t temp_compen;
+
+BMP280_S32_t pres_uncompen;
+BMP280_S32_t pres_compen;
 
 uint16_t dig_T1;
 int16_t dig_T2;

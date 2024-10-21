@@ -714,8 +714,7 @@ BMP280_S32_t BMP280_get_temperature(){
 	 return adc_T;
 }
 
-
- BMP280_S32_t BMP280_get_pressure(){
+BMP280_S32_t BMP280_get_pressure(){
 	 BMP280_S32_t adc_P;
 	 buf_data[3];//buffer pour les données reçues de la part des registres , ici 3 pour la température
 
@@ -1015,20 +1014,137 @@ Le protocole de communication entre le Raspberry et la STM32 est le suivant:
 | GET_K          | K=12.34000     | Coefficient K sur 10 caractères         |
 | GET_A          | A=125.7000     | Angle sur 10 caractères                 |
 
-Pour écrire ce protocole on va écrire une fonction void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) dans BMP280_vincent.c 
+Pour écrire ce protocole on va écrire une fonction void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) dans BMP280_vincent.c. 
+
+On va aussi déclarer en variable globale :
+
+```c
+***********************************
+    // Définir des constantes pour les commandes
+#define GET_T 0
+#define GET_P 1
+#define SET_K 2
+#define GET_K 3
+#define GET_A 4
+#define UNKNOWN 5
+
+uint8_t RxBuff[RX_BUFF_SIZE] = {0};
+int K_pid = 0;
+uint32_t coef;
+BMP280_S32_t temp_uncompen;
+BMP280_S32_t pres_uncompen;
+
+// Fonction pour obtenir le code de commande
+int getRequestCode(const char* request_pi) {
+    if (strcmp(request_pi, "GET_T") == 0) return GET_T;
+    else if (strcmp(request_pi, "GET_P") == 0) return GET_P;
+    else if (strncmp(request_pi, "SET_K=", 6) == 0) return SET_K;
+    else if (strcmp(request_pi, "GET_K") == 0) return GET_K;
+    else if (strcmp(request_pi, "GET_A") == 0) return GET_A;
+    return UNKNOWN;
+}
+
+```
+
+la taille du tableau qui reçoit les données de l'UART est définit dans le fichier BMP280_vincent.h
+
+```c
+#define RX_BUFF_SIZE 5
+```
 
 
 
 ```c
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+     // Assurez-vous que RxBuff est null-terminated avant de l'utiliser
+    RxBuff[RX_BUFF_SIZE - 1] = '\0';
+
+    // Obtenir le code de la requête
+    int request_code = getRequestCode((const char*)RxBuff);
+    
+    switch (request_code) {
+        case GET_T: {
+            temp_uncompen = BMP280_get_temperature();
+            BMP280_S32_t temp_compen = bmp280_compensate_T_int32(temp_uncompen);
+            printf("T=%ld%ld.%ld%ld_C\r\n",
+                (temp_compen / 1000) % 10,
+                (temp_compen / 100) % 10,
+                (temp_compen / 10) % 10,
+                temp_compen % 10);
+            break;
+        }
+        case GET_P: {
+            pres_uncompen = BMP280_get_pressure();
+            BMP280_S32_t pres_compen = bmp280_compensate_P_int64(pres_uncompen);
+            printf("P=%f_Pa\r\n", ((float)(pres_compen)) / 256);
+            break;
+        }
+        case SET_K: {//a modifier
+            coef = atoi((const char*)RxBuff + 6); // Supposer que SET_K=1234
+            printf("SET_K=OK, coef=%d\r\n", coef);
+            break;
+        }
+        case GET_K: {
+            printf("K=%d\r\n", coef);
+            break;
+        }
+        case GET_A: {
+            // Ajouter votre logique pour GET_A
+            printf("GET_A: angle value\r\n");
+            break;
+        }
+        default: {
+            printf("\r\nCommande inconnue\r\n");
+            break;
+        }
+    }
+    //***************
+    request_pi;
+    if(strcmp(RxBuff,request_rpi)==0))
+    switch(){
+        case request_pi=GET_T:
+            //récupérer la température 
+            BMP280_S32_t temp_uncompen; 
+        	temp_uncompen= BMP280_get_temperature(); 
+            //compenser la température sur 10 caractères
+            BMP280_S32_t temp_compen;
+            temp_compen=bmp280_compensate_T_int32(temp_uncompen);
+            //afficher la température sur le port série
+            printf("T=%ld%ld.%ld%ld_C\r\n",(temp/1000)%10,(temp/100)%10,(temp/10)%10,temp%10);
+            break;
+        case request_pi='GET_P':
+        	pres_uncompen=BMP280_get_pressure(); 
+            //compenser la pression sur 10 caractères
+            BMP280_S32_t pres_compen;
+            pres_compen=bmp280_compensate_P_int64(pres_uncompen)
+            //afficher la pression compensée sur le port série
+            printf("P=%f_Pa\r\n",((float)(pres_compen))/256);
+            break;
+        case request_pi'SET_K':
+        	K_pid=0;
+		//printf("\r\nSET_K=OK\r\n");
+		//coef=atoi(RxBuff);
+		coef=atoi(RxBuff);
+		printf("%d\r\n",atoi(RxBuff));
+		//printf("%d\r\n",coef);
+            break;
+        case GET_K:
+            get_k();
+            break();
+        case GET_A:
+            get_a();
+            break();    
+            
+            
+    }
     //buffer=get_t :>> temp_uncompen= BMP280_get_temperature(); 
-    //buffer=get_p :>>  pres_uncompen=BMP280_get_pressure(); //récupérer la pression
+    //buffer=get_p :>>  pres_uncompen=BMP280_get_pressure(); 	//récupérer la pression
     
     //buffer=set_k  :>>
-    //buffer=get_k renvoie la valeur de K sur 10 caractères :>>
-    //buffer=get_a renvoie la valeur de a sur 10 caractères BMP280_config() :>>
-    
+    //buffer=get_k renvoie la valeur de K de l'asservissement du moteur sur 10 caractères :>>
+    //buffer=get_a renvoie la valeur de a de l'asservissement du moteur sur 10 caractères BMP280_config() :>>
+  HAL_UART_Receive_IT(&huart1, RxBuff, RX_BUFF_SIZE);  
 }
 ```
 
