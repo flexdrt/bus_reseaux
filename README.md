@@ -196,7 +196,7 @@ Maintenant l'affichage est centré à gauche comme on peut le voir :
 
 ![test echo avec retour](./docs_annexes/img/test echo avec retour.png)
 
-
+sudo minicom -D /dev/ttyACM0
 
 #### 2.3. Communication I²C
 
@@ -1006,13 +1006,13 @@ Communication entre la PI zero et le STM32
 
 Le protocole de communication entre le Raspberry et la STM32 est le suivant:
 
-| Requête du RPi | Réponse du STM | Commentaire                             |
-| -------------- | -------------- | --------------------------------------- |
-| GET_T          | T=+12.50_C     | Température compensée sur 10 caractères |
-| GET_P          | P=102300Pa     | Pression compensée sur 10 caractères    |
-| SET_K=1234     | SET_K=OK       | Fixe le coefficient K (en 1/100e)       |
-| GET_K          | K=12.34000     | Coefficient K sur 10 caractères         |
-| GET_A          | A=125.7000     | Angle sur 10 caractères                 |
+| Requête ds résuu RPi | Réponse du STM | Commentaire                             |
+| -------------------- | -------------- | --------------------------------------- |
+| GET_T                | T=+12.50_C     | Température compensée sur 10 caractères |
+| GET_P                | P=102300Pa     | Pression compensée sur 10 caractères    |
+| SET_K=1234           | SET_K=OK       | Fixe le coefficient K (en 1/100e)       |
+| GET_K                | K=12.34000     | Coefficient K sur 10 caractères         |
+| GET_A                | A=125.7000     | Angle sur 10 caractères                 |
 
 Pour écrire ce protocole on va écrire une fonction void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) dans BMP280_vincent.c. 
 
@@ -1038,7 +1038,9 @@ BMP280_S32_t pres_uncompen;
 int getRequestCode(const char* request_pi) {
     if (strcmp(request_pi, "GET_T") == 0) return GET_T;
     else if (strcmp(request_pi, "GET_P") == 0) return GET_P;
-    else if (strncmp(request_pi, "SET_K=", 6) == 0) return SET_K;
+    else if (strncmp(request_pi, "SET_K=", 6) == 0) return SET_K; //strncmp(RxBuff, "SET_K=", 6) pour vérifier que les 6 premiers caractères de la chaîne reçue correspondent bien à "SET_K=".
+    //Si la commande est correcte, il suffit de prendre le reste de la chaîne, après ces 6 caractères, pour obtenir la valeur numérique.Vous pouvez utiliser atoi() (convertit une chaîne en entier) pour transformer cette partie de la chaîne en un entier.
+Vous pouvez utiliser atoi() (convertit une chaîne en entier) pour transformer cette partie de la chaîne en un entier.
     else if (strcmp(request_pi, "GET_K") == 0) return GET_K;
     else if (strcmp(request_pi, "GET_A") == 0) return GET_A;
     return UNKNOWN;
@@ -1081,7 +1083,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             break;
         }
         case SET_K: {//a modifier
-            coef = atoi((const char*)RxBuff + 6); // Supposer que SET_K=1234
+            coef = atoi((const char*)RxBuff + 6); // Vous pouvez utiliser atoi() (convertit une chaîne en entier) pour transformer cette partie de la chaîne en un entier.
             printf("SET_K=OK, coef=%d\r\n", coef);
             break;
         }

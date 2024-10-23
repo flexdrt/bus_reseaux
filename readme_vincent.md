@@ -100,6 +100,16 @@ On doit lire  ce contenu avec la fonction HAL_I2C_Master_Receive(). On met dans 
 
 On peut lire comme contenu du registre : 0x58. C 'est bien la valeur attendue pour le registre 0xD0
 
+
+
+![image-20241023185954809](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/checkid() fonctionnel 0x58renvoyer.png)
+
+![checkid()_sansancien_test_afficher_port_serie](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/checkid()_sansancien_test_afficher_port_serie.png)
+
+
+
+checkid() sans les anciens échec
+
 **********
 
 

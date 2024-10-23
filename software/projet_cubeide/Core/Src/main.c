@@ -22,7 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
-
+#include "BMP280_vincent.h"
 
 /* USER CODE END Includes */
 
@@ -36,7 +36,7 @@
 #define BMP_ADDR (0x77 << 1)  // Décale 0x77 d'un bit vers la gauche
 // DOC https://moodle.ensea.fr/pluginfile.php/5788/mod_resource/content/1/bst-bmp280-ds001.pdf page 29
 
-#define BMP_ID_REG 0xD0//id du registre selon la doc
+#define BMP_ID_REG 0xD0 //id du registre selon la doc
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -104,18 +104,19 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  printf("ceci est un dernier test \n\r");
+  printf("ceci est un début dans le main \n\r");
 
   //envoyer une trame avec l'adresse du registre à l'aide de la fonction HAL_I2C_Master_Transmit().
+  //uint8_t buf[10];
   //buf[0]=BMP_ID_REG;
   //HAL_I2C_Master_Transmit(&hi2c1, BMP_ADDR, buf, 1, -1);
-
   //HAL_I2C_Master_Receive(&hi2c1, BMP_ADDR, buf, 1, -1);
-
+  //printf("Idreg: 0x%x\r\n", buf[0]);
   BMP280_checkID();
-  printf("Idreg: 0x%x\r\n", buf[0]);
 
   int ret_conf=BMP280_config();
+
+
   BMP280_calib();
 
   /* USER CODE END 2 */
@@ -127,11 +128,11 @@ int main(void)
 	  BMP280_S32_t temp_uncompen;
 	  BMP280_S32_t pres_uncompen;
 
-	  temp_uncompen= BMP280_get_temperature(); //récupérer la température
-	  pres_uncompen=BMP280_get_pressure(); //récupérer la pression
+	  //temp_uncompen= BMP280_get_temperature(); //récupérer la température
+	  //pres_uncompen=BMP280_get_pressure(); //récupérer la pression
 
-	  printf("valeur non compensée de la température %d \n\ valeur non compensée de la pression %d",temp_uncompen,pres_uncompen);
-
+	  //printf("valeur non compensée de la température %d \r\n valeur non compensée de la pression %d",temp_uncompen);
+	  //printf("valeur non compensée de la pression %d \r\n",pres_uncompen);
 	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
