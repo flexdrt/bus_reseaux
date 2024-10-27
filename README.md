@@ -1198,4 +1198,36 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	HAL_UART_Receive_IT(&huart1, RxBuff, RX_BUFF_SIZE);
 }
 ```
+crétaion de l'environnement à l'aide des commandes au tableau: voir photo pipenv 25/10
+
+
+
+utiliser pipenv 
+
+
+
+Suite à un problème de version de blinker, on procéde à l'installation sans le requirements.txt, package par package.
+
+
+
+
+
+Quel est le rôle du décorateur `@app.route`?
+
+Le décorateur permet d'accéder de se positionner dans le le lien /api/welcome/.
+
+
+
+Capture d'écran
+
+
+
+
+
+Quel est le role du fragment `<int:index>`?
+
+Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none ensuite.
+
+
+
 
