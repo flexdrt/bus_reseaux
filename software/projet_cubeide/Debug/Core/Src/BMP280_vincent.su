@@ -1,5 +1,0 @@
-../Core/Src/BMP280_vincent.c:42:5:BMP280_checkID	24	static
-../Core/Src/BMP280_vincent.c:97:5:BMP280_config	24	static
-../Core/Src/BMP280_vincent.c:140:6:BMP280_calib	48	static
-../Core/Src/BMP280_vincent.c:193:14:BMP280_get_temperature	32	static
-../Core/Src/BMP280_vincent.c:228:14:BMP280_get_pressure	32	static

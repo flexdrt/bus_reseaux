@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "BMP280_vincent.h"
+#include "stm32f4xx_hal_can.h"
 
 /* USER CODE END Includes */
 
@@ -45,6 +46,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+CAN_HandleTypeDef hcan1;
+
 I2C_HandleTypeDef hi2c1;
 
 UART_HandleTypeDef huart2;
@@ -60,6 +63,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART3_UART_Init(void);
+static void MX_CAN1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -101,6 +105,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   MX_USART3_UART_Init();
+  MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
 
 
@@ -118,6 +123,38 @@ int main(void)
 
 
   BMP280_calib();
+
+
+  CAN_TxHeaderTypeDef pHeader;
+  uint8_t aData[3] = {0};  // Tableau pour les données à transmettre
+
+  // Configuration du champ pHeader
+  pHeader.StdId = 0x61;          // Identifiant standard pour la commande "Angle"
+  pHeader.ExtId = 0x00;          // Non utilisé pour une trame standard
+  pHeader.IDE = CAN_ID_STD;      //(0x00000000U)  /*!< Standard Id */
+  pHeader.RTR = CAN_RTR_DATA;    //(0x00000000U)  /*!< Data frame   */
+  pHeader.DLC = 3;
+  pHeader.TransmitGlobalTime = DISABLE;
+
+  aData[0] = 0x5A;  // D0 : 90° en hexadécimal (0x5A)
+  aData[1] = 0x00;  // D1 : Angle positif
+
+
+
+
+  //aData[2] = 0x00;  // D2 : Non utilisé, mis à zéro
+
+  uint32_t pTxMailbox; // Variable pour stocker l'indice de la boîte aux lettres CAN
+
+  // Envoi du message CAN avec l'angle de 90°
+  HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
+
+  // Vérification du statut d'envoi
+  if (status != HAL_OK) {
+      // Gérer l'erreur d'envoi
+	  printf("erreur CAN");
+  }
+
 
   /* USER CODE END 2 */
 
@@ -186,6 +223,43 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief CAN1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN1_Init(void)
+{
+
+  /* USER CODE BEGIN CAN1_Init 0 */
+
+  /* USER CODE END CAN1_Init 0 */
+
+  /* USER CODE BEGIN CAN1_Init 1 */
+
+  /* USER CODE END CAN1_Init 1 */
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 16;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = DISABLE;
+  hcan1.Init.AutoWakeUp = DISABLE;
+  hcan1.Init.AutoRetransmission = DISABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN1_Init 2 */
+
+  /* USER CODE END CAN1_Init 2 */
+
 }
 
 /**
