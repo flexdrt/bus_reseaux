@@ -134,3 +134,13 @@ Le registre de contrôle ctrl_meas (adresse 0xF4) permet de définir le mode de 
 
 1. si on reçoit immédiatement, la valeur reçu sera la nouvelle valeur du registre
 
+
+
+
+
+
+
+
+
+
+

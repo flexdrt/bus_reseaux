@@ -1231,3 +1231,28 @@ Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none
 
 
 
+
+
+
+
+
+
+
+
+
+### TP4 :CAN
+
+
+
+Il faut activer le CAN sur les pin PB8 et PB9 dans l'ioc. 
+
+Il faut configurer la clock à 80 MHz dans clock configuration avec l'ide qui calcule tout tout seul
+
+La configuration a mettre est déterminé à partir du site  
+
+![image-20241108173330654](/home/vincent/snap/typora/90/.config/Typora/typora-user-images/image-20241108173330654.png)
+
+
+
+
+

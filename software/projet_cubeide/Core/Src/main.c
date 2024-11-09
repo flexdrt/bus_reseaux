@@ -61,16 +61,20 @@ UART_HandleTypeDef huart3;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_I2C1_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_CAN1_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+#ifdef __GNUC__ /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf    set to 'Yes') calls __io_putchar() */
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
 /* USER CODE END 0 */
 
 /**
@@ -103,13 +107,13 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  MX_I2C1_Init();
   MX_USART3_UART_Init();
   MX_CAN1_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
 
-  printf("ceci est un début dans le main \n\r");
+
 
   //envoyer une trame avec l'adresse du registre à l'aide de la fonction HAL_I2C_Master_Transmit().
   //uint8_t buf[10];
@@ -117,32 +121,38 @@ int main(void)
   //HAL_I2C_Master_Transmit(&hi2c1, BMP_ADDR, buf, 1, -1);
   //HAL_I2C_Master_Receive(&hi2c1, BMP_ADDR, buf, 1, -1);
   //printf("Idreg: 0x%x\r\n", buf[0]);
-  BMP280_checkID();
+  //BMP280_checkID();
 
-  int ret_conf=BMP280_config();
+  //int ret_conf=BMP280_config();
+
+  //BMP280_calib();
 
 
-  BMP280_calib();
+  //Activer le module can
+  HAL_StatusTypeDef start_can= HAL_CAN_Start(&hcan1);
+  if(start_can!= HAL_OK) {
 
+	  // Gérer l'erreur d'envoi
+	  printf("erreur démarrage CAN\r\n");
 
+  }
+
+//déclaration du pHeader
   CAN_TxHeaderTypeDef pHeader;
-  uint8_t aData[3] = {0};  // Tableau pour les données à transmettre
+  uint8_t aData[3];  // Tableau pour les données à transmettre
 
   // Configuration du champ pHeader
   pHeader.StdId = 0x61;          // Identifiant standard pour la commande "Angle"
-  pHeader.ExtId = 0x00;          // Non utilisé pour une trame standard
   pHeader.IDE = CAN_ID_STD;      //(0x00000000U)  /*!< Standard Id */
   pHeader.RTR = CAN_RTR_DATA;    //(0x00000000U)  /*!< Data frame   */
-  pHeader.DLC = 3;
+  pHeader.DLC = 2;
   pHeader.TransmitGlobalTime = DISABLE;
 
-  aData[0] = 0x5A;  // D0 : 90° en hexadécimal (0x5A)
+  aData[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
   aData[1] = 0x00;  // D1 : Angle positif
 
 
 
-
-  //aData[2] = 0x00;  // D2 : Non utilisé, mis à zéro
 
   uint32_t pTxMailbox; // Variable pour stocker l'indice de la boîte aux lettres CAN
 
@@ -152,9 +162,10 @@ int main(void)
   // Vérification du statut d'envoi
   if (status != HAL_OK) {
       // Gérer l'erreur d'envoi
-	  printf("erreur CAN");
+	  printf("erreur CAN\r\n");
   }
 
+  printf("ceci est un début (dans le main)\r\n");
 
   /* USER CODE END 2 */
 
@@ -170,7 +181,31 @@ int main(void)
 
 	  //printf("valeur non compensée de la température %d \r\n valeur non compensée de la pression %d",temp_uncompen);
 	  //printf("valeur non compensée de la pression %d \r\n",pres_uncompen);
+	  printf("while\r\n");
+
+	  aData[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
+	  aData[1] = 1-aData[1];  // D1 : Angle positif
+
+
+	  // Envoi du message CAN avec l'angle de 90°
+	  HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
+
+	  // Vérification du statut d'envoi
+	    if (status != HAL_OK) {
+	        // Gérer l'erreur d'envoi
+	  	  printf(" err while CAN\r\n");
+	    }
+
+
+
 	  HAL_Delay(1000);
+
+
+
+
+
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -200,9 +235,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 16;
-  RCC_OscInitStruct.PLL.PLLN = 336;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 80;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -241,10 +276,10 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 16;
+  hcan1.Init.Prescaler = 10;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_6TQ;
   hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
