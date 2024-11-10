@@ -12,9 +12,9 @@ Ceci est le compte-rendu du tp de bus et réseau
 
 
 
-#### 2. TP1- Bus I2C
+## 2. TP1- Bus I2C
 
-##### 2.1 Capteur BMP280
+#### 2.1 Capteur BMP280
 
 Mise en œuvre du BMP280 
 
@@ -78,6 +78,28 @@ Carte : STM32 NUCLEO-F446RE
 
 Page 35 datasheet : https://moodle.ensea.fr/pluginfile.php/5789/mod_resource/content/1/dm00105823-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf
 ![Capture d’écran](./docs_annexes/img/Capture%20d’écran%20du%202024-10-11%2009-05-37.png)
+
+
+
+Attention au câblage !!! Surce d'erreur et de grande perte de temps
+
+à contrôler 
+
+-les pins GPIO sur lequels l'i2c est configurée dans l'ioc
+
+-les pins PHYSIQUE sur lesquels on branche SCL cable jaune et SDA cable blanc   : voir la photo
+
+-les pins physiques sur lesquels on branche VCC (3.3V) cable rouge et GND sur un pin GND
+
+
+
+PHOTO du câblage sur la STM32
+
+
+
+
+
+
 
 
 
@@ -207,38 +229,53 @@ On va ajouter tout le code nécessaire pour manipuler le composant dans des fonc
 
 **La première fonction que l’on a codé finalement dans la question précédente est la vérification ou confirmation de l’id de l’équipement I2C et sa réponse précisant son adresse sur le bus I2C. Nous avons donc implémenté la fonction checkID().** 
 
+
+
+___
+
+### CheckID
+
 **code checkID() :** 
 
 ```c
-int BMP280_check(void){ 
+int BMP280_checkID(void) {
 
-    uint8_t buffer[1]; 
 
-    retour = HAL_I2C_Master_Transmit(&hi2c1,BMP280_ADDR, &ID_address, 1, HAL_MAX_DELAY); 
+	//FOnctionnel au 23 oct 18h59 <<<<<<< aussi 9 nov 19h34 organisé
 
-    if(retour != HAL_OK){ 
+	uint8_t buf[10];
+	buf[0]=BMP280_ID_REG;
 
-        printf("Problème avec l'I2C\r\n"); 
+	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, buf, 1, -1);
 
-        return 1; 
+	printf("transmission in progress\r\n");
 
-    } 
+	if(retour != HAL_OK){
 
-    retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buffer, 1, HAL_MAX_DELAY); 
+		printf(" \n problem during transmission \r\n");
 
-    if(retour != HAL_OK){ 
+		return 1;
 
-        printf("Problème avec l'I2C\r\n"); 
+	}
+	else{
+		printf("no problem during transmission | transmission complete -> reception in progress\r\n");
+	}
 
-        return 1; 
 
-    } 
+	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf, 1, -1);
+	if(retour != HAL_OK){
 
-    printf("L'ID du capteur est 0x%x\r\n",buffer[0]); 
+		printf(" \n problem during reception I2C\r\n");
 
-    return 0; 
+		return 1;
 
-} 		
+	}
+	else{
+
+		printf("\n reception complete ...  : Register Id content : 0x%x\r\n", buf[0]);
+	}
+
+}
 ```
 
 
@@ -344,73 +381,130 @@ uint8_t config = (0b010<<5)|(0b101<<2)|(0b11);
 
 
 
-(0b010<<5)pour remplir les bits [7:5] soit les bit 7 à 5 soit osrs_t [2:0] 
+(0b010<<5)pour remplir les bits [7:5] soit les bit 7 à 5 soit **osrs_t [2:0]** 
 
-(0b101<<2) pour remplir les bits [4:2] (bits 4 à 2) soit osrs_p [2:0] 
+**`0b010 << 5`** : 
 
-(0b11) pour remplir les bits [1:0] soit mode [1:0] 
+- `0b010` est `2` en décimal.
+- Décalage de 5 bits vers la gauche : `0b01000000`, soit `64` en décimal
 
 
 
-```c
-int BMP280_config(void){ 
+(0b101<<2) pour remplir les bits [4:2] (bits 4 à 2) soit **osrs_p [2:0]** 
 
-    uint8_t buffer[1]; 
+**`0b101 << 2`** :
 
-    uint8_t buf[2]; 
+- `0b101` est `5` en décimal.
+- Décalage de 2 bits vers la gauche : `0b00010100`, soit `20` en décimal.
 
-    buf[0]= ctrl_meas; 
 
-    buf[1]= config;//mot binaire a ecrire pour conf correctement 
 
-    retour = HAL_I2C_Master_Transmit(&hi2c1,BMP280_address, buf, 2, HAL_MAX_DELAY); 
+(0b11) pour remplir les bits [1:0] soit **mode [1:0]** 
 
-    if(retour != HAL_OK){ 
+**`0b11`** :
 
-        printf("Problème avec l'envoie I2C\r\n"); 
+- `0b11` est `3` en décimal et n'est pas décalé.
 
-        return 1; 
 
-    } 
 
-    retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_address, buffer, 1, HAL_MAX_DELAY); 
+La valeur de `config` est donc **87** en décimal, soit **0x57** en hexadécimal, et **0b01010111** en binaire.
 
-    if(retour != HAL_OK){ 
 
-        printf("Problème avec la lecture I2C\r\n"); 
 
-        return 1; 
+On lit bien sur l'USART la valeur renvoyé par le capteur suite à la configuration, affiché en hexadécimal grâce à %x :
 
-    } 
+
+
+*****
+
+Pour historique/archive
+
+****![image-capteur renvoit la bonne configuration (0d87 en décimal=0x57) 20241110011655406](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110011655406.png)
+
+![image - renvoit la bonne configuration (0d87 en décimal et 0x57 en hexa)-20241110012753904](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110012753904.png)
+
+****
+
+Screenshot résultat [Dernier test après remis en arrière le code] 
+
+![image-20241110122215211](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110122215211.png)
 
  
 
-    if(buffer[0] == config){ 
+```c
+void BMP280_config(void) {
+	uint8_t part1 = 0b010 << 5;  // Décalage de 5 bits
+	uint8_t part2 = 0b101 << 2;  // Décalage de 2 bits
+	uint8_t part3 = 0b11;        // Pas de décalage
+	printf("Part1 (0b010 << 5) = %u\r\n", part1);   // Affiche 64
+	printf("Part2 (0b101 << 2) = %u\r\n", part2);   // Affiche 20
+	printf("Part3 (0b11)       = %u\r\n", part3);   // Affiche 3
+	uint8_t sumPart=part1+part2+part3;
+	printf(" sum of parts = Part1+Part2+Part3 = %u \r\n",sumPart);   // Affiche 3
+	uint8_t config = part1 | part2 | part3;
 
-        printf("La config reçue est bien reçue et elle vaut %d\r\n", buffer[0]); 
 
-        return 0; 
+	uint8_t buf[2];
 
-    } 
 
-    return 1; 
+	buf[0] = ctrl_meas;
 
-} 
+	buf[1] = config;  //mot binaire a ecrire pour conf correctement 
+
+	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, buf, 2,HAL_MAX_DELAY);
+
+	printf("configuration : transmission in progress\r\n");
+
+	if (retour != HAL_OK) {
+
+		printf("\n config: problem during transmission \r\n\r\n");
+
+	}
+
+	else{
+		printf("config : no problem during transmission ... transmission complete -> reception in progress\r\n");
+	}
+
+	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf, 1, HAL_MAX_DELAY);
+
+	if (retour != HAL_OK) {
+
+		printf("\n config : problem during reception I2C\r\n");
+
+
+
+	}
+	//printf("config = %u\r\n",config);
+	if (buf[1] == config) {
+
+		printf("\nconfig : well configured - configuration value = hexadecimal : 0x%x | decimal  : 0d%u\r\n", buf[1]);
+
+
+
+	}
+
+
+
+}
 ```
 
 
 
-
+**Printf - paramètres :**
 
 utiliser le spécificateur de format %d pour afficher un entier 
 
-**%u** est utilisé pour afficher des entiers non signé Code b 
+**%u** est utilisé pour afficher le contenu de la variable en décimal (entiers non signé) Code b 
 
- 
+**%x** sert à afficher le contenu de la variable en hexadécimal  
 
-#####  étalonnage du composant
 
- 
+
+___
+
+
+
+### Étalonnage du composant
 
 Pour récupérer les valeurs d’étalonnage, on envoie l’adresse la plus basse du registre des valeurs d’étalonnage et on réceptionne les 24 valeurs d’étalonnage.
 
@@ -426,7 +520,9 @@ page 21
 
 Code pour l’étallonage 
 
-On va faire une demande  de lecture qui commence avec transmit() puis read(), la lecture se déroule avec l'envoie de l'adresse du registre 0x88 ( qui correspond au registre calib00 de calibration(étalonnage) la plus basse valeur des adresses de registres d'étallonage ) et on reçoit 1 octet correspondant au contenu du registre.
+On va faire une demande  de lecture qui commence avec transmit() puis read().
+
+La lecture se déroule avec l'envoie de l'adresse du registre 0x88 ( qui correspond au registre calib00 de calibration (étalonnage) la plus basse valeur des adresses de registres d'étallonage ) et on reçoit 1 octet correspondant au contenu du registre.
 
 On ajoute la constante dans le fichier BMP280_vincent.h suivante :
 
@@ -444,6 +540,61 @@ static const uint8_t BMP280_TRIM_REG_MSB = 0x88;
 ```
 
 La fonction BMP280_calib() contient le code suivant pour avoir les registres d'étallonage : 
+
+```c
+void BMP280_calib(void) {
+	//**********à supprimer
+
+	// uint8_t etalo = 0x88; //Adresse du premier registre contenant les valeurs d'étalonnage
+	//buf_adr[0]=etalo; //buffer contenant l'adresse du registre d'étalonnage
+
+	//**********************
+
+	uint8_t buf_data[24];	//buffer pour les données reçues des registre
+
+	//on demande la lecture avec le transmit
+
+	//BMP280_TRIM_REG_MSB  est déclarée dans BMP280_vincent.h
+
+	// l'adresse de la variable BMP280_TRIM_REG_MSB est passée a la fonction qui attends une adresse en paramètre (celle sur laquelle pointerait le pointeur pData)
+	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, &BMP280_TRIM_REG_MSB,1, HAL_MAX_DELAY);
+
+	if (retour != HAL_OK) {
+		printf("Probleme calib I2C\r\n");
+		return;
+	}
+	//on lit la réponse qu'on stocke dans le buffer buf_data
+	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf_data, 24,HAL_MAX_DELAY);
+
+	if (retour != HAL_OK) {
+		printf("Problem calib I2C\r\n");;
+
+
+	}
+	else {	//on affiche les données d'étallonage reçues
+
+	}
+	dig_T1 = buf_data[0] | (buf_data[1] << 8);
+	dig_T2 = buf_data[2] | (buf_data[3] << 8);
+	dig_T3 = buf_data[4] | (buf_data[5] << 8);
+	dig_P1 = buf_data[6] | (buf_data[7] << 8);
+	dig_P2 = buf_data[8] | (buf_data[9] << 8);
+	dig_P3 = buf_data[10] | (buf_data[11] << 8);
+	dig_P4 = buf_data[12] | (buf_data[13] << 8);
+	dig_P5 = buf_data[14] | (buf_data[15] << 8);
+	dig_P6 = buf_data[16] | (buf_data[17] << 8);
+	dig_P7 = buf_data[18] | (buf_data[19] << 8);
+	dig_P8 = buf_data[20] | (buf_data[21] << 8);
+	dig_P9 = buf_data[22] | (buf_data[23] << 8);
+	for (int i = 0; i < 24; i++) {
+		printf("\ni :%d\r\n",i);
+		printf("dans boucle for //registre d'etallonage calib= %d \r\n ", buf_data[i]);
+
+
+	}
+	
+}
+```
 
 
 
@@ -469,7 +620,7 @@ int16_t dig_P7;
 int16_t dig_P8;
 int16_t dig_P9;
   
-uint8_t config = (0b010<<5)|(0b101<<2)|(0b11);  
+
   
  
   //envoyer une trame avec l'adresse du registre à l'aide de la fonction HAL_I2C_Master_Transmit().
@@ -658,9 +809,13 @@ On fait pareil pour chaque registre, on stocke dans un variable une fois le déc
 
 
 
+****
 
 
-Récupération de la température et de la pression 
+
+
+
+### Récupération de la température et de la pression 
 
 
 
@@ -681,74 +836,126 @@ static const uint8_t BMP280_PRES_REG_MSB = 0xF7;//Adresse du registre contenant 
 
 
 
+
+
+**<u>Il faut recevoir la température dans un buffer de type `uint8_t` et `int` sinon on obtiens des valeurs températures incorrectes</u>**
+
+
+
+![image buffer de receive mauvais type valeurs temp et press° incorrectes -20241110152218446](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110152218446.png)
+
+-> Comme on le voir ici  avant compensation on a 3422552063 comme valeur de température et 3456106495 comme valeur de pression
+
+
+
+
+
+
+
 ```c
-BMP280_S32_t BMP280_get_temperature(){
+BMP280_S32_t BMP280_get_temperature() {
 
-	 BMP280_S32_t adc_T;
-	 buf_data[3];//buffer pour les données reçues de la part des registres , ici 3 pour la température
+	BMP280_S32_t adc_T;
 
-	 //on demande la lecture avec le transmit
+	//buffer pour les données reçues de la part des registres , ici 3 pour la température
 
-	 //BMP280_TEMP_REG_MSB   est déclarée dans BMP280_vincent.h
+	///uint8_t ! pas int! : valeur mal stockée = valeur pression incorrecte
+	uint8_t buf_data[3];
 
-	 // l'adresse de la variable BMP280_TEMP_REG_MSB  est passée a la fonction qui attend une adresse en paramètre (celle sur laquelle pointerait le pointeur pData)
-	 retour=HAL_I2C_Master_Transmit(&hi2c1,BMP280_address,&BMP280_TEMP_REG_MSB,1, HAL_MAX_DELAY);
+	//on demande la lecture avec le transmit
 
-	 if(retour != HAL_OK){
-		 printf("Problème avec le transmit() del'I2C\r\n");
-	 }
-	 //on lit la réponse qu'on stocke dans le buffer buf_data
-	 retour = HAL_I2C_Master_Receive(&hi2c1,BMP280_address, buf_data, 24, HAL_MAX_DELAY);
+	//BMP280_TEMP_REG_MSB   est déclarée dans BMP280_vincent.h
 
-	 if(retour != HAL_OK){
+	// l'adresse de la variable BMP280_TEMP_REG_MSB  est passée a la fonction qui attend une adresse en paramètre (celle sur laquelle pointerait le pointeur pData)
+	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, &BMP280_TEMP_REG_MSB, 1,
+			HAL_MAX_DELAY);
 
-	 ​    printf("Problème avec la lecture des données temp I2C \r\n");
+	if (retour != HAL_OK) {
+		printf("Probleme I2C\r\n");
+	}
+	//on lit la réponse qu'on stocke dans le buffer buf_data
+	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf_data, 3,HAL_MAX_DELAY);
 
-	     return 1;
-	 }
+	if (retour != HAL_OK) {
 
-	 adc_T = ((BMP280_S32_t) (buf_data[0]) << 12) | ((BMP280_S32_t) (buf_data[1]) << 4)	| ((BMP280_S32_t) (buf_data[2]) >> 4);
-	 printf("Temperature: ");
-	 printf("0X%05lX", adc_T);
-	 printf("\r\n");
-	 return adc_T;
+		printf("problem i2c");
+
+		return 1;
+	}
+
+	adc_T = ((BMP280_S32_t) (buf_data[0]) << 12)| ( (BMP280_S32_t) (buf_data[1]) << 4)| ( (BMP280_S32_t) (buf_data[2]) >> 4);
+	printf("Temperature adc_T: 0d ");
+
+
+
+	//printf("%05lX", adc_T);
+
+	printf("%d \r\n", adc_T);
+
+	return adc_T;
 }
-
-BMP280_S32_t BMP280_get_pressure(){
-	 BMP280_S32_t adc_P;
-	 buf_data[3];//buffer pour les données reçues de la part des registres , ici 3 pour la température
-
- 	 //on demande la lecture avec le transmit
-
- 	 //BMP280_PRES_REG_MSB est déclarée dans BMP280_vincent.h
-
- 	 // l'adresse de la variable BMP280_PRES_REG_MSB est passée a la fonction qui attend une adresse en paramètre (celle sur 			laquelle pointerait le pointeur pData)
- 	 retour=HAL_I2C_Master_Transmit(&hi2c1,BMP280_address,&BMP280_PRES_REG_MSB,1, HAL_MAX_DELAY);
-
- 	 if(retour != HAL_OK){
- 		 printf("Problème avec le transmit() del'I2C\r\n");
- 	 }
- 	 //on lit la réponse qu'on stocke dans le buffer buf_data
- 	 retour = HAL_I2C_Master_Receive(&hi2c1,BMP280_address, buf_data, 3, HAL_MAX_DELAY);
-
- 	 if(retour != HAL_OK){
-
- 	 ​    printf("Problème avec la lecture des données temp I2C \r\n");
-
- 	     return 1;
- 	 }
-
- 	adc_P = ((BMP280_S32_t) (buf[0]) << 12) | ((BMP280_S32_t) (buf[1]) << 4)
- 				| ((BMP280_S32_t) (buf[2]) >> 4);
-
- 	printf("Pressure:    0x");
- 	printf("%05lX", adc_P);
- 	printf("\r\n");
-
- }
 ```
 
-Compensation des valeurs 
+
+
+
+
+
+
+```c
+BMP280_S32_t BMP280_get_pressure() {
+
+	BMP280_S32_t adc_P;
+
+
+	//uint8_t ! pas int!. Si int buf_data[3] :  valeur mal stockée = valeur pression incorrecte
+	uint8_t buf_data[3];//buffer pour 	les données reçues de la part des registres , ici 3 pour la pression
+
+	//on demande la lecture avec le transmit
+
+	//BMP280_PRES_REG_MSB est déclarée dans BMP280_vincent.h
+
+	// l'adresse de la variable BMP280_PRES_REG_MSB est passée a la fonction qui attend une adresse en paramètre (celle sur laquelle pointerait le pointeur pData)
+	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, &BMP280_PRES_REG_MSB, 1,HAL_MAX_DELAY);
+
+	if (retour != HAL_OK) {
+		printf("problem i2c\r\n");
+	}
+	//on lit la réponse qu'on stocke dans le buffer buf_data
+	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf_data, 3,HAL_MAX_DELAY);
+
+	if (retour != HAL_OK) {
+
+		printf("problem i2c \r\n");
+
+		return 1;
+	}
+
+	adc_P = ((BMP280_S32_t) (buf_data[0]) << 12) | ((BMP280_S32_t) (buf_data[1]) << 4) | ((BMP280_S32_t) (buf_data[2]) >> 4);
+
+	printf("Pressure adc_P:    0d ");
+
+
+	//printf("%05lX", adc_P);
+
+	printf("%d\r\n", adc_P);
+
+
+
+	return adc_P;
+}
+```
+
+
+
+***
+
+
+
+
+
+### Compensation des valeurs 
+
 On utilise le code mis à disposition par bosch dans la datasheet que l'on ajoute dans le fichier BMP280_vincent.c
 
 Juste avant dans le fichier .h on déclare les types nécessaire au retour de ces fonctions et on déclare les fonctions : 
@@ -764,6 +971,76 @@ Et on déclare ces fonctions :
 BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t );
 BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t);
 ```
+
+Il faut modifier dans le corps des fonctions les signes tiret longs "–" (ou dash) par des tirets court classique  pour que le compilateur reconnaisse l'opération de soustraction "-"
+
+
+
+
+
+Fonction de compensation de la température :
+
+```c
+// Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
+// t_fine carries fine temperature as global value
+BMP280_S32_t t_fine;
+BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t adc_T)
+{
+BMP280_S32_t var1, var2, T;
+var1 = ((((adc_T>>3) - ((BMP280_S32_t)dig_T1<<1))) * ((BMP280_S32_t)dig_T2)) >> 11;
+var2 = (((((adc_T>>4) - ((BMP280_S32_t)dig_T1)) * ((adc_T>>4) - ((BMP280_S32_t)dig_T1))) >> 12) *((BMP280_S32_t)dig_T3)) >> 14;
+t_fine = var1 + var2;
+T = (t_fine * 5 + 128) >> 8;
+return T;
+}
+
+```
+
+
+
+Fonction de compensation de la pression :
+
+
+
+```c
+// Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
+// Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
+
+
+BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
+{
+	BMP280_S64_t var1, var2, p;
+	var1 = ((BMP280_S64_t)t_fine) - 128000;
+	var2 = var1 * var1 * (BMP280_S64_t)dig_P6;
+	var2 = var2 + ((var1*(BMP280_S64_t)dig_P5)<<17);
+	var2 = var2 + (((BMP280_S64_t)dig_P4)<<35);
+	var1 = ((var1 * var1 * (BMP280_S64_t)dig_P3)>>8) + ((var1 * (BMP280_S64_t)dig_P2)<<12);
+	var1 = (((((BMP280_S64_t)1)<<47)+var1))*((BMP280_S64_t)dig_P1)>>33;
+	if (var1 == 0)
+	{
+		return 0; // avoid exception caused by division by zero
+	}
+	p = 1048576-adc_P;
+	p = (((p<<31)-var2)*3125)/var1;
+	var1 = (((BMP280_S64_t)dig_P9) * (p>>13) * (p>>13)) >> 25;
+	var2 = (((BMP280_S64_t)dig_P8) * p) >> 19;
+	p = ((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7)<<4);
+	return (BMP280_U32_t)p;
+}
+
+```
+
+
+
+***
+
+***
+
+***
+
+
+
+
 
 
 
@@ -813,7 +1090,7 @@ Lors de l'appel de ces fonctions il faudra passer les variables adc_T et adc_P e
 
 On appelle les fonctions dans la boucle while dans le fichier main.c 
 
-```
+```c
 //dans la boucle while
 *************************************************
 BMP280_S32_t temp_uncompen;
@@ -856,7 +1133,69 @@ HAL_Delay(1000);
 
 
 
-### 3. TP2 - Interfaçage STM32 - Raspberry
+
+
+
+
+
+
+
+
+
+
+****
+
+![image-20241110153219501](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110153219501.png)
+
+****
+
+La température est renvoyée en **dixièmes de degré Celsius**, avec une **résolution de 0.01°C**. Vous avez mentionné qu'un **valeur de 5123** correspond à **51.23°C**.
+
+#### Calcul de la température compensée :
+
+Si la température compensée est de **2545**, cela signifie que :
+
+Tempeˊrature compenseˊe en °C=2545100=25.45 °C\text{Température compensée en °C} = \frac{2545}{100} = 25.45 \, \text{°C}Tempeˊrature compenseˊe en °C=1002545=25.45°C
+
+Donc, la température compensée serait ***<u>25.45°C</u>***.
+
+
+
+******
+
+
+
+La pression est renvoyée en **format Q24.8**, où les 24 bits représentent la partie entière de la pression et les 8 bits représentent la partie fractionnaire. 
+
+Ainsi, la pression compensée est donnée sous la forme **P / 256**, où **P** est l'entier brut en **Pa**. 
+
+la doc a mentionné qu'une valeur de **24674867** correspond à une pression de **963.86 hPa**.
+
+Si la pression compensée est de **34601705** (en Pa), cela représente une valeur en **format Q24.8**. Pour obtenir la pression en **hPa**, nous devons diviser par 256 :
+
+Pression compenseˊe en Pa=34601705256=135492.82 Pa\text{Pression compensée en Pa} = \frac{34601705}{256} = 135492.82 \, \text{Pa}Pression compenseˊe en Pa=25634601705=135492.82Pa = 1.3 bar environ c'est cohérent 
+
+Ensuite, pour convertir la pression en **hPa** (hectopascals), nous divisons par 100 :
+
+Pression compenseˊe en hPa=135492.82100=1354.93 hPa\text{Pression compensée en hPa} = \frac{135492.82}{100} = 1354.93 \, \text{hPa}Pression compenseˊe en hPa=100135492.82=1354.93hPa
+
+Donc, la pression compensée serait **<u>*1354.93 hPa*</u>**.
+
+
+
+Passé les pression en bar 
+
+****
+
+****
+
+****
+
+****
+
+
+
+## 3. TP2 - Interfaçage STM32 - Raspberry
 
 #### 3.1. Mise en route du Raspberry PI Zéro
 
@@ -866,6 +1205,89 @@ on flash la carte pour installer pi os lite 32 bits avec l'outil pi imager en pr
 
 Pour le réseau, on configure ESE_Bus_Network pour le ssid et ilovelinux pour le mdp.
 L'adresse IP est attribuée par le routeur : 192.168.88.237.
+
+
+
+#### Modification de la configuration réseau de la PI zero :
+
+Afin de pouvoir me connecter en ssh sur mon réseau privé au lieu du réseau de la salle de TP, je ajouter le réseau dans le fichier `wpa_supplicant.conf` qui se trouve dans `rootfs/etc/wpa_supplicant` . Pour cela, je monte la carte sd sur ma machine linux pour accèder à la partition boot qui contient ce fichier 
+
+Une fois monté, deux partitions apparaissent : 
+
+- rootfs
+- bootfs 
+
+On peut soit uiliser l'interface graphique de l'explorateur de fichier qui va se charger de monter le volume dès que l'on clique sur la partition 
+
+![image-20241110184427471](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110184427471.png)
+
+
+
+
+
+La partition rootfs contient toute l'arborescence (à partir de sa racine \ ), du système (raspbian en l'occurence).
+
+
+
+
+
+Je ne peux pas ouvrir ce fichier sans sudo, grâce à Gedit je trouve le chemin complet depuis ma machine du fichier à ouvrir:
+
+![image-20241110185901711](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110185901711.png)
+
+Lorsque l'on monte une partition, elle est monté à partir du répertoire `/media/vincent/` comme on peut le voir en haut de la fenêtre.
+
+
+
+J'ouvre en mode édition le fichier avec la commande
+
+`sudo nano /media/vincent/rootfs/etc/wpa_supplicant/wpa_supplicant.conf`
+
+J'écris dans le fichier les lignes suivantes :
+
+```shell
+update_config=1
+
+#Ajout du réseau LAN pocket wifi
+network={
+ ssid="AIRBOX-69AE"
+ psk="6wRp2Fr366H4"
+}
+
+
+```
+
+![image-20241110185417222](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110185417222.png)
+
+
+
+
+
+
+
+dans bootfs je créé un fichier ssh vide et je copie le fichier wpa_supplicant.conf et j
+
+```bash
+vincent@Warhawk:/media/vincent/bootfs$ touch ssh
+vincent@Warhawk:/media/vincent/bootfs$ sudo nano /media/vincent/rootfs/etc/wpa_supplicant/wpa_supplicant.conf
+[sudo] Mot de passe de vincent : 
+vincent@Warhawk:/media/vincent/bootfs$ pwd
+/media/vincent/bootfs
+vincent@Warhawk:/media/vincent/bootfs$ sudo cp /media/vincent/rootfs/etc/wpa_supplicant/wpa_supplicant.conf /media/vincent/bootfs
+
+```
+
+
+
+
+
+POur se connecter en ssh :
+
+```bash
+ssh pi0@192.168.1.150
+```
+
+
 
 #### 2.1 Loopback
 
@@ -1240,7 +1662,7 @@ Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none
 
 
 
-### TP4 :CAN
+## TP4 :CAN
 
 
 

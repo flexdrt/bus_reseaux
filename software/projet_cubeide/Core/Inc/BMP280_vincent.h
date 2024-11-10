@@ -16,7 +16,7 @@ static const uint8_t BMP280_ADDR = 0x77 << 1; // Use 8-bit address
 // static const uint8_t BMP280_ADDR = 0x76 << 1; // Use 8-bit address
 
 static const uint8_t BMP280_ID_REG = 0xD0;//id du registre selon la doc
-//extern uint8_t ctrl_meas = 0xF4;
+//uint8_t ctrl_meas = 0xF4;
 
 /* code prof a supprimer une fois que mon code marche
  *
@@ -34,7 +34,7 @@ static const uint8_t BMP280_PRES_REG_MSB = 0xF7;//Adresse du registre contenant 
 //****************** déclarations fonctions**********************
 
 int BMP280_checkID(void);
-int BMP280_config();
+void BMP280_config();
 int BMP280_init();
 void  BMP280_calib(void);
 
