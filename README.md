@@ -14,9 +14,29 @@ Ceci est le compte-rendu du tp de bus et réseau
 
 ## 2. TP1- Bus I2C
 
-#### 2.1 Capteur BMP280
+### 2.1 Capteur BMP280
 
 Mise en œuvre du BMP280 
+
+
+
+
+
+Toutes les communications avec l'équipement (le capteur I2C) sont réalisées en lisant et en écrivant dans des registres. 
+
+​		--> Ces registres sont sur une largeur de 8 bits et sont décrits dans le tableau suivant. 
+
+
+
+
+
+| Quelles sont les adresses I²C possibles pour ce composant. | On peut lire en page 28 de la datasheet (link ) que l'équipement possède une adresse sur 7 bits qui est '111011x' . Les 6 premiers bits, ceux de poids fort, sont différents de 'x'. Le caractère 'x' sert à indiquer que le bit de poids faible n'est pas fixé . L'utilisateur doit le fixer et le configurer en l'adressant avec une adresse personalisée. <br/>Pour |
+| ---------------------------------------------------------- | ------------------------------------------------------------ |
+|                                                            |                                                              |
+|                                                            |                                                              |
+|                                                            |                                                              |
+
+
 
 1. Quelles sont les adresses I²C possibles pour ce composant.
 
@@ -25,14 +45,28 @@ Mise en œuvre du BMP280
 
    
 
-   Toutes les communications avec l'équipement sont réalisées en lisant et en écrivant dans des registres. Ces registres sont sur une largeur de 8 bits et sont décrits dans le tableau suivant. 
-
    ![](C:\Users\gfjk\Downloads\bus_reseaux-main\bus_reseaux-main\Capture d'écran 2024-10-11 114528.png)
 
-2. Identifier le registre et la valeur permettant d'identifier ce composant 
+
+
+| Identifier le registre et la valeur permettant d'identifier ce composant | Le registre d'identification (ID) est à l'adresse 0xD0, et sa valeur est 0x58 pour le BMP280. |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              |                                                              |
+
+
+
+1. Identifier le registre et la valeur permettant d'identifier ce composant 
 
 
 Le registre d'identification (ID) est à l'adresse 0xD0, et sa valeur est 0x58 pour le BMP280. 
+
+
+
+
+
+| Identifier le registre et la valeur permettant de placer le composant en mode normal | Le registre de contrôle ctrl_meas (adresse 0xF4) permet de définir le mode de fonctionnement. Les bits 	mode[1:0] doivent être configurés à 11 pour le mode normal. |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              |                                                              |
 
 
 
@@ -42,11 +76,23 @@ Le registre d'identification (ID) est à l'adresse 0xD0, et sa valeur est 0x58 p
 
  
 
+| Identifier les registres contenant l'étalonnage du composant | Les données d'étalonnage sont stockées dans les registres de 0x88 à 0xA1 |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              |                                                              |
+
+
+
 4. Identifier les registres contenant l'étalonnage du composant 
 
 Les données d'étalonnage sont stockées dans les registres de 0x88 à 0xA1 
 
  
+
+| Identifier les registres contenant la température (ainsi que le format) | Les données de température sont réparties sur trois registres : 0xFA (MSB), 0xFB (LSB), et 0xFC (XLSB). |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              | Le format est une valeur non signée de 20 bits : le MSB contient les bits [19:12], le LSB les bits [11:4], et le XLSB les bits [3:0]. |
+
+
 
 5. Identifier les registres contenant la température (ainsi que le format) 
 
@@ -56,6 +102,12 @@ Le format est une valeur non signée de 20 bits : le MSB contient les bits [19:1
 
  
 
+| Identifier les registres contenant la pression (ainsi que le format) | Les données de pression sont également réparties sur trois registres : 0xF7 (MSB), 0xF8 (LSB), et 0xF9 (XLSB). |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              | Le format est une valeur non signée de 20 bits, similaire à celui des données de température. |
+
+
+
 6. Identifier les registres contenant la pression (ainsi que le format) 
 
 Les données de pression sont également réparties sur trois registres : 0xF7 (MSB), 0xF8 (LSB), et 0xF9 (XLSB). 
@@ -64,40 +116,164 @@ Le format est une valeur non signée de 20 bits, similaire à celui des données
 
  
 
+| Identifier les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits. | La fonction pour la compensation de la température est bmp280_compensate_T_int32 et celle pour la pression est bmp280_compensate_P_int64. Ces fonctions utilisent des entiers 32 bits pour les calculs de compensation. |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              |                                                              |
+
+
+
 7. Identifier les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits. 
 
 La fonction pour la compensation de la température est bmp280_compensate_T_int32 et celle pour la pression est bmp280_compensate_P_int64. Ces fonctions utilisent des entiers 32 bits pour les calculs de compensation. 
 
  
 
+***
+
+***
+
+***
 
 
-#### 2.2. Setup du STM32
 
-Carte : STM32 NUCLEO-F446RE
 
-Page 35 datasheet : https://moodle.ensea.fr/pluginfile.php/5789/mod_resource/content/1/dm00105823-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 2.2. Setup du STM32
+
+La carte utilisée est une : STM32 NUCLEO-F446RE
+
+
+
+Il nous faut 
+
+
+
+
+
+La figure suivante montrent les signaux connectés par défaut aux connecteurs ARDUINO® Uno V3
+(CN5, CN6, CN8, CN9) et au connecteur ST morpho (CN7 et CN10), on retrouve une figure pour chaque carte STM32 Nucleo page 35  de la datasheet :
+
+ [user manual : dm00105823-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf](docs_annexes/datasheet documents/dm00105823-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf) 
+
+
+
+
+
 ![Capture d’écran](./docs_annexes/img/Capture%20d’écran%20du%202024-10-11%2009-05-37.png)
 
 
 
-Attention au câblage !!! Surce d'erreur et de grande perte de temps
+On doit câbler la carte fille qui contient les composants dont le BMP280 . Il faut faire **attention au câblage**  qui a été une source d'erreur et une grande perte de temps.
 
-à contrôler 
+Le points à contrôler sont : 
 
 -les pins GPIO sur lequels l'i2c est configurée dans l'ioc
 
 -les pins PHYSIQUE sur lesquels on branche SCL cable jaune et SDA cable blanc   : voir la photo
 
--les pins physiques sur lesquels on branche VCC (3.3V) cable rouge et GND sur un pin GND
+-les pins physiques sur lesquels on branche VCC (sur un pin 3.3V de la nucleo ) c-a-d le câble rouge et GND sur un pin GND de la nucleo
 
 
 
-PHOTO du câblage sur la STM32
-
-
-
-
+PHOTO du câblage sur la STM32 pour la connection logicielle
 
 
 
@@ -121,6 +297,32 @@ D'un UART pour la PI0. (TP2)
 UART ? : 
 
 ​	PIN 
+
+
+
+
+
+
+
+PHOTO du câblage sur la STM32 pour la connection matérielle :
+
+![Capture d’écran](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/Capture d’écran du 2024-10-11 09-05-37.png)
+
+Les pins PB9 et PB8 se trouvent à droite de la carte en haut comme on peut le voir sur la figure de la carte ci-dessus. 
+
+Attention le pin PB8 commence au deuxième pins sur les connecteurs morpho.
+
+On rappel que le signal SDA sur PB9 et SCL sur PB8.
+
+Tandis quel 3.3 V pour VCC et le GND sont à gauche de la carte( on peut utiliser d'autres GND situé sur la carte qu'à gauche mais visuellement c'est plus pratique pour vérifier le câblage s'ils sont isolé d'un côté et les pins I2C d'un autre).
+
+
+
+
+
+Pour la partie CAN, on doit utiliser les pins PB8 ET PB9  d'après le sujet de TP, il faudra donc penser à déplacer les connexions pour le CAN sur d'autres pins si on souhaite utiliser PB8 et PB9
+
+
 
 
 
@@ -205,6 +407,8 @@ Utiliser la commande suivante pour lancer `minicom` sur le bon port :
 sudo minicom -D /dev/ttyACM0
 ```
 
+Une fois la commande lancé, le code écrit dans le main (la ligne du printf) doit s'afficher dans la commande
+
 ![image-20241011102221878](./docs_annexes/img/capture_envoie_liaison_serie.png)
 
 L'affichage est décalé car il manquait le \r pour le retour chariot 
@@ -218,24 +422,49 @@ Maintenant l'affichage est centré à gauche comme on peut le voir :
 
 ![test echo avec retour](./docs_annexes/img/test echo avec retour.png)
 
-sudo minicom -D /dev/ttyACM0
+****
 
-#### 2.3. Communication I²C
+***
+
+***
 
 
-On va ajouter tout le code nécessaire pour manipuler le composant dans des fonctions dont la syntaxe pour rédiger leurs signatures sera BMP280_fonction_a_coder(). Elle seront déclarer dans le fichier header driver.h et implémenter dans le fichier qui sera appelé driver.c. 
 
- 
+### 2.3. Communication I²C
 
-**La première fonction que l’on a codé finalement dans la question précédente est la vérification ou confirmation de l’id de l’équipement I2C et sa réponse précisant son adresse sur le bus I2C. Nous avons donc implémenté la fonction checkID().** 
+On va ajouter tout le code nécessaire pour manipuler le composant dans des fonctions dont la syntaxe pour rédiger leurs signatures sera BMP280_fonction_a_coder(). Elle seront déclarer dans le fichier header BMP280_vincent.h et implémenter dans le fichier qui sera appelé BMP280_vincent.c. 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 ___
 
-### CheckID
+#### Identification du BMP280 : CheckID
 
-**code checkID() :** 
+
+
+On doit vérifier que le contenu du registre correspond bien à la datasheet.
+
+L'identification du BMP280 consiste en la lecture du registre ID.
+
+La première fonction qu'on code  est donc la vérification de l’id de l’équipement I2C . 
+
+On obtient sa réponse avec la fonction hal Receive (). Le buffer passé en argument de cette fonction sera écrasé par les data transmises par le composant I2C.  Ce buffer doit être de type uint8_t sinon les octets transmis ne seront pas bien stockés.
+
+**Nous avons donc implémenté la fonction checkID().** 
+
+**code de la fonction checkID() :** 
 
 ```c
 int BMP280_checkID(void) {
@@ -280,7 +509,35 @@ int BMP280_checkID(void) {
 
 
 
-##### **Configuration du BMP280** mode normal - Pressure oversampling x16 - Temperature oversampling x2 
+***
+
+
+
+
+
+
+
+#### **Configuration du BMP280** 
+
+Avant de pouvoir faire une mesure, il faut configurer le BMP280.
+
+La configuration à mettre en place dans le composant est la suivante: mode normal, Pressure oversampling x16, Temperature oversampling x2
+
+Pour cela il faut écrire les bonnes valeurs dans les bons registres conformément à la datasheet. 
+
+En I²C, l'écriture dans un registre se déroule de la manière suivante:
+1. envoyer l'adresse du registre à écrire, suivi de la valeur du registre
+2. si on reçoit immédiatement (avec Receive()), la valeur reçu sera la nouvelle valeur du registre
+
+La lecture de la valeur reçu en 2. nous permet de vérifier que la configuration a bien été écrite dans le registre.
+
+
+
+Registre concernés pour établir la configuration voulu dans la documentation.
+
+
+
+##### mode normal - Pressure oversampling x16 - Temperature oversampling x2 
 
 ![](./docs_annexes/img/tab_registres.png)
 
@@ -292,6 +549,20 @@ Les paramètres binaires à mettre sont aussi décrits page 25 datasheet pour ch
 
 ![](./docs_annexes/img/registre cotrol measure.png)
 
+
+
+
+
+
+
+***
+
+
+
+
+
+
+
 ##### Contrôle du mode d'alimentation
 
 ll faut placer le composant en mode normal, les configurations possibles et leurs valeurs binaires associées du registre mode[1:0] sont décrites dans le tableau suivant page 15 : 
@@ -301,7 +572,15 @@ ll faut placer le composant en mode normal, les configurations possibles et leur
 | -------------------------- | ------------------------------------------------------------ |
 | 0xF4                       | Les bits mode[1:0] doivent être configurés à 11 pour le mode normal. |
 
- 
+
+
+
+
+
+
+***
+
+
 
 On souhaite paramétrer Pressure oversampling à x16 etTemperature oversampling à x2 . 
 
@@ -318,14 +597,6 @@ page 12 : Pour activer l’oversampling de la pression (et la mesure) il faut s�
 On va choisir le mot binaire ‘101’ qui correspond à oversampling x16 ce que l’on souhaite comme configuration. 
 
 La valeur '101' à écrire dans le code est notée 0b101. 
-
-
-
-
-
-
-
-
 
 
 
@@ -348,6 +619,14 @@ Ou dans le tabelau  22 page 25 :
 On va choisir le mot binaire ‘010’ qui correspond à oversampling x2, ce que l’on souhaite comme configuration. 
 
 Il faut écrire dans les bits 7 à 5 du registre le mot binaire ’010’ qu’on notera dans le code C “0b010”. 
+
+***
+
+Fin explications de la datasheet
+
+***
+
+
 
 On va ajouter tout le code nécessaire pour configurer le composant dans une fonction BMP280_config() qui sera dans le fichier driver.c qui sera accompagné de son fichier driver.h 
 
@@ -504,7 +783,15 @@ ___
 
 
 
-### Étalonnage du composant
+
+
+#### Récupération de l'étalonnage de la température et de la pression 
+
+
+
+
+
+##### Étalonnage du composant
 
 Pour récupérer les valeurs d’étalonnage, on envoie l’adresse la plus basse du registre des valeurs d’étalonnage et on réceptionne les 24 valeurs d’étalonnage.
 
@@ -815,7 +1102,7 @@ On fait pareil pour chaque registre, on stocke dans un variable une fois le déc
 
 
 
-### Récupération de la température et de la pression 
+##### Récupération de la température et de la pression 
 
 
 
@@ -954,7 +1241,7 @@ BMP280_S32_t BMP280_get_pressure() {
 
 
 
-### Compensation des valeurs 
+#### Calcul des températures et des pression compensées
 
 On utilise le code mis à disposition par bosch dans la datasheet que l'on ajoute dans le fichier BMP280_vincent.c
 
@@ -1151,7 +1438,7 @@ HAL_Delay(1000);
 
 La température est renvoyée en **dixièmes de degré Celsius**, avec une **résolution de 0.01°C**. Vous avez mentionné qu'un **valeur de 5123** correspond à **51.23°C**.
 
-#### Calcul de la température compensée :
+#### Formatage de la température  et de la pression [compensée] :
 
 Si la température compensée est de **2545**, cela signifie que :
 
@@ -1185,19 +1472,77 @@ Donc, la pression compensée serait **<u>*1354.93 hPa*</u>**.
 
 Passé les pression en bar 
 
-****
+
 
 ****
 
 ****
 
 ****
+
+****
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 ## 3. TP2 - Interfaçage STM32 - Raspberry
 
-#### 3.1. Mise en route du Raspberry PI Zéro
+### 3.1. Mise en route du Raspberry PI Zéro
 
 #### Premier démarrage
 
@@ -1217,7 +1562,11 @@ Une fois monté, deux partitions apparaissent :
 - rootfs
 - bootfs 
 
-On peut soit uiliser l'interface graphique de l'explorateur de fichier qui va se charger de monter le volume dès que l'on clique sur la partition 
+On peut soit uiliser l'interface graphique de l'explorateur de fichier qui va se charger de monter le volume dès que l'on clique sur la partition soit utiliser la commande mount 
+
+```bash
+mount	
+```
 
 ![image-20241110184427471](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110184427471.png)
 
@@ -1279,6 +1628,89 @@ vincent@Warhawk:/media/vincent/bootfs$ sudo cp /media/vincent/rootfs/etc/wpa_sup
 
 
 
+***
+
+Dans cmdline.txt, j'ajoute modules-load=dwc2,g_ether et je change regdom par FR
+
+
+
+fichier cmdline.txt
+
+```bash
+console=tty1 root=PARTUUID=31903f62-02 rootfstype=ext4 fsck.repair=yes rootwait modules-load=dwc2,gether cfg80211.ieee80211_regdom=FR
+```
+
+
+
+fichier config.txt
+
+```bash
+//contenu du fichier config.txt
+
+
+#ajout à la fin dernière ligne 
+dtoverlay=dwc2
+
+```
+
+
+
+
+
+
+
+voir les nouveaux périphériques détectés :
+
+
+
+```bash
+dmesg | tail -n 20
+```
+
+
+
+![image-20241111002913982](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241111002913982.png)
+
+D'après les messages `dmesg`, la Raspberry Pi Zero est détectée comme un périphérique USB Ethernet sous le nom **`enx02dae9f2d112`** (renommée automatiquement à partir de `usb0`). 
+
+Cela indique qu'une i**nterface réseau** a bien été créée pour la Raspberry Pi sur mon ordinateur, mais elle utilise le nom **`enx02dae9f2d112`** au lieu de `usb0`
+
+ip a pour voir le détail des interfaces réseau (l'usb ethernet devrait y figurer)
+![image-20241111002727638](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241111002727638.png)
+
+
+
+***
+
+
+
+Exécution de la commande suivante pour voir si une adresse IP est assignée à **`enx02dae9f2d112`** :
+
+```bash
+ip a show enx02dae9f2d112
+
+```
+
+![image-20241111003205857](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241111003205857.png)
+
+
+
+L'interface réseau usb0 n'a pas d'ip, je vais lui fixer l'ip 169.254.100.1
+
+```bash
+sudo ip addr add 169.254.100.1/16 dev enx02dae9f2d112
+
+```
+
+on observe que l'interface a bien récupérée son ip avec la commande `ip a`:
+![image-20241111003542856](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241111003542856.png)
+
+
+
+
+
+***
+
 
 
 POur se connecter en ssh :
@@ -1289,7 +1721,9 @@ ssh pi0@192.168.1.150
 
 
 
-#### 2.1 Loopback
+### 3.2 Port série 
+
+####  Loopback
 
 On modifie les fichiers suivant pour pouvoir accèder à ce port série sur la pi zero :
 
@@ -1652,6 +2086,17 @@ Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none
 
 
 
+### 3.3 Commande depuis Python 
+
+
+
+## 4. TP3- Interface REST
+
+### 4.1. Installation du serveur Python
+
+### 4.2. Première page REST
+
+### 4.3. Nouvelles métodes HTTP
 
 
 
@@ -1659,10 +2104,7 @@ Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none
 
 
 
-
-
-
-## TP4 :CAN
+## 5.TP4 :CAN
 
 
 
@@ -1678,3 +2120,10 @@ La configuration a mettre est déterminé à partir du site
 
 
 
+### 5.1 Pilotage du moteur 
+
+
+
+
+
+### 5.2. Interfaçage avec le capteur
