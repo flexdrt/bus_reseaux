@@ -1197,3 +1197,118 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 }
 ```
 
+<<<<<<< Updated upstream
+=======
+
+
+utiliser pipenv 
+
+
+
+Suite à un problème de version de blinker, on procéde à l'installation sans le requirements.txt, package par package.
+
+
+
+
+
+Quel est le rôle du décorateur `@app.route`?
+
+Le décorateur permet d'accéder de se positionner dans le le lien /api/welcome/.
+
+
+
+Capture d'écran
+
+
+
+
+
+Quel est le role du fragment `<int:index>`?
+
+Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none ensuite.
+
+
+
+### 3.3 Commande depuis Python 
+
+
+
+## 4. TP3- Interface REST
+
+**Configuration et Initialisation**
+
+- Configuration d'un serveur web avec Flask pour gérer les routes API.
+- Connexion au port série pour communiquer avec la STM32, permettant de recevoir et envoyer des données (température, pression, échelle).
+
+**Gestion des Routes API**
+
+- `/api/welcome/`
+
+   : Route pour gérer un message d'accueil avec les méthodes :
+
+  - **GET** : Récupère le message d'accueil actuel.
+  - **POST** : Met à jour le message d'accueil avec une nouvelle valeur.
+  - **DELETE** : Réinitialise le message d'accueil à une chaîne vide.
+
+- `/api/welcome/<int:index>`
+
+   : Route pour manipuler une lettre spécifique du message d'accueil selon l'index, avec les méthodes :
+
+  - **GET** : Récupère la lettre à l'index donné.
+  - **POST** : Remplace le message d'accueil par un nouveau message.
+  - **PUT** : Insère un mot au niveau de l'index spécifié dans le message d'accueil.
+  - **PATCH** : Remplace une lettre spécifique à l'index donné.
+  - **DELETE** : Supprime la lettre à l'index spécifié.
+
+**Gestion des Capteurs**
+
+- Température (`/api/temp/`)
+  - **GET** : Renvoie toutes les valeurs de température enregistrées.
+  - **POST** : Récupère une nouvelle mesure de température du STM32 et l'ajoute au tableau.
+- Température avec Index (`/api/temp/<int:index>`)
+  - **GET** : Renvoie la valeur de température à un index donné.
+  - **DELETE** : Supprime la valeur de température à l'index donné.
+- Pression (`/api/pres/`)
+  - **GET** : Renvoie toutes les valeurs de pression enregistrées.
+  - **POST** : Récupère une nouvelle mesure de pression du STM32 et l'ajoute au tableau.
+- Pression avec Index (`/api/pres/<int:index>`)
+  - **GET** : Renvoie la valeur de pression à un index donné.
+  - **DELETE** : Supprime la valeur de pression à l'index donné.
+
+**Gestion de l'Échelle**
+
+- **`/api/scale/`** : Récupère le coefficient d'échelle du STM32.
+- **`/api/scale/<int:index>`** : Modifie le coefficient d'échelle dans le STM32 en envoyant une nouvelle valeur.
+
+**Gestion de l’Erreur 404**
+
+- Affiche une page personnalisée pour les routes non trouvées, grâce à un gestionnaire d’erreurs 404.
+
+
+
+
+
+## 5.TP4 :CAN
+
+
+
+Il faut activer le CAN sur les pin PB8 et PB9 dans l'ioc. 
+
+Il faut configurer la clock à 80 MHz dans clock configuration avec l'ide qui calcule tout tout seul
+
+La configuration a mettre est déterminé à partir du site  
+
+![image-20241108173330654](/home/vincent/snap/typora/90/.config/Typora/typora-user-images/image-20241108173330654.png)
+
+
+
+
+
+### 5.1 Pilotage du moteur 
+
+
+
+
+
+### 5.2. Interfaçage avec le capteur
+>>>>>>> Stashed changes
