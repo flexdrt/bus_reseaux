@@ -1198,7 +1198,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 ```
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+
+
+crétaion de l'environnement à l'aide des commandes au tableau: voir photo pipenv 25/10
+
+>>>>>>> Stashed changes
 
 
 utiliser pipenv 
@@ -1207,6 +1214,7 @@ utiliser pipenv
 
 Suite à un problème de version de blinker, on procéde à l'installation sans le requirements.txt, package par package.
 
+<<<<<<< Updated upstream
 
 
 
@@ -1311,4 +1319,12 @@ La configuration a mettre est déterminé à partir du site
 
 
 ### 5.2. Interfaçage avec le capteur
+>>>>>>> Stashed changes
+=======
+On rafraichit le serveur à l'aide de la commande suivante:
+
+```
+pi@raspberrypi:~/server $ FLASK_APP=hello.py FLASK_ENV=development flask run --host 0.0.0.0
+```
+
 >>>>>>> Stashed changes
