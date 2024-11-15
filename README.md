@@ -401,10 +401,18 @@ PUTCHAR_PROTOTYPE
 
 ##### **Test de la chaîne de compilation et communication UART sur USB**
 
+Si `ttyAMA0` est utilisé pour la console système et que vous souhaitez l’utiliser pour votre propre application, vous devrez le libérer 
+
+
+
+
+
 Utiliser la commande suivante pour lancer `minicom` sur le bon port :
 
 ```bash
-sudo minicom -D /dev/ttyACM0
+sudo minicom -D /dev/ttyACM0 # pour la nucleo
+
+minicom -b 115200 -o -D /dev/ttyAMA0 #pour la pi zero
 ```
 
 Une fois la commande lancé, le code écrit dans le main (la ligne du printf) doit s'afficher dans la commande
@@ -1551,9 +1559,47 @@ on flash la carte pour installer pi os lite 32 bits avec l'outil pi imager en pr
 Pour le réseau, on configure ESE_Bus_Network pour le ssid et ilovelinux pour le mdp.
 L'adresse IP est attribuée par le routeur : 192.168.88.237.
 
+ 231 disparue 
+
+****
+
+carte sd de vincent 
+
+nom d'hote:  vkpi
 
 
-#### Modification de la configuration réseau de la PI zero :
+
+user : vkuser
+
+mot de passe : mdp 
+
+
+
+Réseau 
+
+ssid: IPhone de vincent
+
+mot de passe : mdp
+
+![image-20241114141719716](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241114141719716.png)
+
+
+
+
+
+![image-20241114155717268](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241114155717268.png)
+
+makerspace wifi :
+
+user : vkuser
+
+mdp: mdp
+
+
+
+
+
+Modification de la configuration réseau de la PI zero :
 
 Afin de pouvoir me connecter en ssh sur mon réseau privé au lieu du réseau de la salle de TP, je ajouter le réseau dans le fichier `wpa_supplicant.conf` qui se trouve dans `rootfs/etc/wpa_supplicant` . Pour cela, je monte la carte sd sur ma machine linux pour accèder à la partition boot qui contient ce fichier 
 
@@ -1590,7 +1636,7 @@ Lorsque l'on monte une partition, elle est monté à partir du répertoire `/med
 
 J'ouvre en mode édition le fichier avec la commande
 
-`sudo nano /media/vincent/rootfs/etc/wpa_supplicant/wpa_supplicant.conf`
+`sudo nano /media/vincent/bootfs/etc/wpa_supplicant/wpa_supplicant.conf`
 
 J'écris dans le fichier les lignes suivantes :
 
@@ -1719,6 +1765,67 @@ POur se connecter en ssh :
 ssh pi0@192.168.1.150
 ```
 
+****
+
+***
+
+
+
+copier boot fs sur la 64 go a moi 
+
+sudo dump -0u -f /dev/sdc1 /dev/sda1
+
+
+
+copier rootfs 
+sudo dump -0u -f /dev/sdc2 /dev/sda2
+
+
+
+
+
+
+
+**Cloner la carte SD avec `dd` :** Utilisez la commande `dd` pour copier le contenu de la carte SD de 32 Go sur celle de 64 Go. Voici la commande de base pour cela :
+
+```bash
+sudo dd if=/dev/sda of=/dev/sdc bs=4M status=progress
+
+```
+
+`if=/dev/sda` : spécifie la carte SD source.
+
+`of=/dev/sdc` : spécifie la carte SD destination.
+
+`bs=4M` : définit la taille du bloc de lecture/écriture à 4 Mo pour une copie plus rapide.
+
+`status=progress` : affiche la progression de la commande `dd`.
+
+
+
+
+
+led pi zero informations 
+
+| Nombre de clignotements | Signification de l'erreur                                    |
+| ----------------------- | ------------------------------------------------------------ |
+| **3 clignotements**     | Erreur de démarrage : le fichier `boot.img` est introuvable. |
+| **4 clignotements**     | Erreur de démarrage : `start.elf` est introuvable.           |
+| **7 clignotements**     | Kernel introuvable (`kernel.img`).                           |
+| **8 clignotements**     | Erreur de mémoire SDRAM (souvent lié à une incompatibilité de matériel). |
+
+### 
+
+**Clignotements réguliers** : Fonctionnement normal, la Pi accède à la carte SD.
+
+**Clignotements spécifiques (ex. 4 ou 7)** : Erreurs de démarrage liées aux fichiers de démarrage.
+
+**LED fixe ou éteinte** : Problème d'alimentation, carte SD absente ou image corrompue.
+
+
+
+***
+
 
 
 ### 3.2 Port série 
@@ -1777,13 +1884,25 @@ Par exemple, en tapant t il se réaffiche grâce au echo qui affiche les caract�
 
 
 
+
+
+
+
+******
+
+
+
 #### Communication avec la STM32	
 
 
 
-
+Attention au cablâge , il ne faut pas câbler sur pa1 et pa2 mais sur pc10 et pc11
 
 On a besoin d'un autre port UART, nous avons activé l'UART3 :
+
+pin PC11 USART3_RX
+
+pin PC10 USART3_TX
 
 ~~pin PC5 USART3_RX~~
 
@@ -1799,15 +1918,11 @@ On a besoin d'un autre port UART, nous avons activé l'UART3 :
 
 
 
-pin PC11 USART3_RX
-
-pin PC10 USART3_TX
 
 
 
-Afin de pouvoir facilement déboguer votre programme STM32, faites en  sorte que la fonction printf renvoie bien ses chaînes de caractères sur  la liaison UART sur USB, en ajoutant le code suivant au fichier  stm32f4xx_hal_msp.c: 
 
-On va modifier la fonction **printf** pour quelle affiche sur les 2 ports série en même temps. On part de code : 
+Afin de pouvoir facilement déboguer votre programme STM32, faites en  sorte que la fonction printf renvoie bien ses chaînes de caractères sur  la liaison UART (usart 2 ) sur USB, en ajoutant le code suivant au fichier  stm32f4xx_hal_msp.c. On va modifier la fonction **printf** pour quelle affiche sur les 2 ports série en même temps. On part de code : 
 
 ```c
 /* USER CODE BEGIN PV */
@@ -1837,6 +1952,8 @@ PUTCHAR_PROTOTYPE
 /* USER CODE END 1 */
 ```
 
+On ajoute également la transmission vers l'usart3 pour assurer la redirection du printf dans la console de l'USART3.
+
 On rajoute l'écriture dans l'USART3 avec la fonction Transmit dans stm32f4xx_hal_msp.c:
 
 ```c
@@ -1857,6 +1974,18 @@ PUTCHAR_PROTOTYPE
   return ch;
 }
 ```
+
+
+
+##### Activation de l'usart dans la PI ZERO
+
+On active l'usart dans la PI ZERO : `sudo raspi-config` > advanced options>seiral port activate
+
+
+
+
+
+
 
 Communication entre la PI zero et le STM32
 
@@ -1912,98 +2041,33 @@ la taille du tableau qui reçoit les données de l'UART est définit dans le fic
 
 
 
+Switch  case étape par étape
+
+
+
+
+
 ```c
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-     // Assurez-vous que RxBuff est null-terminated avant de l'utiliser
-    RxBuff[RX_BUFF_SIZE - 1] = '\0';
-
-    // Obtenir le code de la requête
-    int request_code = getRequestCode((const char*)RxBuff);
-    
-    switch (request_code) {
+    int rq_pi=0; 
+    switch(rq_pi)t{
         case GET_T: {
-            temp_uncompen = BMP280_get_temperature();
-            BMP280_S32_t temp_compen = bmp280_compensate_T_int32(temp_uncompen);
-            printf("T=%ld%ld.%ld%ld_C\r\n",
-                (temp_compen / 1000) % 10,
-                (temp_compen / 100) % 10,
-                (temp_compen / 10) % 10,
-                temp_compen % 10);
-            break;
+        temp_uncompen= BMP280_get_temperature(); //récupérer la température
+		temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température
+
+		//Si on souhaite affiché la température décommenter la suiteet changer le handle dans le usart transmit 
+		//printf("valeur non compensée de la température %u \r\n",temp_uncompen);
+		//printf("la température compensée %u \r\n",temp_comp);
+		
+          
+            
         }
-        case GET_P: {
-            pres_uncompen = BMP280_get_pressure();
-            BMP280_S32_t pres_compen = bmp280_compensate_P_int64(pres_uncompen);
-            printf("P=%f_Pa\r\n", ((float)(pres_compen)) / 256);
-            break;
-        }
-        case SET_K: {//a modifier
-            coef = atoi((const char*)RxBuff + 6); // Vous pouvez utiliser atoi() (convertit une chaîne en entier) pour transformer cette partie de la chaîne en un entier.
-            printf("SET_K=OK, coef=%d\r\n", coef);
-            break;
-        }
-        case GET_K: {
-            printf("K=%d\r\n", coef);
-            break;
-        }
-        case GET_A: {
-            // Ajouter votre logique pour GET_A
-            printf("GET_A: angle value\r\n");
-            break;
-        }
-        default: {
-            printf("\r\nCommande inconnue\r\n");
-            break;
-        }
-    }
-    //***************
-    request_pi;
-    if(strcmp(RxBuff,request_rpi)==0))
-    switch(){
-        case request_pi=GET_T:
-            //récupérer la température 
-            BMP280_S32_t temp_uncompen; 
-        	temp_uncompen= BMP280_get_temperature(); 
-            //compenser la température sur 10 caractères
-            BMP280_S32_t temp_compen;
-            temp_compen=bmp280_compensate_T_int32(temp_uncompen);
-            //afficher la température sur le port série
-            printf("T=%ld%ld.%ld%ld_C\r\n",(temp/1000)%10,(temp/100)%10,(temp/10)%10,temp%10);
-            break;
-        case request_pi='GET_P':
-        	pres_uncompen=BMP280_get_pressure(); 
-            //compenser la pression sur 10 caractères
-            BMP280_S32_t pres_compen;
-            pres_compen=bmp280_compensate_P_int64(pres_uncompen)
-            //afficher la pression compensée sur le port série
-            printf("P=%f_Pa\r\n",((float)(pres_compen))/256);
-            break;
-        case request_pi'SET_K':
-        	K_pid=0;
-		//printf("\r\nSET_K=OK\r\n");
-		//coef=atoi(RxBuff);
-		coef=atoi(RxBuff);
-		printf("%d\r\n",atoi(RxBuff));
-		//printf("%d\r\n",coef);
-            break;
-        case GET_K:
-            get_k();
-            break();
-        case GET_A:
-            get_a();
-            break();    
+            
             
             
     }
-    //buffer=get_t :>> temp_uncompen= BMP280_get_temperature(); 
-    //buffer=get_p :>>  pres_uncompen=BMP280_get_pressure(); 	//récupérer la pression
-    
-    //buffer=set_k  :>>
-    //buffer=get_k renvoie la valeur de K de l'asservissement du moteur sur 10 caractères :>>
-    //buffer=get_a renvoie la valeur de a de l'asservissement du moteur sur 10 caractères BMP280_config() :>>
-  HAL_UART_Receive_IT(&huart1, RxBuff, RX_BUFF_SIZE);  
-}
+
 ```
 
 
@@ -2013,47 +2077,75 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 
 
+
+
+
+Switch version g
 
 ```c
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if(strcmp(RxBuff,"GET_T")==0){
-		//printf("\r\nGET_T\r\n");
-		nc_temp = BMP280_get_temp();
-		temp=bmp280_compensate_T_int32(nc_temp);
-		printf("T=%ld%ld.%ld%ld_C\r\n",(temp/1000)%10,(temp/100)%10,(temp/10)%10,temp%10);
-	}
-	else if(strcmp(RxBuff,"GET_P")==0){
-		//printf("\r\nGET_P\r\n");
-		nc_pres = BMP280_get_pres();
-		pres=bmp280_compensate_P_int64(nc_pres);
-		printf("P=%f_Pa\r\n",((float)(pres))/256);
-	}
-	else if(strcmp(RxBuff,"SET_K")==0){
-		setK=1;
-	}
-	else if(setK==1){
-		setK=0;
-		//printf("\r\nSET_K=OK\r\n");
-		//coef=atoi(RxBuff);
-		coef=atoi(RxBuff);
-		printf("%d\r\n",atoi(RxBuff));
-		//printf("%d\r\n",coef);
+void dial_pi(){
+
+	if(strcmp(RxBuff,'GET_T')==0) {
+
+
+		//déclaration des variables contenant la température non compensée
+		temp_uncompen= BMP280_get_temperature(); //récupérer la température
+
+		//déclaration des variables contenant la température  compensée
+		BMP280_U32_t temp_comp;
+
+
+		temp_uncompen= BMP280_get_temperature(); //récupérer la température
+
+		temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température compensé
+
+		printf("%u \r\n",temp_comp);// AFFICHÉ TEMPÉRATURE compensée sur l'usart
+
+		//T=+12.50_C 	Température compensée sur 10 cafficher aractères
+		//GET_P 	P=102300Pa
 
 	}
-	else if(strcmp(RxBuff,"GET_K")==0){
-		//printf("\r\nGET_K\r\n");
-		printf("K=%d\r\n",coef);
+
+	if (strcmp(RxBuff,'GET_P')==0){
+
+		//déclaration des variables contenant la pression non compensée
+		pres_uncompen= BMP280_get_pressure(); //récupérer la température
+
+		//déclaration des variables contenant la pression  compensée
+		BMP280_U32_t pres_comp;
+
+
+
+		pres_uncompen=BMP280_get_pressure(); //récupérer la pression non compensée
+
+		pres_comp=bmp280_compensate_P_int64(pres_uncompen); //compenser la pression
+
+
+
+		printf("%u \r\n",pres_comp);
+
 	}
-	else if(strcmp(RxBuff,"GET_A")==0){
-		//printf("\r\nGET_A\r\n");
-	}
-	else{
-		printf("\r\nCommande inconnue\r\n");
-	}
-	HAL_UART_Receive_IT(&huart1, RxBuff, RX_BUFF_SIZE);
+
+
+
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	dial_pi();
+
+	HAL_UART_Receive_IT(&huart3, RxBuff, RX_BUFF_SIZE);
 }
 ```
+
+
+
+
+
+
+
+I
+
 crétaion de l'environnement à l'aide des commandes au tableau: voir photo pipenv 25/10
 
 
@@ -2084,6 +2176,59 @@ Quel est le role du fragment `<int:index>`?
 
 Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none ensuite.
 
+##### 
+
+
+
+##### Logiciel de la nucleo pour lire le contenu de l'UART de la PI ZERO
+
+
+
+
+
+
+
+-Code de la callback qui controlle le driver 
+
+
+
+
+
+-Interruption pour gérer les événements de réception RX UART3
+
+
+
+
+
+-DMA pour gérer ces interruptions 
+
+
+
+#### **Configurer le DMA dans STM32CubeMX**
+
+Activez le DMA pour la réception (`USARTx_RX`) et, si nécessaire, pour l’émission (`USARTx_TX`).
+
+Associez le DMA RX/TX aux canaux DMA appropriés.
+
+Configurez les paramètres suivants dans CubeMX :
+
+- **Mode DMA RX :** **Normal** ou **Circulaire** (souvent circulaire pour un tampon RX).
+- **Priorité :** Medium ou High.
+
+- Générer le code.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### 3.3 Commande depuis Python 
@@ -2093,6 +2238,100 @@ Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none
 ## 4. TP3- Interface REST
 
 ### 4.1. Installation du serveur Python
+
+
+
+
+
+
+
+```bash
+sudo apt update
+sudo apt install python3-pip
+```
+
+
+
+
+
+
+
+On va installer flask et pyserial avec apt à part sans passer par pipenv.
+
+
+
+
+
+
+
+```bash
+vkuser@vkpi:~/serveur_python/envrepo $ sudo pipenv --python3
+Usage: pipenv [OPTIONS] COMMAND [ARGS]...
+Try 'pipenv -h' for help.
+
+Error: No such option: --python3 (Possible options: --py, --python)
+vkuser@vkpi:~/serveur_python/envrepo $ pipenv install flask
+Creating a virtualenv for this project...
+Pipfile: /home/vkuser/serveur_python/envrepo/Pipfile
+Using /usr/bin/python (3.11.2) to create virtualenv...
+⠹ Creating virtual environment...created virtual environment CPython3.11.2.final.0-32 in 9118ms
+  creator CPython3Posix(dest=/home/vkuser/.local/share/virtualenvs/envrepo-iqDQ4qIp, clear=False, no_vcs_ignore=False, global=False)
+  seeder FromAppData(download=False, pip=bundle, setuptools=bundle, wheel=bundle, via=copy, app_data_dir=/home/vkuser/.local/share/virtualenv)
+    added seed packages: pip==23.0.1, setuptools==66.1.1, wheel==0.38.4
+  activators BashActivator,CShellActivator,FishActivator,NushellActivator,PowerShellActivator,PythonActivator
+
+⠼ Creating virtual environment...✔ Successfully created virtual environment!
+Virtualenv location: /home/vkuser/.local/share/virtualenvs/envrepo-iqDQ4qIp
+Creating a Pipfile for this project...
+Installing flask...
+Pipfile.lock not found, creating...
+Locking [packages] dependencies...
+Locking [dev-packages] dependencies...
+Updated Pipfile.lock (60364d8fec40062cefddf8fc7df3eb90e861b5d9e9b7faf7d5782480799581c9)!
+Installing dependencies from Pipfile.lock (9581c9)...
+To activate this project's virtualenv, run pipenv shell.
+Alternatively, run a command inside the virtualenv with pipenv run.
+vkuser@vkpi:~/serveur_python/envrepo $ pipenv install pyserial
+Installing pyserial...
+Pipfile.lock (9581c9) out of date, updating to (271ade)...
+Locking [packages] dependencies...
+Locking [dev-packages] dependencies...
+Updated Pipfile.lock (cbd209451ba7541a03cba51c6cbe4072f21bfc19fce86f2c6bffa465ee271ade)!
+Installing dependencies from Pipfile.lock (271ade)...
+To activate this project's virtualenv, run pipenv shell.
+Alternatively, run a command inside the virtualenv with pipenv run.
+
+```
+
+Pas dans l'environnement donc lorsque l'on essaie de démarrer le fichier app.py il trouve pas les library import
+
+
+voici la commande à rentrer, cette foirs dans l'environnement 
+
+```bash
+(envrepo) vkuser@vkpi:~/serveur_python/envrepo/REST_server $ pipenv install flask
+Creating a virtualenv for this project...
+Pipfile: /home/vkuser/serveur_python/envrepo/REST_server/Pipfile
+Using /home/vkuser/.local/share/virtualenvs/envrepo-iqDQ4qIp/bin/python3 (3.11.2) to create virtualenv...
+⠸ Creating virtual environment...created virtual environment CPython3.11.2.final.0-32 in 6183ms
+  creator CPython3Posix(dest=/home/vkuser/.local/share/virtualenvs/REST_server-aL8mx64A, clear=False, no_vcs_ignore=False, global=False)
+  seeder FromAppData(download=False, pip=bundle, setuptools=bundle, wheel=bundle, via=copy, app_data_dir=/home/vkuser/.local/share/virtualenv)
+    added seed packages: pip==23.0.1, setuptools==66.1.1, wheel==0.38.4
+  activators BashActivator,CShellActivator,FishActivator,NushellActivator,PowerShellActivator,PythonActivator
+
+⠼ Creating virtual environment...✔ Successfully created virtual environment!
+Virtualenv location: /home/vkuser/.local/share/virtualenvs/REST_server-aL8mx64A
+Installing flask...
+Pipfile.lock (6ad37b) out of date, updating to (790917)...
+Locking [packages] dependencies...
+Locking [dev-packages] dependencies...
+Updated Pipfile.lock (775eec9d328e7ef027fdeae79f5f2f5ce8a3a3c983f34415e3a3167a9d790917)!
+Installing dependencies from Pipfile.lock (790917)...
+
+```
+
+
+
 
 ### 4.2. Première page REST
 

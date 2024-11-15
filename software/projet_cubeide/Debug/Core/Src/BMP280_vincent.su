@@ -1,7 +1,9 @@
-../Core/Src/BMP280_vincent.c:43:5:BMP280_checkID	32	static
-../Core/Src/BMP280_vincent.c:85:6:BMP280_config	24	static
-../Core/Src/BMP280_vincent.c:140:6:BMP280_calib	48	static
-../Core/Src/BMP280_vincent.c:197:14:BMP280_get_temperature	24	static
-../Core/Src/BMP280_vincent.c:239:14:BMP280_get_pressure	32	static
-../Core/Src/BMP280_vincent.c:285:14:bmp280_compensate_T_int32	32	static
-../Core/Src/BMP280_vincent.c:299:14:bmp280_compensate_P_int64	328	static
+../Core/Src/BMP280_vincent.c:45:5:BMP280_checkID	32	static
+../Core/Src/BMP280_vincent.c:87:6:BMP280_config	24	static
+../Core/Src/BMP280_vincent.c:150:6:BMP280_calib	48	static
+../Core/Src/BMP280_vincent.c:207:14:BMP280_get_temperature	24	static
+../Core/Src/BMP280_vincent.c:249:14:BMP280_get_pressure	32	static
+../Core/Src/BMP280_vincent.c:295:14:bmp280_compensate_T_int32	32	static
+../Core/Src/BMP280_vincent.c:309:14:bmp280_compensate_P_int64	328	static
+../Core/Src/BMP280_vincent.c:334:6:dial_pi	16	static
+../Core/Src/BMP280_vincent.c:386:6:HAL_UART_RxCpltCallback	16	static

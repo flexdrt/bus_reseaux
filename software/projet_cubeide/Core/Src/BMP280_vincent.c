@@ -5,9 +5,11 @@
 #include "BMP280_vincent.h"
 
 extern I2C_HandleTypeDef hi2c1;
+extern UART_HandleTypeDef huart1;
+
 HAL_StatusTypeDef retour; //Permet de verifier si les fonctions I2C s'exécutent correctement
-int RX_BUFF_SIZE = 500;
-//uint8_t RxBuff[RX_BUFF_SIZE]={0};
+//int RX_BUFF_SIZE = 500;
+uint8_t RxBuff[RX_BUFF_SIZE]={0};
 int K_pid = 0;
 int A_pid = 0;
 uint8_t ctrl_meas = 0xF4;
@@ -50,7 +52,7 @@ int BMP280_checkID(void) {
 
 	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, buf, 1, -1);
 
-	printf("checkID : transmission in progress\r\n");
+	//printf("checkID : transmission in progress\r\n");
 
 	if(retour != HAL_OK){
 
@@ -60,7 +62,7 @@ int BMP280_checkID(void) {
 
 	}
 	else{
-		printf("no problem during transmission ... transmission complete -> reception in progress\r\n");
+		//%%printf("no problem during transmission ... transmission complete -> reception in progress\r\n");
 	}
 
 
@@ -74,7 +76,7 @@ int BMP280_checkID(void) {
 	}
 	else{
 
-		printf("\n reception complete ...  : Register Id content : 0x%x\r\n", buf[0]);
+		//^printf("\n reception complete ...  : Register Id content : 0x%x\r\n", buf[0]);
 	}
 
 }
@@ -86,11 +88,19 @@ void BMP280_config(void) {
 	uint8_t part1 = 0b010 << 5;  // Décalage de 5 bits
 	uint8_t part2 = 0b101 << 2;  // Décalage de 2 bits
 	uint8_t part3 = 0b11;        // Pas de décalage
-	printf("Part1 (0b010 << 5) = %u\r\n", part1);   // Affiche 64
+	/*
+	 * ^
+	 *
+	 *
+	 * printf("Part1 (0b010 << 5) = %u\r\n", part1);   // Affiche 64
 	printf("Part2 (0b101 << 2) = %u\r\n", part2);   // Affiche 20
 	printf("Part3 (0b11)       = %u\r\n", part3);   // Affiche 3
+
+
+
+	 */
 	uint8_t sumPart=part1+part2+part3;
-	printf(" sum of parts = Part1+Part2+Part3 = %u \r\n",sumPart);   // Affiche 3
+	//^^printf(" sum of parts = Part1+Part2+Part3 = %u \r\n",sumPart);   // Affiche 3
 	uint8_t config = part1 | part2 | part3;
 
 
@@ -103,7 +113,7 @@ void BMP280_config(void) {
 
 	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, buf, 2,HAL_MAX_DELAY);
 
-	printf("configuration : transmission in progress\r\n");
+	//%%printf("configuration : transmission in progress\r\n");
 
 	if (retour != HAL_OK) {
 
@@ -112,7 +122,7 @@ void BMP280_config(void) {
 	}
 
 	else{
-		printf("config : no problem during transmission ... transmission complete -> reception in progress\r\n");
+		//%%printf("config : no problem during transmission ... transmission complete -> reception in progress\r\n");
 	}
 
 	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf, 1, HAL_MAX_DELAY);
@@ -124,10 +134,10 @@ void BMP280_config(void) {
 
 
 	}
-	//printf("config = %u\r\n",config);
+	//^^^printf("config = %u\r\n",config);
 	if (buf[0] == config) {
 
-		printf("\nconfig : well configured - configuration value = hexadecimal : 0x%x | decimal  : 0d%u\r\n", buf[0]);
+		//printf("\nconfig : well configured - configuration value = hexadecimal : 0x%x | decimal  : 0d%u\r\n", buf[0]);
 
 
 
@@ -155,14 +165,14 @@ void BMP280_calib(void) {
 	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, &BMP280_TRIM_REG_MSB,1, HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
-		printf("Probleme calib I2C\r\n");
+		//printf("Probleme calib I2C\r\n");
 		return;
 	}
 	//on lit la réponse qu'on stocke dans le buffer buf_data
 	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf_data, 24,HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
-		printf("Problem calib I2C\r\n");;
+		//^printf("Problem calib I2C\r\n");;
 
 
 	}
@@ -186,8 +196,8 @@ void BMP280_calib(void) {
 
 
 	for (int i = 0; i < 24; i++) {
-		printf("i :%d\r",i);
-		printf("dans boucle for //registre d'etallonage calib= 0x%x soit %d \r\n ", buf_data[i],buf_data[i]);
+		//^printf("i :%d\r",i);
+		//printf("dans boucle for //registre d'etallonage calib= 0x%x soit %d \r\n ", buf_data[i],buf_data[i]);
 
 
 	}
@@ -212,14 +222,14 @@ BMP280_S32_t BMP280_get_temperature() {
 			HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
-		printf("Probleme I2C\r\n");
+		//^printf("Probleme I2C\r\n");
 	}
 	//on lit la réponse qu'on stocke dans le buffer buf_data
 	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf_data, 3,HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
 
-		printf("problem i2c");
+		//^printf("problem i2c");
 
 		return 1;
 	}
@@ -231,7 +241,7 @@ BMP280_S32_t BMP280_get_temperature() {
 
 	//printf("%05lX", adc_T);
 
-	printf("%d \r\n", adc_T);
+	//^printf("%d \r\n", adc_T);
 
 	return adc_T;
 }
@@ -252,26 +262,26 @@ BMP280_S32_t BMP280_get_pressure() {
 	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, &BMP280_PRES_REG_MSB, 1,HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
-		printf("problem i2c\r\n");
+		//printf("problem i2c\r\n");
 	}
 	//on lit la réponse qu'on stocke dans le buffer buf_data
 	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf_data, 3,HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
 
-		printf("problem i2c \r\n");
+		//^printf("problem i2c \r\n");
 
 		return 1;
 	}
 
 	adc_P = ((BMP280_S32_t) (buf_data[0]) << 12) | ((BMP280_S32_t) (buf_data[1]) << 4) | ((BMP280_S32_t) (buf_data[2]) >> 4);
 
-	printf("Pressure adc_P:    0d ");
+	//^printf("Pressure adc_P:    0d ");
 
 
 	//printf("%05lX", adc_P);
 
-	printf("%d\r\n", adc_P);
+	//^printf("%d\r\n", adc_P);
 
 
 
@@ -316,3 +326,70 @@ BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
 	p = ((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7)<<4);
 	return (BMP280_U32_t)p;
 }
+
+
+
+
+
+void dial_pi(){
+
+	if(strncmp(RxBuff, "GET_T", 5)==0) {
+
+
+		//déclaration des variables contenant la température non compensée
+		temp_uncompen= BMP280_get_temperature(); //récupérer la température
+
+		//déclaration des variables contenant la température  compensée
+		BMP280_U32_t temp_comp;
+
+
+		temp_uncompen= BMP280_get_temperature(); //récupérer la température
+
+		temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température compensé
+
+		printf("%u \r\n",temp_comp);// AFFICHÉ TEMPÉRATURE compensée sur l'usart
+
+		//T=+12.50_C 	Température compensée sur 10 cafficher aractères
+		//GET_P 	P=102300Pa
+
+	}
+
+	if (strncmp(RxBuff,"GET_P",5)==0){
+
+		//déclaration des variables contenant la pression non compensée
+		pres_uncompen= BMP280_get_pressure(); //récupérer la température
+
+		//déclaration des variables contenant la pression  compensée
+		BMP280_U32_t pres_comp;
+
+
+
+		pres_uncompen=BMP280_get_pressure(); //récupérer la pression non compensée
+
+		pres_comp=bmp280_compensate_P_int64(pres_uncompen); //compenser la pression
+
+
+
+		printf("%u \r\n",pres_comp);
+
+	}
+
+	if (strcmp(RxBuff,'GET_P')==0){
+
+
+	}
+
+
+
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+
+	dial_pi();
+	HAL_UART_Receive_IT(&huart1, RxBuff, RX_BUFF_SIZE);
+
+
+}
+
+

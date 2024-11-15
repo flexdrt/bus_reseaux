@@ -12,6 +12,9 @@ typedef uint32_t BMP280_U32_t;
 typedef int32_t BMP280_S32_t;
 typedef int64_t BMP280_S64_t;
 
+
+#define RX_BUFF_SIZE 7 //taille buffer de l'usart pour lire caractères
+
 static const uint8_t BMP280_ADDR = 0x77 << 1; // Use 8-bit address
 // static const uint8_t BMP280_ADDR = 0x76 << 1; // Use 8-bit address
 
@@ -45,6 +48,7 @@ BMP280_S32_t BMP280_get_pressure();
 BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t );
 BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t);
 
+void dial_pi();
 
 
 #endif /* BMP280_VINCENT_H_ */
