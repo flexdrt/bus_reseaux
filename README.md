@@ -2282,113 +2282,83 @@ Configurez les paramètres suivants dans CubeMX :
 
 ## 4. TP3- Interface REST
 
+## 4. TP3- Interface REST
+
 ### 4.1. Installation du serveur Python
 
+**Configuration et Initialisation**
+
+- Configuration d'un serveur web avec Flask pour gérer les routes API.
+- Connexion au port série pour communiquer avec la STM32, permettant de recevoir et envoyer des données (température, pression, échelle).
+- Une difficulté a été rencontrée lors du téléchargement des requirements sur notre environnement, il a donc fallu instaler séparément flask et pyserial
+- 
+
+4.2. Première page REST
+
+**Gestion des Routes API**
+
+- `/api/welcome/`
+
+  : Route pour gérer un message d'accueil avec les méthodes :
+
+  - **GET** : Récupère le message d'accueil actuel.
+  - **POST** : Met à jour le message d'accueil avec une nouvelle valeur.
+  - **DELETE** : Réinitialise le message d'accueil à une chaîne vide.
+
+- `/api/welcome/<int:index>`
+
+  : Route pour manipuler une lettre spécifique du message d'accueil selon l'index, avec les méthodes :
+
+  - **GET** : Récupère la lettre à l'index donné.
+  - **POST** : Remplace le message d'accueil par un nouveau message.
+  - **PUT** : Insère un mot au niveau de l'index spécifié dans le message d'accueil.
+  - **PATCH** : Remplace une lettre spécifique à l'index donné.
+  - **DELETE** : Supprime la lettre à l'index spécifié.
+
+![image-20241122223232932](./assets/image-20241122223232932.png)
+
+
+
+**Gestion des Capteurs**
+
+- Température (`/api/temp/`)
+  - **GET** : Renvoie toutes les valeurs de température enregistrées.
+  - **POST** : Récupère une nouvelle mesure de température du STM32 et l'ajoute au tableau.
+- Température avec Index (`/api/temp/<int:index>`)
+  - **GET** : Renvoie la valeur de température à un index donné.
+  - **DELETE** : Supprime la valeur de température à l'index donné.
+- Pression (`/api/pres/`)
+  - **GET** : Renvoie toutes les valeurs de pression enregistrées.
+  - **POST** : Récupère une nouvelle mesure de pression du STM32 et l'ajoute au tableau.
+- Pression avec Index (`/api/pres/<int:index>`)
+  - **GET** : Renvoie la valeur de pression à un index donné.
+  - **DELETE** : Supprime la valeur de pression à l'index donné.
+
+**Gestion de l'Échelle**
+
+- **`/api/scale/`** : Récupère le coefficient d'échelle du STM32.
+- **`/api/scale/<int:index>`** : Modifie le coefficient d'échelle dans le STM32 en envoyant une nouvelle valeur.
+
+**Gestion de l’Erreur 404**
+
+- Affiche une page personnalisée pour les routes non trouvées, grâce à un gestionnaire d’erreurs 404.
 
 
 
 
+Nous créons un dashboard.html pour recueillir l'ensemble des données de température et de pression recueillies et les compiler sous forme de graphes.
 
+Ce dashboard est construit à l'aide d'un tableau composé des valeurs renvoyées sur l'uart préalablement par passées par des fonctions de parcing pour isoler la valeur numérique de la pression et de la température.(T=   _C) Les valeurs ici sont aléatoires pour test.
 
-```bash
-sudo apt update
-sudo apt install python3-pip
-```
-
-
+![Capture d'écran 2024-11-14 165321](./assets/Capture%20d%27%C3%A9cran%202024-11-14%20165321.png)
 
 
 
 
-
-On va installer flask et pyserial avec apt à part sans passer par pipenv.
-
-
-
-
-
-
-
-```bash
-vkuser@vkpi:~/serveur_python/envrepo $ sudo pipenv --python3
-Usage: pipenv [OPTIONS] COMMAND [ARGS]...
-Try 'pipenv -h' for help.
-
-Error: No such option: --python3 (Possible options: --py, --python)
-vkuser@vkpi:~/serveur_python/envrepo $ pipenv install flask
-Creating a virtualenv for this project...
-Pipfile: /home/vkuser/serveur_python/envrepo/Pipfile
-Using /usr/bin/python (3.11.2) to create virtualenv...
-⠹ Creating virtual environment...created virtual environment CPython3.11.2.final.0-32 in 9118ms
-  creator CPython3Posix(dest=/home/vkuser/.local/share/virtualenvs/envrepo-iqDQ4qIp, clear=False, no_vcs_ignore=False, global=False)
-  seeder FromAppData(download=False, pip=bundle, setuptools=bundle, wheel=bundle, via=copy, app_data_dir=/home/vkuser/.local/share/virtualenv)
-    added seed packages: pip==23.0.1, setuptools==66.1.1, wheel==0.38.4
-  activators BashActivator,CShellActivator,FishActivator,NushellActivator,PowerShellActivator,PythonActivator
-
-⠼ Creating virtual environment...✔ Successfully created virtual environment!
-Virtualenv location: /home/vkuser/.local/share/virtualenvs/envrepo-iqDQ4qIp
-Creating a Pipfile for this project...
-Installing flask...
-Pipfile.lock not found, creating...
-Locking [packages] dependencies...
-Locking [dev-packages] dependencies...
-Updated Pipfile.lock (60364d8fec40062cefddf8fc7df3eb90e861b5d9e9b7faf7d5782480799581c9)!
-Installing dependencies from Pipfile.lock (9581c9)...
-To activate this project's virtualenv, run pipenv shell.
-Alternatively, run a command inside the virtualenv with pipenv run.
-vkuser@vkpi:~/serveur_python/envrepo $ pipenv install pyserial
-Installing pyserial...
-Pipfile.lock (9581c9) out of date, updating to (271ade)...
-Locking [packages] dependencies...
-Locking [dev-packages] dependencies...
-Updated Pipfile.lock (cbd209451ba7541a03cba51c6cbe4072f21bfc19fce86f2c6bffa465ee271ade)!
-Installing dependencies from Pipfile.lock (271ade)...
-To activate this project's virtualenv, run pipenv shell.
-Alternatively, run a command inside the virtualenv with pipenv run.
-
-```
-
-Pas dans l'environnement donc lorsque l'on essaie de démarrer le fichier app.py il trouve pas les library import
-
-
-voici la commande à rentrer, cette foirs dans l'environnement 
-
-```bash
-(envrepo) vkuser@vkpi:~/serveur_python/envrepo/REST_server $ pipenv install flask
-Creating a virtualenv for this project...
-Pipfile: /home/vkuser/serveur_python/envrepo/REST_server/Pipfile
-Using /home/vkuser/.local/share/virtualenvs/envrepo-iqDQ4qIp/bin/python3 (3.11.2) to create virtualenv...
-⠸ Creating virtual environment...created virtual environment CPython3.11.2.final.0-32 in 6183ms
-  creator CPython3Posix(dest=/home/vkuser/.local/share/virtualenvs/REST_server-aL8mx64A, clear=False, no_vcs_ignore=False, global=False)
-  seeder FromAppData(download=False, pip=bundle, setuptools=bundle, wheel=bundle, via=copy, app_data_dir=/home/vkuser/.local/share/virtualenv)
-    added seed packages: pip==23.0.1, setuptools==66.1.1, wheel==0.38.4
-  activators BashActivator,CShellActivator,FishActivator,NushellActivator,PowerShellActivator,PythonActivator
-
-⠼ Creating virtual environment...✔ Successfully created virtual environment!
-Virtualenv location: /home/vkuser/.local/share/virtualenvs/REST_server-aL8mx64A
-Installing flask...
-Pipfile.lock (6ad37b) out of date, updating to (790917)...
-Locking [packages] dependencies...
-Locking [dev-packages] dependencies...
-Updated Pipfile.lock (775eec9d328e7ef027fdeae79f5f2f5ce8a3a3c983f34415e3a3167a9d790917)!
-Installing dependencies from Pipfile.lock (790917)...
-
-```
-
-
-
-
-
-
-
-
-
-
-### 4.2. Première page REST
 
 ### 4.3. Nouvelles métodes HTTP
 
-
+Une version en fastAPI du code de app.py est disponible mais pas à jour des fonctionalités de parsing et de compilation des graphes dans le dashboard.html.
 
 
 
@@ -2404,7 +2374,7 @@ Il faut configurer la clock à 80 MHz dans clock configuration avec l'ide qui ca
 
 La configuration a mettre est déterminé à partir du site  
 
-![image-20241108173330654](/home/vincent/snap/typora/90/.config/Typora/typora-user-images/image-20241108173330654.png)
+![image-20241108173330654](./../../../../../home/vincent/snap/typora/90/.config/Typora/typora-user-images/image-20241108173330654.png)
 
 
 
@@ -2429,3 +2399,28 @@ segment : 2
 
 
 ### 5.2. Interfaçage avec le capteur
+
+
+
+
+
+
+
+## **5.TP5 : Mise en série de l'ensemble**
+
+Comme visible sur la vidéo fournie, la température fait varier la position du moteur proportionnellement à son augmentation relative. 
+
+On récupère également la pression qui est stockée dans un tableau python. 
+
+La mesure de l'angle n'a pas pu être récupérée sur l'interface REST, même si elle est disponible depuis minicom.
+
+Les données sont ensuite compilés dans le dashboard qui permet de voir les évolutions au fur et à mesure des requêtes envoyées et d'avoir une vue d'ensemble.
+
+
+
+**Vidéo finale disponible en annexe**
+
+
+
+
+
