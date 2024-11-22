@@ -287,6 +287,27 @@ image-20241011090144010-I2C :
 
 ​	I2C1_SCL sur PB8 
 
+
+
+MAJ du tp4 : il faut déplacer l'i2c de ces pins afin de les libérer pour le bus CAN 
+
+| PB7 pour SDA | PB6 pour SCL |
+| ------------ | ------------ |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 UART 2
 	TX sur PA2 et RX  PA3
 
@@ -294,7 +315,7 @@ UART 2
 
 D'un UART pour la PI0. (TP2)
 
-UART ? : 
+UART ? : usart 1 PA10 et PA9  
 
 ​	PIN 
 
@@ -1492,7 +1513,9 @@ Passé les pression en bar
 
 
 
+20 nov 2024
 
+![image-20241120194205487](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241120194205487.png)
 
 
 
@@ -1896,9 +1919,23 @@ Par exemple, en tapant t il se réaffiche grâce au echo qui affiche les caract�
 
 
 
-Attention au cablâge , il ne faut pas câbler sur pa1 et pa2 mais sur pc10 et pc11
+Attention au cablâge , il  faut  câbler sur pa10 et pa9 et
 
-On a besoin d'un autre port UART, nous avons activé l'UART3 :
+![image-20241115164613134](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241115164613134.png)
+
+La pi zero est branché sur les pins PA10 et PA9 de la pi zero (avec le GND).
+
+
+
+
+
+
+
+
+
+ pa2 mais sur pc10 et pc11
+
+On a besoin d'un autre port UART, nous avons activé l'UART1 :
 
 pin PC11 USART3_RX
 
@@ -2186,6 +2223,14 @@ Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none
 
 
 
+hal_uart_transmit(UART1)
+
+
+
+
+
+
+
 
 
 -Code de la callback qui controlle le driver 
@@ -2333,6 +2378,12 @@ Installing dependencies from Pipfile.lock (790917)...
 
 
 
+
+
+
+
+
+
 ### 4.2. Première page REST
 
 ### 4.3. Nouvelles métodes HTTP
@@ -2360,6 +2411,18 @@ La configuration a mettre est déterminé à partir du site
 
 
 ### 5.1 Pilotage du moteur 
+
+Paramètre du CAN dans l'ioc :
+
+
+
+
+
+prescaler =10/2 = 5 
+
+segment1 : 13 
+
+segment : 2 
 
 
 

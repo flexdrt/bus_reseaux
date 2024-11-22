@@ -49,6 +49,7 @@ BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t );
 BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t);
 
 void dial_pi();
+void can_setter();
 
 
 #endif /* BMP280_VINCENT_H_ */

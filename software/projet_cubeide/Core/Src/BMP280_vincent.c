@@ -1,17 +1,34 @@
 #include <stdio.h>
-#include "stdlib.h"
-
+#include <stdlib.h>
+#include <string.h>
 #include "main.h"
 #include "BMP280_vincent.h"
 
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart2;
+extern CAN_HandleTypeDef hcan1;
+
+
+
+
 
 HAL_StatusTypeDef retour; //Permet de verifier si les fonctions I2C s'exécutent correctement
 //int RX_BUFF_SIZE = 500;
 uint8_t RxBuff[RX_BUFF_SIZE]={0};
+
+
+
+//déclaration du pHeader
+CAN_TxHeaderTypeDef pHeader;
+uint8_t aData[3];  // Tableau pour les données à transmettre
+uint32_t pTxMailbox; // Variable pour stocker l'indice de la boîte aux lettres CAN
+
+
 int K_pid = 0;
-int A_pid = 0;
+int a_pid = 0;
+int setK=0;
+
 uint8_t ctrl_meas = 0xF4;
 BMP280_S32_t temp_uncompen;
 BMP280_S32_t temp_compen;
@@ -19,18 +36,22 @@ BMP280_S32_t temp_compen;
 BMP280_S32_t pres_uncompen;
 BMP280_S32_t pres_compen;
 
+
+//registre etalo temperature
 uint16_t dig_T1;
 int16_t dig_T2;
 int16_t dig_T3;
-uint16_t dig_P1;
-int16_t dig_P2;
-int16_t dig_P3;
-int16_t dig_P4;
-int16_t dig_P5;
-int16_t dig_P6;
-int16_t dig_P7;
-int16_t dig_P8;
-int16_t dig_P9;
+
+//registre etalo pression
+short dig_P1 = 0;
+signed short dig_P2 = 0;
+signed short dig_P3 = 0;
+signed short dig_P4 = 0;
+signed short dig_P5 = 0;
+signed short dig_P6 = 0;
+signed short dig_P7 = 0;
+signed short dig_P8 = 0;
+signed short dig_P9 = 0;
 
 //uint8_t config = (0b010 << 5) | (0b101 << 2) | (0b11);
 
@@ -130,8 +151,6 @@ void BMP280_config(void) {
 	if (retour != HAL_OK) {
 
 		printf("\n config : problem during reception I2C\r\n");
-
-
 
 	}
 	//^^^printf("config = %u\r\n",config);
@@ -235,7 +254,9 @@ BMP280_S32_t BMP280_get_temperature() {
 	}
 
 	adc_T = ((BMP280_S32_t) (buf_data[0]) << 12)| ( (BMP280_S32_t) (buf_data[1]) << 4)| ( (BMP280_S32_t) (buf_data[2]) >> 4);
-	printf("Temperature adc_T: 0d ");
+
+
+
 
 
 
@@ -304,9 +325,32 @@ BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t adc_T)
 
 // Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
 // Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
-
+//test
 
 BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
+//affiche une valeur cohérente truc
+
+/*
+ *
+ *
+ *
+ * GET_P
+
+251525343
+
+26757075
+
+div 256 *10⁵ 1
+
+P=104519.828125_Pa soit P=1.045198
+
+
+ *
+ *
+ *
+ *
+ */
+
 {
 	BMP280_S64_t var1, var2, p;
 	var1 = ((BMP280_S64_t)t_fine) - 128000;
@@ -315,21 +359,207 @@ BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
 	var2 = var2 + (((BMP280_S64_t)dig_P4)<<35);
 	var1 = ((var1 * var1 * (BMP280_S64_t)dig_P3)>>8) + ((var1 * (BMP280_S64_t)dig_P2)<<12);
 	var1 = (((((BMP280_S64_t)1)<<47)+var1))*((BMP280_S64_t)dig_P1)>>33;
-	if (var1 == 0)
-	{
+	if (var1 == 0){
 		return 0; // avoid exception caused by division by zero
 	}
 	p = 1048576-adc_P;
 	p = (((p<<31)-var2)*3125)/var1;
 	var1 = (((BMP280_S64_t)dig_P9) * (p>>13) * (p>>13)) >> 25;
-	var2 = (((BMP280_S64_t)dig_P8) * p) >> 19;
-	p = ((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7)<<4);
+	var2 = (((BMP280_S64_t)dig_P8) * p) >> 19; p = ((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7)<<4);
 	return (BMP280_U32_t)p;
 }
 
+/* affiche une valeur non cohérente
+ *
+ *
+ * GET_P
+
+228582208
+
+4268442490
+
+div 256 *10⁵ 166
+
+P=16673603.000000_Pa soit P=166.736023
+ */
+
+
+//{
+//	BMP280_S64_t var1, var2, p;
+//	var1 = ((BMP280_S64_t)t_fine) - 128000;
+//	var2 = var1 * var1 * (BMP280_S64_t)dig_P6;
+//	var2 = var2 + ((var1*(BMP280_S64_t)dig_P5)<<17);
+//	var2 = var2 + (((BMP280_S64_t)dig_P4)<<35);
+//	var1 = ((var1 * var1 * (BMP280_S64_t)dig_P3)>>8) + ((var1 * (BMP280_S64_t)dig_P2)<<12);
+//	var1 = (((((BMP280_S64_t)1)<<47)+var1))*((BMP280_S64_t)dig_P1)>>33;
+//	if (var1 == 0){
+//		return 0; // avoid exception caused by division by zero
+//	}
+//	p = 1048576-adc_P;
+//	p = (((p<<31)-var2)*3125)/var1;
+//	var1 = (((BMP280_S64_t)dig_P9) * (p>>13) * (p>>13)) >> 25;
+//	var2 = (((BMP280_S64_t)dig_P8) * p) >> 19; p = ((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7)<<4);
+//	return (BMP280_U32_t)p;
+//}
 
 
 
+
+
+HAL_StatusTypeDef tx_can(CAN_TxHeaderTypeDef pHeader2,uint8_t* aData2,uint32_t pTxMailbox2){
+
+	HAL_StatusTypeDef error_out;
+	//uint32_t pTxMailbox; // Variable pour stocker l'indice de la boîte aux lettres CAN
+
+	// Envoi du message CAN avec l'angle de 90°
+	HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(&hcan1, &pHeader2, aData2, &pTxMailbox2);
+	error_out=status;
+	// Vérification du statut d'envoi
+	if (status != HAL_OK) {
+		// Gérer l'erreur d'envoi
+		printf("erreur HAL_CAN_AddTxMessageCAN\r\n");
+	}
+	else{
+		printf("[tx_can]  envoi reussi\r\n");
+	}
+
+	return error_out;
+
+
+}
+
+void enable_can(){
+
+	//********************Activer le module can***************************************************
+	HAL_StatusTypeDef start_can= HAL_CAN_Start(&hcan1);
+	if(start_can!= HAL_OK) {
+
+		// Gérer l'erreur de démarrage
+		printf("erreur start can_config CAN\r\n");
+
+	}
+	else{
+		printf("[enable_can] start  CAN OK\r\n");
+	}
+
+
+
+	//*************************************déclaration du pHeader**********************************
+
+	//CAN_TxHeaderTypeDef pHeader;
+	//uint8_t aData[3];  // Tableau pour les données à transmettre
+
+	// Configuration du champ pHeader
+	pHeader.StdId = 0x61;          // Identifiant standard pour la commande "Angle"
+	pHeader.IDE = CAN_ID_STD;      //(0x00000000U)  !< Standard Id
+	pHeader.RTR = CAN_RTR_DATA;    //(0x00000000U)  !< Data frame
+	pHeader.DLC = 2;
+	pHeader.TransmitGlobalTime = DISABLE;
+
+	aData[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
+	aData[1] = 0x00;  // D1 : Angle positif
+
+	//*************************************transmission au can de la configuration**********************************
+	HAL_StatusTypeDef conf_errout=tx_can(pHeader, aData, pTxMailbox);
+	// Vérification du statut d'envoi
+	if (conf_errout != HAL_OK) {
+		// Gérer l'erreur d'envoi
+		printf("erreur config_base_ CAN\r\n");
+	}
+	else{
+		printf("config base  envoi reussi\r\n");
+	}
+
+}
+
+
+void can_setter(CAN_TxHeaderTypeDef pHeader, uint8_t* aData,uint32_t pTxMailbox){
+
+
+
+	// CAN part start  while loop
+	aData[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
+	aData[1] = 1-aData[1];  //
+
+
+	HAL_StatusTypeDef rota_out=tx_can(pHeader, aData, pTxMailbox);
+	if (rota_out != HAL_OK) {
+		// Gérer l'erreur d'envoi
+		printf(" err rota CAN\r\n");
+	}
+	else {
+		printf("change rotation complete \r\n");
+
+	}
+
+
+}
+
+
+void can_change_temp(BMP280_U32_t temp_comp){
+
+
+	enable_can();
+
+	//TP4 partie CAN d
+	//début *******************************************
+
+// récupérer temps****************************
+//	BMP280_S32_t temp_uncompen;
+//
+//	temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température compensé
+//	//déclaration des variables contenant la température non compensée
+//	temp_uncompen= BMP280_get_temperature(); //récupérer la température
+
+	//déclaration des variables contenant la température  compensée
+	BMP280_U32_t old_temp;
+
+
+//********temp_comp = temperature *******************************************
+
+
+	if(fabs(temp_comp-old_temp)>2){
+
+		if(temp_comp>old_temp){//On bouge dans le sens 0x00 +
+
+			aData[1]=0x00;
+			aData[0]=(int)(10*(temp_comp-old_temp));
+			HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
+			//printf("adata0= %d\r\n",aData[0]);
+
+			old_temp=temp_comp;
+		}
+		else{//On bouge dans le sens 0x01 -
+			aData[1]=0x01;
+			aData[0]=(int)((old_temp-temp_comp));
+			HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
+			//printf("adata0= %d\r\n",aData[0]);
+			old_temp=temp_comp;
+		}
+
+
+	}
+
+	//tx_can
+
+	//	// Envoi du message CAN avec l'angle de 90°
+	//	HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
+	//
+	//	// Vérification du statut d'envoi
+	//	if (status != HAL_OK) {
+	//		// Gérer l'erreur d'envoi
+	//		printf(" [can_setter] err while CAN\r\n");
+	//	}
+
+	//CAN oart finish while loop
+
+
+	//old_temp = temp_comp;//mise à jour de la température
+
+
+}
+
+//*********************************************************************************************
 
 void dial_pi(){
 
@@ -343,25 +573,31 @@ void dial_pi(){
 		BMP280_U32_t temp_comp;
 
 
-		temp_uncompen= BMP280_get_temperature(); //récupérer la température
-
 		temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température compensé
 
-		printf("%u \r\n",temp_comp);// AFFICHÉ TEMPÉRATURE compensée sur l'usart
 
+		//ancien printf
+		//printf("%u \r\n",temp_comp);// AFFICHÉ TEMPÉRATURE compensée sur l'usart
+
+
+		printf("T=%ld%ld.%ld%ld_C\r\n",(temp_comp/1000)%10,(temp_comp/100)%10,(temp_comp/10)%10,temp_comp%10);
 		//T=+12.50_C 	Température compensée sur 10 cafficher aractères
 		//GET_P 	P=102300Pa
+
+		//HAL_Delay(1000);
+		//interaction sur le moteur de la température
+		can_change_temp(temp_comp);
+
 
 	}
 
 	if (strncmp(RxBuff,"GET_P",5)==0){
 
 		//déclaration des variables contenant la pression non compensée
-		pres_uncompen= BMP280_get_pressure(); //récupérer la température
+		//pres_uncompen= BMP280_get_pressure(); //récupérer la température
 
 		//déclaration des variables contenant la pression  compensée
 		BMP280_U32_t pres_comp;
-
 
 
 		pres_uncompen=BMP280_get_pressure(); //récupérer la pression non compensée
@@ -369,20 +605,47 @@ void dial_pi(){
 		pres_comp=bmp280_compensate_P_int64(pres_uncompen); //compenser la pression
 
 
+		//printf("%u \r\n",pres_uncompen);
+		//printf("%u \r\n",pres_comp);
+		//printf("div 256 *10⁵ %u \r\n", ((pres_comp) / (25600000) ));
 
-		printf("%u \r\n",pres_comp);
+
+
+		printf("P=%f_Pa  \r\n",((float)(pres_comp))/256);
+
 
 	}
 
-	if (strcmp(RxBuff,'GET_P')==0){
+	if (strncmp(RxBuff,"SET_K=",10)==0){
+		//K_pid=RxBuff[7];
+		K_pid=0;
+
+		printf("K %d",K_pid);
+
+		//		BMP280_U32_t pres_comp;
+		//		pres_uncompen=BMP280_get_pressure(); //récupérer la pression non compensée
+		//
+		//		pres_comp=bmp280_compensate_P_int64(pres_uncompen); //compenser la pression
+		//
+		//
+		//		printf("%u \r\n",pres_uncompen);
+		//
+		//		printf("%u \r\n",pres_comp);
 
 
 	}
 
 
+
+	if(strncmp(RxBuff,"GET_A",5)==0){
+		a_pid=145;
+		printf("A=%d\r\n",a_pid);
+	}
+
+	// Réinitialiser RxBuff après chaque commande
+	//memset(RxBuff, 0, RX_BUFF_SIZE);
 
 }
-
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
@@ -392,4 +655,87 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 }
 
+//*********************anciennes fonctions archives ********************
 
+
+/*
+ * void init_motor(CAN_TxHeaderTypeDef pHeader2,uint8_t* aData2,uint32_t pTxMailbox2)
+{
+	// Configuration du champ pHeader
+	pHeader2.StdId = 0x61;          // Identifiant standard pour la commande "Angle"
+	pHeader2.IDE = CAN_ID_STD;      //(0x00000000U)  !< Standard Id
+	pHeader2.RTR = CAN_RTR_DATA;    //(0x00000000U)  !< Data frame
+	pHeader2.DLC = 2;
+	pHeader2.TransmitGlobalTime = DISABLE;
+
+	aData2[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
+	aData2[1] = 0x00;  // D1 : Angle positif
+
+}
+ */
+
+
+
+/*void enable_can(){
+//Activer le module can
+	HAL_StatusTypeDef start_can= HAL_CAN_Start(&hcan1);
+	if(start_can!= HAL_OK) {
+
+		// Gérer l'erreur de démarrage
+		printf("erreur start can_config CAN\r\n");
+
+	}
+	else{
+		printf("[main] start  CAN OK");
+	}
+
+}
+
+void tx_can(uint8_t * aData){
+
+//déclaration du pHeader
+	CAN_TxHeaderTypeDef pHeader;
+	uint32_t pTxMailbox; // Variable pour stocker l'indice de la boîte aux lettres CAN
+	// Configuration du champ pHeader
+	pHeader.StdId = 0x61;          // Identifiant standard pour la commande "Angle"
+	pHeader.IDE = CAN_ID_STD;      //(0x00000000U)  !< Standard Id
+	pHeader.RTR = CAN_RTR_DATA;    //(0x00000000U)  !< Data frame
+	pHeader.DLC = 2;
+	pHeader.TransmitGlobalTime = DISABLE;
+
+	aData[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
+	aData[1] = 0x00;  // D1 : Angle positif
+
+
+
+	// Envoi du message CAN avec l'angle de 90°
+	HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
+
+	// Vérification du statut d'envoi
+	if (status != HAL_OK) {
+		// Gérer l'erreur d'envoi
+		printf("erreur TX CAN\r\n");
+	}
+	else{
+		printf("start TX can OK");
+	}
+
+
+}
+
+
+
+
+void can_setter(){
+
+	uint8_t aData[3];
+
+
+	//on peut définirla vitesse aussi
+	aData[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
+	aData[1] = 0x00;  // D1 : Angle positif donc on ajoute 90 degrès
+
+	tx_can(aData);
+
+
+}*/
