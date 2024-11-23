@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Capteurs</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #555;
+        }
+        .charts-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .chart-container {
+            flex: 1 1 300px;
+            max-width: 400px;
+            margin: 10px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .chart-container h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #007BFF;
+            text-align: center;
+        }
+        .refresh-btn {
+            display: block;
+            margin: 10px auto 0;
+            padding: 7px 15px;
+            font-size: 14px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .refresh-btn:hover {
+            background-color: #0056b3;
+        }
+        #general-refresh {
+            margin: 0 auto 20px;
+            display: block;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #scaleValue {
+            font-size: 24px;
+            color: #007BFF;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tableau de Bord des Capteurs</h1>
+    <button id="general-refresh" class="refresh-btn" onclick="refreshAll()">Actualiser Tout</button>
+
+    <div class="charts-wrapper">
+        <div class="chart-container">
+            <h2>Température</h2>
+            <canvas id="tempChart"></canvas>
+            <button class="refresh-btn" onclick="refreshTemp()">Actualiser</button>
+        </div>
+
+        <div class="chart-container">
+            <h2>Pression</h2>
+            <canvas id="presChart"></canvas>
+            <button class="refresh-btn" onclick="refreshPres()">Actualiser</button>
+        </div>
+
+        <div class="chart-container">
+            <h2>Échelle</h2>
+            <div id="scaleValue"></div>
+            <button class="refresh-btn" onclick="refreshScale()">Actualiser</button>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData(endpoint) {
+            const response = await fetch(endpoint);
+            return response.json();
+        }
+
+        let tempChartInstance = null;
+        let presChartInstance = null;
+
+        async function refreshTemp() {
+            const tempData = await fetchData('/api/temp/');
+            const ctx = document.getElementById('tempChart').getContext('2d');
+
+            if (tempChartInstance) {
+                tempChartInstance.data.labels = tempData.map((_, i) => `Point ${i + 1}`);
+                tempChartInstance.data.datasets[0].data = tempData;
+                tempChartInstance.update();
+            } else {
+                tempChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: tempData.map((_, i) => `Point ${i + 1}`),
+                        datasets: [{
+                            label: 'Température (°C)',
+                            data: tempData,
+                            borderColor: '#ff6384',
+                            fill: false
+                        }]
+                    }
+                });
+            }
+        }
+
+        async function refreshPres() {
+            const presData = await fetchData('/api/pres/');
+            const ctx = document.getElementById('presChart').getContext('2d');
+
+            if (presChartInstance) {
+                presChartInstance.data.labels = presData.map((_, i) => `Point ${i + 1}`);
+                presChartInstance.data.datasets[0].data = presData;
+                presChartInstance.update();
+            } else {
+                presChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: presData.map((_, i) => `Point ${i + 1}`),
+                        datasets: [{
+                            label: 'Pression (Pa)',
+                            data: presData,
+                            borderColor: '#36a2eb',
+                            fill: false
+                        }]
+                    }
+                });
+            }
+        }
+
+        async function refreshScale() {
+            const scaleData = await fetchData('/api/scale/');
+            document.getElementById('scaleValue').innerText = `Coefficient actuel : ${scaleData}`;
+        }
+
+        function refreshAll() {
+            refreshTemp();
+            refreshPres();
+            refreshScale();
+        }
+
+        // Chargement initial des données
+        refreshAll();
+    </script>
+</body>
+</html>

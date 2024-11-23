@@ -42,15 +42,27 @@ Toutes les communications avec l'équipement (le capteur I2C) sont réalisées e
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Le registre d'identification (ID) est à l'adresse 0xD0,      | sa valeur est 0x58 pour le BMP280                            |
 
+
+
+
+
 | 3.Identifier le registre et la valeur permettant de placer le composant en mode normal |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Le registre de contrôle ctrl_meas (adresse 0xF4) permet de définir le mode de fonctionnement. | Les bits  bits mode[1:0] doivent être configurés à 11 pour le mode normal. |
+
+
+
+
+
+
 
 | 4.Identifier les registres contenant l'étalonnage du composant |
 | ------------------------------------------------------------ |
 | Les données d'étalonnage sont stockées dans les registres de 0x88 à 0xA1 |
 
  
+
+
 
 | 5.Identifier les registres contenant la température (ainsi que le format) |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -64,8 +76,6 @@ Toutes les communications avec l'équipement (le capteur I2C) sont réalisées e
 
 
 
-
-
 | 7.Identifier les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits. | La fonction pour la compensation de la température est bmp280_compensate_T_int32(BMP280_S32_t adc_P) et celle pour la pression est bmp280_compensate_P_int64(BMP280_S32_t adc_T). Ces fonctions utilisent des entiers 32 bits pour les calculs de compensation. |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 
@@ -75,11 +85,9 @@ Toutes les communications avec l'équipement (le capteur I2C) sont réalisées e
 
 ### 2.2. Setup du STM32
 
-La carte utilisée est une carte de dévellopement STM32 NUCLEO-F446RE
+La carte utilisée est une carte de développement STM32 NUCLEO-F446RE.
 
 
-
-Il nous faut 
 
 La figure suivante montrent les signaux connectés par défaut aux connecteurs ARDUINO® Uno V3
 (CN5, CN6, CN8, CN9) et au connecteur ST morpho (CN7 et CN10), on retrouve une figure pour chaque carte STM32 Nucleo page 35  de la datasheet :
@@ -108,11 +116,11 @@ Le points à contrôler sont :
 
 PHOTO du câblage sur la STM32 pour la connexion logicielle (pins) : 
 
-![image-20241123043425564](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123043425564.png)
+![image-20241123043425564](./docs_annexes/img/23_oct_18h59/image-20241123043425564.png)
+
+Au début du projet, sur les premières séances, l'I2C était sur les pins suivants :
 
 
-
-image-20241011090144010-I2C : 
 
 ​	![image-20241011090144010](./docs_annexes/img/image_ioc.png)
 
@@ -122,17 +130,21 @@ image-20241011090144010-I2C :
 
 
 
-MAJ du tp4 : il faut déplacer l'i2c de ces pins afin de les libérer pour le bus CAN  toujours avec l'I2C1
+Mise à jour du tp4 : 
+
+Il faut déplacer l'i2c de ces pins afin de les libérer pour le bus CAN,  nous utilisons toujours avec l'I2C1 pour communiquer avec le capteur sur d'autres pins :
 
 | PB7 pour SDA | PB6 pour SCL |
 | ------------ | ------------ |
 
 
 
-
+Nous avons également besoin de liaisons UART selon ce schéma 
+![image-20241123174819047](./docs_annexes/img/image-20241123174819047.png)
 
 UART 2
 	TX sur PA2 et RX  PA3
+
 
 
 
@@ -150,7 +162,7 @@ UART ? = usart 1 PA10 et PA9
 
 PHOTO du câblage sur la STM32 pour la connection matérielle :
 
-![Capture d’écran](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/Capture d’écran du 2024-10-11 09-05-37.png)
+![Capture d’écran](./docs_annexes/img/23_oct_18h59/Capture d’écran du 2024-10-11 09-05-37.png)
 
 Les pins PB9 et PB8 se trouvent à droite de la carte en haut comme on peut le voir sur la figure de la carte ci-dessus. 
 
@@ -164,15 +176,19 @@ Tandis quel 3.3 V pour VCC et le GND sont à gauche de la carte( on peut utilise
 
 
 
-Pour la partie CAN, on doit utiliser les pins PB8 ET PB9  d'après le sujet de TP, il faudra donc penser à déplacer les connexions pour le CAN sur d'autres pins si on souhaite utiliser PB8 et PB9
+Pour la partie CAN, on doit utiliser les pins PB8 ET PB9  d'après le sujet de TP, il faudra donc penser à déplacer les connexions pour le CAN sur d'autres pins si on souhaite utiliser PB8 et PB9.
 
 
 
 
 
-D'un CAN 
+
 
 *****************Problèmes cube ide****************************
+
+Afin de pouvoir exécuter le projet, il faut installer cette librairie qui était manquante.
+
+
 
 ```bash
 sudo apt-get install libncurses5
@@ -271,8 +287,15 @@ printf("Hello from STM32!\r\n");
 
 Maintenant l'affichage est centré à gauche comme on peut le voir : 
 
-
 ![test echo avec retour](./docs_annexes/img/test echo avec retour.png)
+
+
+
+![](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/test echo avec retour.png)
+
+
+
+
 
 ****
 
@@ -1175,6 +1198,12 @@ Ce qui affiche :
 
 ![image-20241123040647748](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123040647748.png)
 
+
+
+![image-20241123040647748](./docs_annexes/img/23_oct_18h59/image-20241123040647748.png)
+
+
+
 La température est affiché au format T=22.72_C .
 
 
@@ -1199,14 +1228,6 @@ la doc a mentionné qu'une valeur de **24674867** correspond à une pression de 
 
 
 
-20 nov 2024
-
-![image-20241120194205487](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241120194205487.png)
-
-
-
-
-
 
 
 
@@ -1222,7 +1243,7 @@ On installe sur la carte sd raspbian os lite 32 bits avec l'outil pi imager en p
 Pour le réseau, on configure ESE_Bus_Network pour le ssid et ilovelinux pour le mdp.
 L'adresse IP est attribuée par le routeur : 192.168.88.237.
 
- 231 disparue 
+L'adresse .231 avait disparue lors de la séance de tp suivante.
 
 ****
 
@@ -1583,19 +1604,6 @@ On reçoit bien la température et la pression.
 
 
 
-
-#### **Configurer le DMA dans STM32CubeMX**
-
-Activez le DMA pour la réception (`USARTx_RX`) et, si nécessaire, pour l’émission (`USARTx_TX`).
-
-Associez le DMA RX/TX aux canaux DMA appropriés.
-
-Configurez les paramètres suivants dans CubeMX :
-
-- **Mode DMA RX :** **Normal** ou **Circulaire** (souvent circulaire pour un tampon RX).
-- **Priorité :** Medium ou High.
-
-- Générer le code.
 
 
 
