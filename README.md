@@ -1715,15 +1715,15 @@ Ce dashboard est construit à l'aide d'un tableau composé des valeurs renvoyée
 
 
 
-### 4.3. Nouvelles métodes HTTP
+### 4.3. Nouvelles méthodes HTTP
 
-Nous pouvons envoyer nos requête avec RESTED qui déclenche le code python et l'obtention de la température et de la pression au format JSON.
+Nous pouvons envoyer nos requêtes avec RESTED qui déclenche le code python et l'obtention de la température et de la pression au format JSON, ce protocole est visbile sur la vidéo finale.
 
 
 
-### 4.4. Nouvelles métodes HTTP
+### 4.4. Nouvelles méthodes HTTP
 
-Nous pouvons envoyer nos requête avec RESTED qui déclenche le code python.
+Nous pouvons envoyer nos requêtes avec RESTED qui déclenche le code python communiquant avec notre système visible sur la vidéo également.
 
 Une version en fastAPI du code de app.py est disponible mais pas à jour des fonctionalité de parsing et de compilation des graphes dans le dashboard.html.
 
