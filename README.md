@@ -1188,27 +1188,7 @@ la doc a mentionné qu'une valeur de **24674867** correspond à une pression de 
 
 
 
-
-
-****
-
-****
-
-****
-
-****
-
-
-
-20 nov 2024
-
-![image-20241120194205487](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241120194205487.png)
-
-
-
-
-
-
+![image-20241120194205487](./docs_annexes/img/image-20241120194205487.png)
 
 
 
@@ -1291,9 +1271,7 @@ Dans minicom il faut configurer les paramètre suivants en appuyant sur ctrl+A p
 
 
 
-
-
-![minicom_options](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/minicom_options.png)
+![minicom_options](./docs_annexes/img/minicom_options.png)
 
 
 
@@ -1305,17 +1283,11 @@ Dans minicom il faut configurer les paramètre suivants en appuyant sur ctrl+A p
 
 Puis appuyer sur ctrl+A puis Z
 
-![minicom ctrl z](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/minicom ctrl z.png)
+![minicom ctrl z](./docs_annexes/img/minicom%20ctrl%20z.png)
 
 Il faut appuyer sur E pour activer le local Echo on/off, ainsi lorsque l'on appuye sur une touche elle est automatiquement renvoyé dans le terminal à la suite du caractère qu'on vient de taper comme montré ci-dessous dans la figure 'loopback test'
 
-![minicom ctrl z](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/minicom ctrl z.png)
-
-
-
-
-
-![loopback proof test](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/loopback proof test.png)
+![loopback proof test](./docs_annexes/img/loopback%20proof%20test-1732383681924-1.png)
 
 ​											figure loopback test
 
@@ -1337,9 +1309,9 @@ On  teste la connexion en UART, on connecte Rx et Tx et on utilise minicom pour 
 
 Attention au cablâge , il  faut  câbler sur pa10 et pa9 et
 
-![image-20241123034431943](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123034431943.png)
 
 
+![image-20241123034431943](./docs_annexes/img/image-20241123034431943.png)
 
 
 
@@ -1359,11 +1331,7 @@ La pi zero est branché sur les pins PA10 et PA9 de la pi zero (avec le GND).
 
 
 
-
-
-
-
-![image-20241123034455515](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123034455515.png)
+![image-20241123034455515](./docs_annexes/img/image-20241123034455515.png)
 
 
 
@@ -1449,8 +1417,6 @@ Pour écrire ce protocole on va écrire une fonction **void** **dial_pi**() dans
 ```c
 #define RX_BUFF_SIZE 7
 ```
-
-
 
 
 
@@ -1564,24 +1530,9 @@ On se connecte à la pi zero en ssh puis on ouvre minicom avec la commande suiva
 minicom -D /dev/serial0
 ```
 
-
-
-
-![image-20241120194205487](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241120194205487.png)
+![image-20241120194205487](./docs_annexes/img/image-20241120194205487-1732383774498-3.png)
 
 On reçoit bien la température et la pression.
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1600,35 +1551,13 @@ Configurez les paramètres suivants dans CubeMX :
 
 
 
-
-
-
-
-
-
 ### 3.3 Commande depuis Python 
 
 Création de l'environnement à l'aide des commandes au tableau: voir photo pipenv 25/10
 
 Suite à un problème de version de blinker, on procéde à l'installation sans le requirements.txt, package par package.
 
-On va installer flask et pyserial avec apt, à part, sans passer par pipenv.
-
-<<<<<<< Updated upstream
-
-Quel est le rôle du décorateur `@app.route`?
-
-Le décorateur permet d'accéder de se positionner dans le le lien /api/welcome/.
-
-Capture d'écran
-
-Quel est le role du fragment `<int:index>`?
-
-Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none ensuite.
-
-On veut maintenant pouvoir envoyer les requêtes grâce à un programme et non en les tapant sur minicom. On installe donc python et on utilise la bibliothèque serial. Avec un timeout à 1 un baudrate de 115200 un bit de stop et pas de parité. On utilise la fonction Serial.write pour envoyer les requêtes automatiquement.
-
-
+On établi également un environnement pour notre futur serveur.
 
 
 
@@ -1660,8 +1589,6 @@ Les clients  se basent sur l'en-tête `Content-Type` pour interpréter correctem
 Si le `Content-Type` n'est pas défini comme `application/json`, certains clients pourraient traiter la réponse comme du texte brut , même si son contenu est du JSON valide.
 
 C'est pour cela que l'on a recourt à Flask.
-
-
 
 
 
@@ -1725,7 +1652,7 @@ Ce dashboard est construit à l'aide d'un tableau composé des valeurs renvoyée
 
 ## 5.TP4 : CAN
 
-![image-20241123021247517](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123021247517.png)
+![image-20241123021247517](./docs_annexes/img/image-20241123021247517-1732383893311-5.png)
 
 On peut voir sur l'image ci-dessus que l'on a déplacé les pins I2C pour pouvoir mettre le CAN TX sur PB9 et le CAN RX sur PB8.
 
@@ -1737,12 +1664,6 @@ Il faut configurer la clock à 80 MHz dans clock configuration avec l'ide qui ca
 | prescaler                       | segment 1 | segment 2 |
 | ------------------------------- | --------- | --------- |
 | 10 que l'on divise par 2 donc 5 | 13        | 2         |
-
-******
-
-****
-
-
 
 ### 5.1 Pilotage du moteur 
 
@@ -1857,12 +1778,6 @@ void can_setter(CAN_TxHeaderTypeDef pHeader, uint8_t* aData,uint32_t pTxMailbox)
 
 
 
-
-
-
-
-
-
 ### 5.2. Interfaçage avec le capteur
 
 On fait maintenant en sorte que lorsqu'une nouvelle valeur de température est renvoyée par le capteur, celle-ci soit utilisé pour établir un coefficient pour obtenir un angle de rotation du moteur. Cet angle est ensuite envoyé via le bus CAN au moteur pour que celui-ci tourne en fonction de la température. Le tout dans la fonction `can_change_temp()` qui sert à bouger le moteur en fonction de la variation de température, elle est appelée lors de la requête `GET_T` dans le code de `dial_pi()`
@@ -1916,13 +1831,13 @@ void can_change_temp(BMP280_U32_t temp_comp){
 
 
 
-5.TP5 : Mise en série de l'ensemble
+## 5.TP5 : Mise en série de l'ensemble
 
-![image-20241123044021571](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123044021571.png)
+![image-20241123044021571](./docs_annexes/img/image-20241123044021571-1732383929692-7.png)
 
 Comme visible sur la vidéo fournie, la température fait varier la position du moteur proportionnellement à son augmentation relative. 
 
-![image-20241123044236059](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123044236059.png)
+![image-20241123044236059](./docs_annexes/img/image-20241123044236059.png)
 
 On récupère également la pression qui est stockée dans un tableau python. 
 
@@ -1935,10 +1850,6 @@ Nous avons donc l’ensemble du système qui fonctionne.
 
 
 **Vidéo finale disponible en annexe**
-
-
-
-
 
 [vidéo finale](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/vidéo fusion avecst.mp4)
 
