@@ -196,7 +196,7 @@ Maintenant l'affichage est centré à gauche comme on peut le voir :
 
 ![test echo avec retour.png](./docs_annexes/img/test echo avec retour.png)
 
-
+![test echo_autre dossier](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/test echo avec retour.png)
 
 #### 2.3. Communication I²C
 
