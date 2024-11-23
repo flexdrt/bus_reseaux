@@ -1702,12 +1702,6 @@ Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none
 
 
 
-On va installer flask et pyserial avec apt, à part, sans passer par pipenv.
-
-
-
-
-
 
 Nous créons un dashboard.html pour recueillir l'ensemble des données de température et de pression recueillies et les compiler sous forme de graphes.
 
@@ -1715,13 +1709,7 @@ Ce dashboard est construit à l'aide d'un tableau composé des valeurs renvoyée
 
 
 
-
-
-![](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/Capture d'écran 2024-11-14 165321.png)
-
-
-
-![image-20241122134801152](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/assets)
+![image-20241122134801152](./assets/image-20241122134801152-1732347826627-1.png)
 
 
 
