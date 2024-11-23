@@ -6,7 +6,7 @@ Karim JERJOUB
 
 Ceci est le compte-rendu du tp de bus et réseau de Vincent LAKHMECHE et Karim JERJOUB
 
-
+Certaines images ne s'affichent pas dans ce readme, une version complète est disponible en pdf à la racine du repo.
 
 [TOC]
 
