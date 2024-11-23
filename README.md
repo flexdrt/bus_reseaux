@@ -1778,8 +1778,8 @@ Il faut configurer la clock à 80 MHz dans clock configuration avec l'ide qui ca
 
 ### 5.1 Pilotage du moteur 
 
-Pour piloter le moteur, nous avons codé plusieurs fonctions. Premièrement la fonction `enable_can()`est la première appelé dans le main.
-On active le module can 
+Pour piloter le moteur, nous avons codé plusieurs fonctions. Premièrement la fonction `enable_can()`est la première appelée dans le main.
+On active le module can dans ce bout de code :
 
 ```C
 //********************Activer le module can***************************************************
@@ -1863,7 +1863,7 @@ La fonction `tx_can()`sert à envoyer avec `HAL_CAN_AddTxMessage` au moteur les 
 
 
 
-La fonction `can_setter()` sert à faire tourner le moteur dans le sens opposé. Ce qui est utilisé dans la boucle while pour faire bouger le moteur de +90° à -90 °.
+La fonction `can_setter()` sert à faire tourner le moteur dans le sens opposé. Elle est utilisé dans la boucle while pour faire bouger le moteur de +90° à -90 ° en continu.
 
 ```c
 void can_setter(CAN_TxHeaderTypeDef pHeader, uint8_t* aData,uint32_t pTxMailbox){
