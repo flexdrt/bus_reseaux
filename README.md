@@ -1963,7 +1963,7 @@ Nous avons donc l’ensemble du système qui fonctionne.
 
 [vidéo finale](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/vidéo fusion avecst.mp4)
 
-
+<video src="./vid%C3%A9o%20fusion%20avecst.mp4"></video>
 
 
 
