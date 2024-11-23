@@ -277,7 +277,8 @@ int main(void)
 	while (1)
 	{
 
-		/*
+/*
+
 		//printf("\n on rentre dans le while\r\n");
 
 		//capter la température
@@ -287,14 +288,11 @@ int main(void)
 		//printf("T=%ld%ld.%ld%ld_C\r\n",(temp_comp/1000)%10,(temp_comp/100)%10,(temp_comp/10)%10,temp_comp%10);
 
 		//Les Affichages
-		 *
-		 *
-		 *
-		 *
+
 		//Température
 
 		printf("valeur non compensée de la température %u \r\n",temp_uncompen);
-		printf("la température compensée %u \r\n",temp_comp);
+
 		printf("T=%ld%ld.%ld%ld_C\r\n",(temp_comp/1000)%10,(temp_comp/100)%10,(temp_comp/10)%10,temp_comp%10);
 
 		//Pression
@@ -302,18 +300,15 @@ int main(void)
 		pres_comp=bmp280_compensate_P_int64(pres_uncompen); //compenser la pression
 		//HAL_Delay(1000);
 
-		printf("valeur non compensée de la pression %d \n \r\n",pres_uncompen);
 
-		printf("la pression compensée avant dvision par 256 : %u    \r\n",pres_comp);
-
-		BMP280_U32_t pres_compen_deux;
-
-		pres_compen_deux=pres_comp/256;
-		pres_compen_deux=pres_compen_deux/100000;
-		//printf("la pression compensée 1/(256*100 000)  %u     \r\n",  pres_compen_deux );
+		printf("P=%f_Pa  \r\n",((float)(pres_comp))/256);
+*/
 
 
-		 */
+
+
+
+
 
 		/*
 		//*******************************************Fonctionnel CAN avec Mr.B *********************
@@ -343,11 +338,14 @@ int main(void)
 		//*******************************************Fonctionnel CAN avec Mr.B *********************
 		 */
 
-
+		//*********************************************TP5 5.1**********************
 
 		//Faire pivoter le moteur +90 puis -90 avec la fonction du driver
 		//can_setter(pHeader, aData, pTxMailbox);
 
+
+
+		//*********************************************TP5 5.2**********************
 		//temp_uncompen= BMP280_get_temperature(); //récupérer la température
 		//temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température
 

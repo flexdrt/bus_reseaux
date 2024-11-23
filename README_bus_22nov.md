@@ -1,10 +1,8 @@
-# TP de Bus_Réseaux
+# bus_reseaux
 
-Vincent LAKHMECHE 
 
-Karim JERJOUB
 
-Ceci est le compte-rendu du tp de bus et réseau de Vincent LAKHMECHE et Karim JERJOUB
+Ceci est le compte-rendu du tp de bus et réseau
 
 
 
@@ -26,48 +24,213 @@ Mise en œuvre du BMP280
 
 Toutes les communications avec l'équipement (le capteur I2C) sont réalisées en lisant et en écrivant dans des registres. 
 
-​		--> Ces registres sont sur une largeur de 8 bits et sont décrits dans les tableaux suivant. 
+​		--> Ces registres sont sur une largeur de 8 bits et sont décrits dans le tableau suivant. 
 
 
 
 
 
-| Quelles sont les adresses I²C possibles pour ce composant.   | On peut lire en page 28 de la datasheet (link ) que l'équipement possède une adresse sur 7 bits qui est '111011x' . Les 6 premiers bits, ceux de poids fort, sont différents de 'x'. Le caractère 'x' sert à indiquer que le bit de poids faible n'est pas fixé . L'utilisateur doit le fixer et le configurer en l'adressant avec une adresse personalisée. <br/>Pour |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| il y en a deux possibles en fonction de si SDO est connecté à la masse (0x76) ou à Vcc (0x77). | Dans notre cas, l’adresse I2C du BMP280 est de 0x77          |
+| Quelles sont les adresses I²C possibles pour ce composant. | On peut lire en page 28 de la datasheet (link ) que l'équipement possède une adresse sur 7 bits qui est '111011x' . Les 6 premiers bits, ceux de poids fort, sont différents de 'x'. Le caractère 'x' sert à indiquer que le bit de poids faible n'est pas fixé . L'utilisateur doit le fixer et le configurer en l'adressant avec une adresse personalisée. <br/>Pour |
+| ---------------------------------------------------------- | ------------------------------------------------------------ |
+|                                                            |                                                              |
+|                                                            |                                                              |
+|                                                            |                                                              |
+
+
+
+1. Quelles sont les adresses I²C possibles pour ce composant.
+
+   On peut lire en page 28 de la datasheet (link ) que l'équipement possède une adresse sur 7 bits qui est '111011x' . Les 6 premiers bits, ceux de poids fort, sont différents de 'x'. Le caractère 'x' sert à indiquer que le bit de poids faible n'est pas fixé et que l'utilisateur doit le fixer et le configurer en l'adressant avec une adresse personalisée. 
+   Pour 
+
+   
+
+   ![](C:\Users\gfjk\Downloads\bus_reseaux-main\bus_reseaux-main\Capture d'écran 2024-10-11 114528.png)
 
 
 
 | Identifier le registre et la valeur permettant d'identifier ce composant | Le registre d'identification (ID) est à l'adresse 0xD0, et sa valeur est 0x58 pour le BMP280. |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Le registre d'identification (ID) est à l'adresse 0xD0,      | sa valeur est 0x58 pour le BMP280                            |
+|                                                              |                                                              |
 
-| 3.Identifier le registre et la valeur permettant de placer le composant en mode normal |                                                              |
+
+
+1. Identifier le registre et la valeur permettant d'identifier ce composant 
+
+
+Le registre d'identification (ID) est à l'adresse 0xD0, et sa valeur est 0x58 pour le BMP280. 
+
+
+
+
+
+| Identifier le registre et la valeur permettant de placer le composant en mode normal | Le registre de contrôle ctrl_meas (adresse 0xF4) permet de définir le mode de fonctionnement. Les bits 	mode[1:0] doivent être configurés à 11 pour le mode normal. |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Le registre de contrôle ctrl_meas (adresse 0xF4) permet de définir le mode de fonctionnement. | Les bits  bits mode[1:0] doivent être configurés à 11 pour le mode normal. |
+|                                                              |                                                              |
 
-| 4.Identifier les registres contenant l'étalonnage du composant |
-| ------------------------------------------------------------ |
-| Les données d'étalonnage sont stockées dans les registres de 0x88 à 0xA1 |
+
+
+3. Identifier le registre et la valeur permettant de placer le composant en mode normal 
+
+​	Le registre de contrôle ctrl_meas (adresse 0xF4) permet de définir le mode de fonctionnement. Les bits 	mode[1:0] doivent être configurés à 11 pour le mode normal. 
 
  
 
-| 5.Identifier les registres contenant la température (ainsi que le format) |                                                              |
+| Identifier les registres contenant l'étalonnage du composant | Les données d'étalonnage sont stockées dans les registres de 0x88 à 0xA1 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Les données de température sont réparties sur trois registres : 0xFA (MSB), 0xFB (LSB), et 0xFC (XLSB). | Le format est une valeur non signée de 20 bits : le MSB contient les bits [19:12], le LSB les bits [11:4], et le XLSB les bits [3:0]. |
+|                                                              |                                                              |
+
+
+
+4. Identifier les registres contenant l'étalonnage du composant 
+
+Les données d'étalonnage sont stockées dans les registres de 0x88 à 0xA1 
 
  
 
-| 6.Identifier les registres contenant la pression (ainsi que le format) | Les données de pression sont également réparties sur trois registres : 0xF7 (MSB), 0xF8 (LSB), et 0xF9 (XLSB). |
+| Identifier les registres contenant la température (ainsi que le format) | Les données de température sont réparties sur trois registres : 0xFA (MSB), 0xFB (LSB), et 0xFC (XLSB). |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Les données de pression sont également réparties sur trois registres : 0xF7 (MSB), 0xF8 (LSB), et 0xF9 (XLSB). | Le format est une valeur non signée de 20 bits, similaire à celui des données de température. |
+|                                                              | Le format est une valeur non signée de 20 bits : le MSB contient les bits [19:12], le LSB les bits [11:4], et le XLSB les bits [3:0]. |
 
 
 
+5. Identifier les registres contenant la température (ainsi que le format) 
 
+Les données de température sont réparties sur trois registres : 0xFA (MSB), 0xFB (LSB), et 0xFC (XLSB). 
 
-| 7.Identifier les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits. | La fonction pour la compensation de la température est bmp280_compensate_T_int32(BMP280_S32_t adc_P) et celle pour la pression est bmp280_compensate_P_int64(BMP280_S32_t adc_T). Ces fonctions utilisent des entiers 32 bits pour les calculs de compensation. |
+Le format est une valeur non signée de 20 bits : le MSB contient les bits [19:12], le LSB les bits [11:4], et le XLSB les bits [3:0]. 
+
+ 
+
+| Identifier les registres contenant la pression (ainsi que le format) | Les données de pression sont également réparties sur trois registres : 0xF7 (MSB), 0xF8 (LSB), et 0xF9 (XLSB). |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              | Le format est une valeur non signée de 20 bits, similaire à celui des données de température. |
+
+
+
+6. Identifier les registres contenant la pression (ainsi que le format) 
+
+Les données de pression sont également réparties sur trois registres : 0xF7 (MSB), 0xF8 (LSB), et 0xF9 (XLSB). 
+
+Le format est une valeur non signée de 20 bits, similaire à celui des données de température. 
+
+ 
+
+| Identifier les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits. | La fonction pour la compensation de la température est bmp280_compensate_T_int32 et celle pour la pression est bmp280_compensate_P_int64. Ces fonctions utilisent des entiers 32 bits pour les calculs de compensation. |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              |                                                              |
+
+
+
+7. Identifier les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits. 
+
+La fonction pour la compensation de la température est bmp280_compensate_T_int32 et celle pour la pression est bmp280_compensate_P_int64. Ces fonctions utilisent des entiers 32 bits pour les calculs de compensation. 
+
+ 
+
+***
+
+***
+
+***
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -75,11 +238,15 @@ Toutes les communications avec l'équipement (le capteur I2C) sont réalisées e
 
 ### 2.2. Setup du STM32
 
-La carte utilisée est une carte de dévellopement STM32 NUCLEO-F446RE
+La carte utilisée est une : STM32 NUCLEO-F446RE
 
 
 
 Il nous faut 
+
+
+
+
 
 La figure suivante montrent les signaux connectés par défaut aux connecteurs ARDUINO® Uno V3
 (CN5, CN6, CN8, CN9) et au connecteur ST morpho (CN7 et CN10), on retrouve une figure pour chaque carte STM32 Nucleo page 35  de la datasheet :
@@ -94,21 +261,21 @@ La figure suivante montrent les signaux connectés par défaut aux connecteurs A
 
 
 
-On doit câbler la carte fille qui contient les composants(capteurs) dont le BMP280 . Il faut faire **attention au câblage**  qui a été une source d'erreur et une grande perte de temps.
+On doit câbler la carte fille qui contient les composants dont le BMP280 . Il faut faire **attention au câblage**  qui a été une source d'erreur et une grande perte de temps.
 
 Le points à contrôler sont : 
 
 -les pins GPIO sur lequels l'i2c est configurée dans l'ioc
 
--les pins PHYSIQUE sur lesquels on branche SCL cable jaune et SDA cable blanc   :  cf voir la photo
+-les pins PHYSIQUE sur lesquels on branche SCL cable jaune et SDA cable blanc   : voir la photo
 
--les pins physiques sur lesquels on branche VCC (sur un pin 3.3V de la nucleo ) c-a-d le câble rouge, et GND sur un pin GND de la nucleo
+-les pins physiques sur lesquels on branche VCC (sur un pin 3.3V de la nucleo ) c-a-d le câble rouge et GND sur un pin GND de la nucleo
 
 
 
-PHOTO du câblage sur la STM32 pour la connexion logicielle (pins) : 
+PHOTO du câblage sur la STM32 pour la connection logicielle
 
-![image-20241123043425564](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123043425564.png)
+
 
 
 
@@ -122,10 +289,20 @@ image-20241011090144010-I2C :
 
 
 
-MAJ du tp4 : il faut déplacer l'i2c de ces pins afin de les libérer pour le bus CAN  toujours avec l'I2C1
+MAJ du tp4 : il faut déplacer l'i2c de ces pins afin de les libérer pour le bus CAN 
 
 | PB7 pour SDA | PB6 pour SCL |
 | ------------ | ------------ |
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -138,7 +315,7 @@ UART 2
 
 D'un UART pour la PI0. (TP2)
 
-UART ? = usart 1 PA10 et PA9  
+UART ? : usart 1 PA10 et PA9  
 
 ​	PIN 
 
@@ -207,7 +384,7 @@ Traitement des actions différées (« triggers ») pour libc-bin (2.35-0ubunt
 
 *************************************
 
-##### Redirection du print
+##### **Redirection du print**
 
 Afin de pouvoir facilement déboguer votre programme STM32, faites en  sorte que la fonction printf renvoie bien ses chaînes de caractères sur  la liaison UART sur USB, en ajoutant le code suivant au fichier  stm32f4xx_hal_msp.c:
 
@@ -243,7 +420,7 @@ PUTCHAR_PROTOTYPE
 
 *********************************************
 
-##### Test de la chaîne de compilation et communication UART sur USB
+##### **Test de la chaîne de compilation et communication UART sur USB**
 
 Si `ttyAMA0` est utilisé pour la console système et que vous souhaitez l’utiliser pour votre propre application, vous devrez le libérer 
 
@@ -259,7 +436,7 @@ sudo minicom -D /dev/ttyACM0 # pour la nucleo
 minicom -b 115200 -o -D /dev/ttyAMA0 #pour la pi zero
 ```
 
-Une fois la commande lancé, le code écrit dans le main (la ligne du printf) doit s'afficher dans le terminal minicom
+Une fois la commande lancé, le code écrit dans le main (la ligne du printf) doit s'afficher dans la commande
 
 ![image-20241011102221878](./docs_annexes/img/capture_envoie_liaison_serie.png)
 
@@ -290,6 +467,16 @@ On va ajouter tout le code nécessaire pour manipuler le composant dans des fonc
 
 
 
+
+
+
+
+
+
+
+
+
+
 ___
 
 #### Identification du BMP280 : CheckID
@@ -302,7 +489,7 @@ L'identification du BMP280 consiste en la lecture du registre ID.
 
 La première fonction qu'on code  est donc la vérification de l’id de l’équipement I2C . 
 
-On obtient sa réponse avec la fonction HAL_Receive (). Le buffer passé en argument de cette fonction sera écrasé par les data transmises par le composant I2C.  Ce buffer doit être de type uint8_t sinon les octets transmis ne seront pas bien stockés.
+On obtient sa réponse avec la fonction hal Receive (). Le buffer passé en argument de cette fonction sera écrasé par les data transmises par le composant I2C.  Ce buffer doit être de type uint8_t sinon les octets transmis ne seront pas bien stockés.
 
 **Nous avons donc implémenté la fonction checkID().** 
 
@@ -351,19 +538,15 @@ int BMP280_checkID(void) {
 
 
 
-![image-20241123035521252](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123035521252.png)
-
-On peut lire comme contenu du registre : 0x58. C 'est bien la valeur attendue pour le registre 0xD0
-
-
-
-
-
 ***
 
 
 
-#### Configuration du BMP280 
+
+
+
+
+#### **Configuration du BMP280** 
 
 Avant de pouvoir faire une mesure, il faut configurer le BMP280.
 
@@ -375,19 +558,19 @@ En I²C, l'écriture dans un registre se déroule de la manière suivante:
 1. envoyer l'adresse du registre à écrire, suivi de la valeur du registre
 2. si on reçoit immédiatement (avec Receive()), la valeur reçu sera la nouvelle valeur du registre
 
-La lecture de la valeur reçu en 2 nous permet de vérifier que la configuration a bien été écrite dans le registre.
+La lecture de la valeur reçu en 2. nous permet de vérifier que la configuration a bien été écrite dans le registre.
 
 
 
-Registres concernés pour établir la configuration voulu dans la documentation : mode normal - Pressure oversampling x16 - Temperature oversampling x2 
+Registre concernés pour établir la configuration voulu dans la documentation.
 
 
 
-##### 
+##### mode normal - Pressure oversampling x16 - Temperature oversampling x2 
 
 ![](./docs_annexes/img/tab_registres.png)
 
-Tous les registres à configurer sont des sous parties du registre **ctrl_meas** : les bits 7 à 5 pour l‘oversampling de temperature , 4 à 2 pour l‘oversampling de la pression. 
+tous les registres à configurer sont des sous parties du registre **ctrl_meas** : les bits 7 à 5 pOUr l‘oversampling de temperature , 4 à 2 pour l‘oversampling de la pression. 
 
  il faudra donc modifier les bits de bon poids à l’adresse du registre **ctrl_meas** pour modifier le paramètre voulu (mode power normal, oversampling) mais tous situés à l’adresse 0xF4 
 
@@ -398,8 +581,6 @@ Les paramètres binaires à mettre sont aussi décrits page 25 datasheet pour ch
 
 
 
-
-***
 
 
 
@@ -430,9 +611,9 @@ ll faut placer le composant en mode normal, les configurations possibles et leur
 
 
 
-##### Contrôle de la mesure de pression 
+On souhaite paramétrer Pressure oversampling à x16 etTemperature oversampling à x2 . 
 
-On souhaite paramétrer Pressure oversampling à x16 
+##### Contrôle de la mesure de pression 
 
 page 12 : Pour activer l’oversampling de la pression (et la mesure) il faut sélectionner les bits [2:0] du registre de control osrs_p à l’adresse 0xF4. Les configurations possibles et valeurs associés du registre osrs_p ne pas sont décrites p.13 dans le tableau ci-dessous.
 
@@ -448,13 +629,9 @@ La valeur '101' à écrire dans le code est notée 0b101.
 
 
 
-***
-
 
 
 ##### Contrôle de la mesure de température
-
-On souhaite paramétrer Temperature oversampling à x2 
 
 Pour activer l’oversampling de la température (et la mesure), il faut sélectionner les bits [2:0] du registre de control osrs_t toujours à l’adresse 0xF4 
 
@@ -536,19 +713,96 @@ uint8_t config = (0b010<<5)|(0b101<<2)|(0b11);
 
 - `0b11` est `3` en décimal et n'est pas décalé.
 
-![image-20241123035632885](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123035632885.png)
 
-La valeur de `config` est donc **0x87** en hexadécimal, soit **0d57** en décimal, et **0b01010111** en binaire.
+
+La valeur de `config` est donc **87** en décimal, soit **0x57** en hexadécimal, et **0b01010111** en binaire.
 
 
 
 On lit bien sur l'USART la valeur renvoyé par le capteur suite à la configuration, affiché en hexadécimal grâce à %x :
 
+
+
+*****
+
+Pour historique/archive
+
+****![image-capteur renvoit la bonne configuration (0d87 en décimal=0x57) 20241110011655406](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110011655406.png)
+
+![image - renvoit la bonne configuration (0d87 en décimal et 0x57 en hexa)-20241110012753904](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110012753904.png)
+
+****
+
+Screenshot résultat [Dernier test après remis en arrière le code] 
+
+![image-20241110122215211](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110122215211.png)
+
+ 
+
+```c
+void BMP280_config(void) {
+	uint8_t part1 = 0b010 << 5;  // Décalage de 5 bits
+	uint8_t part2 = 0b101 << 2;  // Décalage de 2 bits
+	uint8_t part3 = 0b11;        // Pas de décalage
+	printf("Part1 (0b010 << 5) = %u\r\n", part1);   // Affiche 64
+	printf("Part2 (0b101 << 2) = %u\r\n", part2);   // Affiche 20
+	printf("Part3 (0b11)       = %u\r\n", part3);   // Affiche 3
+	uint8_t sumPart=part1+part2+part3;
+	printf(" sum of parts = Part1+Part2+Part3 = %u \r\n",sumPart);   // Affiche 3
+	uint8_t config = part1 | part2 | part3;
+
+
+	uint8_t buf[2];
+
+
+	buf[0] = ctrl_meas;
+
+	buf[1] = config;  //mot binaire a ecrire pour conf correctement 
+
+	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, buf, 2,HAL_MAX_DELAY);
+
+	printf("configuration : transmission in progress\r\n");
+
+	if (retour != HAL_OK) {
+
+		printf("\n config: problem during transmission \r\n\r\n");
+
+	}
+
+	else{
+		printf("config : no problem during transmission ... transmission complete -> reception in progress\r\n");
+	}
+
+	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf, 1, HAL_MAX_DELAY);
+
+	if (retour != HAL_OK) {
+
+		printf("\n config : problem during reception I2C\r\n");
+
+
+
+	}
+	//printf("config = %u\r\n",config);
+	if (buf[1] == config) {
+
+		printf("\nconfig : well configured - configuration value = hexadecimal : 0x%x | decimal  : 0d%u\r\n", buf[1]);
+
+
+
+	}
+
+
+
+}
+```
+
+
+
 **Printf - paramètres :**
 
 utiliser le spécificateur de format %d pour afficher un entier 
 
-**%u** est utilisé pour afficher le contenu de la variable en décimal (entiers non signé)  
+**%u** est utilisé pour afficher le contenu de la variable en décimal (entiers non signé) Code b 
 
 **%x** sert à afficher le contenu de la variable en hexadécimal  
 
@@ -904,6 +1158,16 @@ static const uint8_t BMP280_PRES_REG_MSB = 0xF7;//Adresse du registre contenant 
 
 
 
+![image buffer de receive mauvais type valeurs temp et press° incorrectes -20241110152218446](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110152218446.png)
+
+-> Comme on le voir ici  avant compensation on a 3422552063 comme valeur de température et 3456106495 comme valeur de pression
+
+
+
+
+
+
+
 ```c
 BMP280_S32_t BMP280_get_temperature() {
 
@@ -911,7 +1175,7 @@ BMP280_S32_t BMP280_get_temperature() {
 
 	//buffer pour les données reçues de la part des registres , ici 3 pour la température
 
-	///uint8_t ! pas int!. Si int buf_data[3] :  valeur mal stockée = valeur température  incorrecte
+	///uint8_t ! pas int! : valeur mal stockée = valeur pression incorrecte
 	uint8_t buf_data[3];
 
 	//on demande la lecture avec le transmit
@@ -923,28 +1187,26 @@ BMP280_S32_t BMP280_get_temperature() {
 			HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
-		//^printf("Probleme I2C\r\n");
+		printf("Probleme I2C\r\n");
 	}
 	//on lit la réponse qu'on stocke dans le buffer buf_data
 	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf_data, 3,HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
 
-		//^printf("problem i2c");
+		printf("problem i2c");
 
 		return 1;
 	}
 
 	adc_T = ((BMP280_S32_t) (buf_data[0]) << 12)| ( (BMP280_S32_t) (buf_data[1]) << 4)| ( (BMP280_S32_t) (buf_data[2]) >> 4);
-
-
-
+	printf("Temperature adc_T: 0d ");
 
 
 
 	//printf("%05lX", adc_T);
 
-	//^printf("%d \r\n", adc_T);
+	printf("%d \r\n", adc_T);
 
 	return adc_T;
 }
@@ -958,11 +1220,12 @@ BMP280_S32_t BMP280_get_temperature() {
 
 ```c
 BMP280_S32_t BMP280_get_pressure() {
-BMP280_S32_t adc_P;
+
+	BMP280_S32_t adc_P;
 
 
 	//uint8_t ! pas int!. Si int buf_data[3] :  valeur mal stockée = valeur pression incorrecte
-	uint32_t buf_data[3];//buffer pour 	les données reçues de la part des registres , ici 3 pour la pression
+	uint8_t buf_data[3];//buffer pour 	les données reçues de la part des registres , ici 3 pour la pression
 
 	//on demande la lecture avec le transmit
 
@@ -972,40 +1235,32 @@ BMP280_S32_t adc_P;
 	retour = HAL_I2C_Master_Transmit(&hi2c1, BMP280_ADDR, &BMP280_PRES_REG_MSB, 1,HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
-		//printf("problem i2c\r\n");
+		printf("problem i2c\r\n");
 	}
 	//on lit la réponse qu'on stocke dans le buffer buf_data
 	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf_data, 3,HAL_MAX_DELAY);
 
 	if (retour != HAL_OK) {
 
-		//^printf("problem i2c \r\n");
+		printf("problem i2c \r\n");
 
 		return 1;
 	}
 
 	adc_P = ((BMP280_S32_t) (buf_data[0]) << 12) | ((BMP280_S32_t) (buf_data[1]) << 4) | ((BMP280_S32_t) (buf_data[2]) >> 4);
 
-	//^printf("Pressure adc_P:    0d ");
+	printf("Pressure adc_P:    0d ");
 
 
 	//printf("%05lX", adc_P);
 
-	//^printf("%d\r\n", adc_P);
+	printf("%d\r\n", adc_P);
 
 
 
 	return adc_P;
 }
 ```
-
-
-
-
-
-
-
-
 
 
 
@@ -1033,9 +1288,111 @@ BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t );
 BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t);
 ```
 
-Il faut modifier dans le corps des fonctions les signes tiret longs "–" (ou dash) par des tirets court classique  pour que le compilateur reconnaisse l'opération de soustraction "-" .
+Il faut modifier dans le corps des fonctions les signes tiret longs "–" (ou dash) par des tirets court classique  pour que le compilateur reconnaisse l'opération de soustraction "-"
 
-Lors de l'appel de ces fonctions il faudra passer les variables adc_T et adc_P en argument pour recevoir les valeurs compensées retournées par la fonction.
+
+
+
+
+Fonction de compensation de la température :
+
+```c
+// Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
+// t_fine carries fine temperature as global value
+BMP280_S32_t t_fine;
+BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t adc_T)
+{
+BMP280_S32_t var1, var2, T;
+var1 = ((((adc_T>>3) - ((BMP280_S32_t)dig_T1<<1))) * ((BMP280_S32_t)dig_T2)) >> 11;
+var2 = (((((adc_T>>4) - ((BMP280_S32_t)dig_T1)) * ((adc_T>>4) - ((BMP280_S32_t)dig_T1))) >> 12) *((BMP280_S32_t)dig_T3)) >> 14;
+t_fine = var1 + var2;
+T = (t_fine * 5 + 128) >> 8;
+return T;
+}
+
+```
+
+
+
+Fonction de compensation de la pression :
+
+
+
+```c
+// Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
+// Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
+
+
+BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
+{
+	BMP280_S64_t var1, var2, p;
+	var1 = ((BMP280_S64_t)t_fine) - 128000;
+	var2 = var1 * var1 * (BMP280_S64_t)dig_P6;
+	var2 = var2 + ((var1*(BMP280_S64_t)dig_P5)<<17);
+	var2 = var2 + (((BMP280_S64_t)dig_P4)<<35);
+	var1 = ((var1 * var1 * (BMP280_S64_t)dig_P3)>>8) + ((var1 * (BMP280_S64_t)dig_P2)<<12);
+	var1 = (((((BMP280_S64_t)1)<<47)+var1))*((BMP280_S64_t)dig_P1)>>33;
+	if (var1 == 0)
+	{
+		return 0; // avoid exception caused by division by zero
+	}
+	p = 1048576-adc_P;
+	p = (((p<<31)-var2)*3125)/var1;
+	var1 = (((BMP280_S64_t)dig_P9) * (p>>13) * (p>>13)) >> 25;
+	var2 = (((BMP280_S64_t)dig_P8) * p) >> 19;
+	p = ((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7)<<4);
+	return (BMP280_U32_t)p;
+}
+
+```
+
+
+
+
+
+
+
+
+
+```C
+/ Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
+// t_fine carries fine temperature as global value
+BMP280_S32_t t_fine;
+BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t adc_T)
+{
+BMP280_S32_t var1, var2, T;
+var1 = ((((adc_T>>3) – ((BMP280_S32_t)dig_T1<<1))) * ((BMP280_S32_t)dig_T2)) >> 11;
+var2 = (((((adc_T>>4) – ((BMP280_S32_t)dig_T1)) * ((adc_T>>4) – ((BMP280_S32_t)dig_T1))) >> 12) *
+((BMP280_S32_t)dig_T3)) >> 14;
+t_fine = var1 + var2;
+T = (t_fine * 5 + 128) >> 8;
+return T;
+}
+“”–
+// Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
+// Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
+BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
+{
+BMP280_S64_t var1, var2, p;
+var1 = ((BMP280_S64_t)t_fine) – 128000;
+var2 = var1 * var1 * (BMP280_S64_t)dig_P6;
+var2 = var2 + ((var1*(BMP280_S64_t)dig_P5)<<17);
+var2 = var2 + (((BMP280_S64_t)dig_P4)<<35);
+var1 = ((var1 * var1 * (BMP280_S64_t)dig_P3)>>8) + ((var1 * (BMP280_S64_t)dig_P2)<<12);
+var1 = (((((BMP280_S64_t)1)<<47)+var1))*((BMP280_S64_t)dig_P1)>>33;
+if (var1 == 0)
+{
+return 0; // avoid exception caused by division by zero
+}
+p = 1048576-adc_P;
+p = (((p<<31)-var2)*3125)/var1;
+var1 = (((BMP280_S64_t)dig_P9) * (p>>13) * (p>>13)) >> 25;
+var2 = (((BMP280_S64_t)dig_P8) * p) >> 19;
+p = ((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7)<<4);
+return (BMP280_U32_t)p;
+```
+
+Lors de l'appel de ces fonctions il faudra passer les variables adc_T et adc_P en argument pour recevoir les valeurs compensées retournées par la fonction 
 
 
 
@@ -1044,138 +1401,77 @@ Lors de l'appel de ces fonctions il faudra passer les variables adc_T et adc_P e
 On appelle les fonctions dans la boucle while dans le fichier main.c 
 
 ```c
-	/* Initialize all configured peripherals */
-	MX_GPIO_Init();
-	MX_USART2_UART_Init();
-	MX_I2C1_Init();
-	MX_USART1_UART_Init();
-	MX_CAN1_Init();
-	/* USER CODE BEGIN 2 */
+//dans la boucle while
+*************************************************
+BMP280_S32_t temp_uncompen;
+BMP280_S32_t pres_uncompen;
 
-	HAL_UART_Receive_IT(&huart1, RxBuff,RX_BUFF_SIZE);
+temp_uncompen= BMP280_get_temperature();//récupérer la température
+pres_uncompen=BMP280_get_pressure()//récupérer la pression
 
-	BMP280_S32_t temp_uncompen;
-	BMP280_S32_t pres_uncompen;
+printf("valeur non compensée de la température %d \n\ valeur non compensée de la pression %d",temp_uncompen,pres_uncompen);
 
+HAL_Delay(1000);
 
-	//déclaration des variables contenant la température non compensée
-	BMP280_U32_t temp_comp;
-	BMP280_U32_t pres_comp;
+**************************************************
+//aperçu de la boucle while du main.c
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+	  BMP280_S32_t temp_uncompen;
+	  BMP280_S32_t pres_uncompen;
 
-	BMP280_checkID();
-	BMP280_config();
-	BMP280_calib(); //récupère données étallonnage
+	  temp_uncompen= BMP280_get_temperature(); //récupérer la température
+	  pres_uncompen=BMP280_get_pressure(); //récupérer la pression
 
-	printf("main\r\n");
+	  printf("valeur non compensée de la température %d \n\ valeur non compensée de la pression %d",temp_uncompen,pres_uncompen);
 
-	//***************** COnnexion au moteur Avec fonctions du driver ******************************
+	  HAL_Delay(1000);
+    /* USER CODE END WHILE */
 
-	//enable_can();
-
-	//***********************************************
-
-
-	//********************FOnctionnel avec Mr.B**********************************************************************
-	//TP4 partie CAN d
-	//début *******************************************
-
-
-
-	/*
-
-
-	//Activer le module can
-	HAL_StatusTypeDef start_can= HAL_CAN_Start(&hcan1);
-	if(start_can!= HAL_OK) {
-
-		// Gérer l'erreur d'envoi
-		printf("erreur démarrage CAN\r\n");
-
-	}
-	 */
-
-	/*
-	//déclaration du pHeader
-	CAN_TxHeaderTypeDef pHeader;
-	uint8_t aData[3];  // Tableau pour les données à transmettre
-
-	// Configuration du champ pHeader
-	pHeader.StdId = 0x61;          // Identifiant standard pour la commande "Angle"
-	pHeader.IDE = CAN_ID_STD;      //(0x00000000U)  !< Standard Id
-	pHeader.RTR = CAN_RTR_DATA;    //(0x00000000U)  !< Data frame
-	pHeader.DLC = 2;
-	pHeader.TransmitGlobalTime = DISABLE;
-
-	aData[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
-	aData[1] = 0x00;  // D1 : Angle positif
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
+}
 
 
 
 
-	uint32_t pTxMailbox; // Variable pour stocker l'indice de la boîte aux lettres CAN
-
-	// Envoi du message CAN avec l'angle de 90°
-	HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
-
-	// Vérification du statut d'envoi
-	if (status != HAL_OK) {
-		// Gérer l'erreur d'envoi
-		printf("erreur CAN\r\n");
-	}
-	else{
-		printf("premiere conf reussi\r\n");
-	}
-	//fin partie CAN *******************************************
-
-	//*********************************************************************************************
-
-	 */
-
-
-	//tx_can(pHeader, aData, pTxMailbox);
-
-
-	/* USER CODE END 2 */
-
-	/* Infinite loop */
-	/* USER CODE BEGIN WHILE */
-	while (1)
-	{
-
-
-		//printf("\n on rentre dans le while\r\n");
-
-		//capter la température
-		temp_uncompen= BMP280_get_temperature(); //récupérer la température
-		temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température
-
-		//printf("T=%ld%ld.%ld%ld_C\r\n",(temp_comp/1000)%10,(temp_comp/100)%10,(temp_comp/10)%10,temp_comp%10);
-
-		//Les Affichages
-
-		//Température
-
-		printf("valeur non compensée de la température %u \r\n",temp_uncompen);
-
-		printf("T=%ld%ld.%ld%ld_C\r\n",(temp_comp/1000)%10,(temp_comp/100)%10,(temp_comp/10)%10,temp_comp%10);
-
-		//Pression
-		pres_uncompen=BMP280_get_pressure(); //récupérer la pression
-		pres_comp=bmp280_compensate_P_int64(pres_uncompen); //compenser la pression
-		//HAL_Delay(1000);
-
-
-		printf("P=%f_Pa  \r\n",((float)(pres_comp))/256);
 
 ```
 
 
 
-Ce qui affiche :
 
-![image-20241123040647748](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123040647748.png)
 
-La température est affiché au format T=22.72_C .
+
+
+
+
+
+
+
+
+****
+
+![image-20241110153219501](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110153219501.png)
+
+****
+
+La température est renvoyée en **dixièmes de degré Celsius**, avec une **résolution de 0.01°C**. Vous avez mentionné qu'un **valeur de 5123** correspond à **51.23°C**.
+
+#### Formatage de la température  et de la pression [compensée] :
+
+Si la température compensée est de **2545**, cela signifie que :
+
+Tempeˊrature compenseˊe en °C=2545100=25.45 °C\text{Température compensée en °C} = \frac{2545}{100} = 25.45 \, \text{°C}Tempeˊrature compenseˊe en °C=1002545=25.45°C
+
+Donc, la température compensée serait ***<u>25.45°C</u>***.
+
+
+
+******
 
 
 
@@ -1185,7 +1481,19 @@ Ainsi, la pression compensée est donnée sous la forme **P / 256**, où **P** e
 
 la doc a mentionné qu'une valeur de **24674867** correspond à une pression de **963.86 hPa**.
 
+Si la pression compensée est de **34601705** (en Pa), cela représente une valeur en **format Q24.8**. Pour obtenir la pression en **hPa**, nous devons diviser par 256 :
 
+Pression compenseˊe en Pa=34601705256=135492.82 Pa\text{Pression compensée en Pa} = \frac{34601705}{256} = 135492.82 \, \text{Pa}Pression compenseˊe en Pa=25634601705=135492.82Pa = 1.3 bar environ c'est cohérent 
+
+Ensuite, pour convertir la pression en **hPa** (hectopascals), nous divisons par 100 :
+
+Pression compenseˊe en hPa=135492.82100=1354.93 hPa\text{Pression compensée en hPa} = \frac{135492.82}{100} = 1354.93 \, \text{hPa}Pression compenseˊe en hPa=100135492.82=1354.93hPa
+
+Donc, la pression compensée serait **<u>*1354.93 hPa*</u>**.
+
+
+
+Passé les pression en bar 
 
 
 
@@ -1202,6 +1510,52 @@ la doc a mentionné qu'une valeur de **24674867** correspond à une pression de 
 20 nov 2024
 
 ![image-20241120194205487](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241120194205487.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1228,9 +1582,9 @@ L'adresse IP est attribuée par le routeur : 192.168.88.237.
 
 carte sd de vincent 
 
-On a refait les étapes d'installation avec d'autres paramètres de compte et de réseau.
-
 nom d'hote:  vkpi
+
+
 
 user : vkuser
 
@@ -1306,7 +1660,7 @@ Puis appuyer sur ctrl+A puis Z
 
 ![minicom ctrl z](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/minicom ctrl z.png)
 
-Il faut appuyer sur E pour activer le local Echo on/off, ainsi lorsque l'on appuye sur une touche elle est automatiquement renvoyé dans le terminal à la suite du caractère qu'on vient de taper comme montré ci-dessous dans la figure 'loopback test'
+Il faut appuyer sur E pour activer le local Echo on/off, ainsi lorsque l'on appuyer sur une touche elle est automatiquement renvoyé dans le terminal à la suite du caractère qu'on vient de taper comme montré ci-dessous dans la figure 'loopback test'
 
 ![minicom ctrl z](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/minicom ctrl z.png)
 
@@ -1332,25 +1686,29 @@ Par exemple, en tapant t il se réaffiche grâce au echo qui affiche les caract�
 
 #### Communication avec la STM32	
 
-On  teste la connexion en UART, on connecte Rx et Tx et on utilise minicom pour s'auto-envoyer des messages. Une fois que ça fonctionne, on peut connecter Rx sur Tx de la STM32 et Tx sur Rx de la STM32, on utilise l’UART1 et les pins PA9 et PA10. Il ne faut pas oublier la masse.
+
 
 Attention au cablâge , il  faut  câbler sur pa10 et pa9 et
 
-![image-20241123034431943](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123034431943.png)
-
-
-
-
-
-On a besoin d'un autre port UART qui va communiquer à la pi zero, nous avons activé l'UART1 sur les pins
-
-pin PC10 USART1_RX
-
-pin PC9 USART1_TX
-
-
+![image-20241115164613134](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241115164613134.png)
 
 La pi zero est branché sur les pins PA10 et PA9 de la pi zero (avec le GND).
+
+
+
+
+
+
+
+
+
+ pa2 mais sur pc10 et pc11
+
+On a besoin d'un autre port UART, nous avons activé l'UART1 :
+
+pin PC11 USART3_RX
+
+pin PC10 USART3_TX
 
 ~~pin PC5 USART3_RX~~
 
@@ -1360,17 +1718,17 @@ La pi zero est branché sur les pins PA10 et PA9 de la pi zero (avec le GND).
 
 
 
+![Capture d’écran du 2024-10-18 10-38-24](/home/vincent/Images/Captures d’écran/Capture d’écran du 2024-10-18 10-38-24.png)
 
-
-![image-20241123034455515](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123034455515.png)
-
-
-
+![apres changement_ioc_usart3](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/tp2/apres changement_ioc_usart3.png)
 
 
 
 
-Afin de pouvoir facilement déboguer votre programme STM32, faites en  sorte que la fonction printf renvoie bien ses chaînes de caractères sur  la liaison UART (USART 2) sur USB, en ajoutant le code suivant au fichier  stm32f4xx_hal_msp.c. On va modifier la fonction **printf** pour quelle affiche sur les 2 ports série en même temps. On part de code : 
+
+
+
+Afin de pouvoir facilement déboguer votre programme STM32, faites en  sorte que la fonction printf renvoie bien ses chaînes de caractères sur  la liaison UART (usart 2 ) sur USB, en ajoutant le code suivant au fichier  stm32f4xx_hal_msp.c. On va modifier la fonction **printf** pour quelle affiche sur les 2 ports série en même temps. On part de code : 
 
 ```c
 /* USER CODE BEGIN PV */
@@ -1393,19 +1751,19 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the USART2 and Loop until the end of transmission */
-  //HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);//transmission à la nucleo
-  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF); //transmission à la pi zero
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
+
   return ch;
 }
 /* USER CODE END 1 */
 ```
 
-On ajoute également la transmission vers l'usart1 pour assurer la redirection du printf dans la console de l'USART1.
+On ajoute également la transmission vers l'usart3 pour assurer la redirection du printf dans la console de l'USART3.
 
-On rajoute l'écriture dans l'USART1 avec la fonction Transmit dans stm32f4xx_hal_msp.c:
+On rajoute l'écriture dans l'USART3 avec la fonction Transmit dans stm32f4xx_hal_msp.c:
 
 ```c
-  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+  HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 0xFFFF);
 ```
 
 
@@ -1418,7 +1776,7 @@ PUTCHAR_PROTOTYPE
   /* Place your implementation of fputc here */
   /* e.g. write a character to the USART2 and Loop until the end of transmission */
   HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
-  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+  HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 0xFFFF);
   return ch;
 }
 ```
@@ -1431,32 +1789,109 @@ On active l'usart dans la PI ZERO : `sudo raspi-config` > advanced options>seira
 
 
 
+
+
+
+
 Communication entre la PI zero et le STM32
 
 Le protocole de communication entre le Raspberry et la STM32 est le suivant:
 
-| Requête du RPI ZERO | Réponse du STM | Commentaire                             |
-| ------------------- | -------------- | --------------------------------------- |
-| GET_T               | T=+12.50_C     | Température compensée sur 10 caractères |
-| GET_P               | P=102300Pa     | Pression compensée sur 10 caractères    |
-| SET_K=1234          | SET_K=OK       | Fixe le coefficient K (en 1/100e)       |
-| GET_K               | K=12.34000     | Coefficient K sur 10 caractères         |
-| GET_A               | A=125.7000     | Angle sur 10 caractères                 |
+| Requête ds résuu RPi | Réponse du STM | Commentaire                             |
+| -------------------- | -------------- | --------------------------------------- |
+| GET_T                | T=+12.50_C     | Température compensée sur 10 caractères |
+| GET_P                | P=102300Pa     | Pression compensée sur 10 caractères    |
+| SET_K=1234           | SET_K=OK       | Fixe le coefficient K (en 1/100e)       |
+| GET_K                | K=12.34000     | Coefficient K sur 10 caractères         |
+| GET_A                | A=125.7000     | Angle sur 10 caractères                 |
 
-Pour écrire ce protocole on va écrire une fonction **void** **dial_pi**() dans BMP280_vincent.c. La taille du tableau qui reçoit les données de l'UART est définit dans le fichier BMP280_vincent.h
+Pour écrire ce protocole on va écrire une fonction void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) dans BMP280_vincent.c. 
+
+On va aussi déclarer en variable globale :
 
 ```c
-#define RX_BUFF_SIZE 7
+***********************************
+    // Définir des constantes pour les commandes
+#define GET_T 0
+#define GET_P 1
+#define SET_K 2
+#define GET_K 3
+#define GET_A 4
+#define UNKNOWN 5
+
+uint8_t RxBuff[RX_BUFF_SIZE] = {0};
+int K_pid = 0;
+uint32_t coef;
+BMP280_S32_t temp_uncompen;
+BMP280_S32_t pres_uncompen;
+
+// Fonction pour obtenir le code de commande
+int getRequestCode(const char* request_pi) {
+    if (strcmp(request_pi, "GET_T") == 0) return GET_T;
+    else if (strcmp(request_pi, "GET_P") == 0) return GET_P;
+    else if (strncmp(request_pi, "SET_K=", 6) == 0) return SET_K; //strncmp(RxBuff, "SET_K=", 6) pour vérifier que les 6 premiers caractères de la chaîne reçue correspondent bien à "SET_K=".
+    //Si la commande est correcte, il suffit de prendre le reste de la chaîne, après ces 6 caractères, pour obtenir la valeur numérique.Vous pouvez utiliser atoi() (convertit une chaîne en entier) pour transformer cette partie de la chaîne en un entier.
+Vous pouvez utiliser atoi() (convertit une chaîne en entier) pour transformer cette partie de la chaîne en un entier.
+    else if (strcmp(request_pi, "GET_K") == 0) return GET_K;
+    else if (strcmp(request_pi, "GET_A") == 0) return GET_A;
+    return UNKNOWN;
+}
+
+```
+
+la taille du tableau qui reçoit les données de l'UART est définit dans le fichier BMP280_vincent.h
+
+```c
+#define RX_BUFF_SIZE 5
+```
+
+
+
+Switch  case étape par étape
+
+
+
+
+
+```c
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    int rq_pi=0; 
+    switch(rq_pi)t{
+        case GET_T: {
+        temp_uncompen= BMP280_get_temperature(); //récupérer la température
+		temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température
+
+		//Si on souhaite affiché la température décommenter la suiteet changer le handle dans le usart transmit 
+		//printf("valeur non compensée de la température %u \r\n",temp_uncompen);
+		//printf("la température compensée %u \r\n",temp_comp);
+		
+          
+            
+        }
+            
+            
+            
+    }
+
 ```
 
 
 
 
 
+
+
+
+
+
+
+Switch version g
+
 ```c
 void dial_pi(){
 
-	if(strncmp(RxBuff, "GET_T", 5)==0) {
+	if(strcmp(RxBuff,'GET_T')==0) {
 
 
 		//déclaration des variables contenant la température non compensée
@@ -1466,31 +1901,25 @@ void dial_pi(){
 		BMP280_U32_t temp_comp;
 
 
+		temp_uncompen= BMP280_get_temperature(); //récupérer la température
+
 		temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température compensé
 
+		printf("%u \r\n",temp_comp);// AFFICHÉ TEMPÉRATURE compensée sur l'usart
 
-		//ancien printf
-		//printf("%u \r\n",temp_comp);// AFFICHÉ TEMPÉRATURE compensée sur l'usart
-
-
-		printf("T=%ld%ld.%ld%ld_C\r\n",(temp_comp/1000)%10,(temp_comp/100)%10,(temp_comp/10)%10,temp_comp%10);
 		//T=+12.50_C 	Température compensée sur 10 cafficher aractères
 		//GET_P 	P=102300Pa
 
-		//HAL_Delay(1000);
-		//interaction sur le moteur de la température
-		can_change_temp(temp_comp);
-
-
 	}
 
-	if (strncmp(RxBuff,"GET_P",5)==0){
+	if (strcmp(RxBuff,'GET_P')==0){
 
 		//déclaration des variables contenant la pression non compensée
-		//pres_uncompen= BMP280_get_pressure(); //récupérer la température
+		pres_uncompen= BMP280_get_pressure(); //récupérer la température
 
 		//déclaration des variables contenant la pression  compensée
 		BMP280_U32_t pres_comp;
+
 
 
 		pres_uncompen=BMP280_get_pressure(); //récupérer la pression non compensée
@@ -1498,89 +1927,84 @@ void dial_pi(){
 		pres_comp=bmp280_compensate_P_int64(pres_uncompen); //compenser la pression
 
 
-		//printf("%u \r\n",pres_uncompen);
-		//printf("%u \r\n",pres_comp);
-		//printf("div 256 *10⁵ %u \r\n", ((pres_comp) / (25600000) ));
 
-
-
-		printf("P=%f_Pa  \r\n",((float)(pres_comp))/256);
-
-
-	}
-
-	if (strncmp(RxBuff,"SET_K=",10)==0){
-		//K_pid=RxBuff[7];
-		K_pid=0;
-
-		printf("K %d",K_pid);
-
-		//		BMP280_U32_t pres_comp;
-		//		pres_uncompen=BMP280_get_pressure(); //récupérer la pression non compensée
-		//
-		//		pres_comp=bmp280_compensate_P_int64(pres_uncompen); //compenser la pression
-		//
-		//
-		//		printf("%u \r\n",pres_uncompen);
-		//
-		//		printf("%u \r\n",pres_comp);
-
+		printf("%u \r\n",pres_comp);
 
 	}
 
 
-
-	if(strncmp(RxBuff,"GET_A",5)==0){
-		a_pid=145;
-		printf("A=%d\r\n",a_pid);
-	}
-
-	// Réinitialiser RxBuff après chaque commande
-	//memset(RxBuff, 0, RX_BUFF_SIZE);
 
 }
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-
 	dial_pi();
-	HAL_UART_Receive_IT(&huart1, RxBuff, RX_BUFF_SIZE);
 
-
+	HAL_UART_Receive_IT(&huart3, RxBuff, RX_BUFF_SIZE);
 }
 ```
 
-On compare le contenu des messages stockés dans le bufer de l'USART pour lancer la bonne section de code dans dial_pi().
-
-##### Test d'envoi des ordres à la STM32 
-
-
-
-
-
-On se connecte à la pi zero en ssh puis on ouvre minicom avec la commande suivante :
-
-```c
-minicom -D /dev/serial0
-```
-
-
-
-
-![image-20241120194205487](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241120194205487.png)
-
-On reçoit bien la température et la pression.
 
 
 
 
 
 
+I
+
+crétaion de l'environnement à l'aide des commandes au tableau: voir photo pipenv 25/10
+
+
+
+utiliser pipenv 
+
+
+
+Suite à un problème de version de blinker, on procéde à l'installation sans le requirements.txt, package par package.
 
 
 
 
 
+Quel est le rôle du décorateur `@app.route`?
 
+Le décorateur permet d'accéder de se positionner dans le le lien /api/welcome/.
+
+
+
+Capture d'écran
+
+
+
+
+
+Quel est le role du fragment `<int:index>`?
+
+Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none ensuite.
+
+##### 
+
+
+
+##### Logiciel de la nucleo pour lire le contenu de l'UART de la PI ZERO
+
+hal_uart_transmit(UART1)
+
+
+
+-Code de la callback qui controlle le driver 
+
+
+
+
+
+-Interruption pour gérer les événements de réception RX UART3
+
+
+
+
+
+-DMA pour gérer ces interruptions 
 
 
 
@@ -1605,29 +2029,13 @@ Configurez les paramètres suivants dans CubeMX :
 
 
 
+
+
+
+
+
+
 ### 3.3 Commande depuis Python 
-
-Création de l'environnement à l'aide des commandes au tableau: voir photo pipenv 25/10
-
-Suite à un problème de version de blinker, on procéde à l'installation sans le requirements.txt, package par package.
-
-On va installer flask et pyserial avec apt, à part, sans passer par pipenv.
-
-<<<<<<< Updated upstream
-
-Quel est le rôle du décorateur `@app.route`?
-
-Le décorateur permet d'accéder de se positionner dans le le lien /api/welcome/.
-
-Capture d'écran
-
-Quel est le role du fragment `<int:index>`?
-
-Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none ensuite.
-
-On veut maintenant pouvoir envoyer les requêtes grâce à un programme et non en les tapant sur minicom. On installe donc python et on utilise la bibliothèque serial. Avec un timeout à 1 un baudrate de 115200 un bit de stop et pas de parité. On utilise la fonction Serial.write pour envoyer les requêtes automatiquement.
-
-
 
 
 
@@ -1642,19 +2050,7 @@ On veut maintenant pouvoir envoyer les requêtes grâce à un programme et non e
 
 
 
-### 4.2 Première page REST
-
-
-
-Quel est le rôle du décorateur `@app.route`?
-
-Le décorateur permet d'accéder de se positionner dans le le lien /api/welcome/.
-
-Quel est le role du fragment `<int:index>`?
-
-Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none ensuite.
-
-
+4.2. Première page REST
 
 **Gestion des Routes API**
 
@@ -1702,9 +2098,9 @@ Le fragment permet l'affichage de chaque lettre de Welcome, de 0 à 6 donc, none
 
 
 
-On va installer flask et pyserial avec apt, à part, sans passer par pipenv.
+On va installer flask et pyserial avec apt à part sans passer par pipenv.*
 
-
+as dans l'environnement donc lorsque l'on essaie de démarrer le fichier app.py il trouve pas les library import
 
 
 
@@ -1713,15 +2109,7 @@ Nous créons un dashboard.html pour recueillir l'ensemble des données de tempé
 
 Ce dashboard est construit à l'aide d'un tableau composé des valeurs renvoyées sur l'uart préalablement par passées par des fonctions de parcing pour isoler la valeur numérique de la pression et de la température.(T=   _C)
 
-
-
-
-
-![](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/Capture d'écran 2024-11-14 165321.png)
-
-
-
-![image-20241122134801152](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/assets)
+![image-20241122134801152](./assets/image-20241122134801152.png)
 
 
 
@@ -1729,168 +2117,41 @@ Ce dashboard est construit à l'aide d'un tableau composé des valeurs renvoyée
 
 ### 4.3. Nouvelles métodes HTTP
 
-Nous pouvons envoyer nos requête avec RESTED qui déclenche le code python et l'obtention de la température et de la pression au format JSON.
-
-
-
-### 4.4. Nouvelles métodes HTTP
-
-Nous pouvons envoyer nos requête avec RESTED qui déclenche le code python.
-
 Une version en fastAPI du code de app.py est disponible mais pas à jour des fonctionalité de parsing et de compilation des graphes dans le dashboard.html.
 
-****
-
-***
-
-***
-
-
-
-## 5.TP4 : CAN
 
 
 
 
+## 5.TP4 :CAN
 
-
-
-
-
-![image-20241123021247517](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123021247517.png)
-
-On peut voir sur l'image ci-dessus que l'on a déplacé les pins I2C pour pouvoir mettre le CAN TX sur PB9 et le CAN RX sur PB8.
 
 
 Il faut activer le CAN sur les pin PB8 et PB9 dans l'ioc. 
 
-Il faut configurer la clock à 80 MHz dans clock configuration avec l'ide qui calcule les coefficients pour nous afin de fixer la fréquence de communication avec le bus can à 500 kbits/s.
+Il faut configurer la clock à 80 MHz dans clock configuration avec l'ide qui calcule tout tout seul
 
-| prescaler                       | segment 1 | segment 2 |
-| ------------------------------- | --------- | --------- |
-| 10 que l'on divise par 2 donc 5 | 13        | 2         |
+La configuration a mettre est déterminé à partir du site  
 
-******
+![image-20241108173330654](/home/vincent/snap/typora/90/.config/Typora/typora-user-images/image-20241108173330654.png)
 
-****
+
 
 
 
 ### 5.1 Pilotage du moteur 
 
-Pour piloter le moteur, nous avons codé plusieurs fonctions. Premièrement la fonction `enable_can()`est la première appelé dans le main.
-On active le module can 
-
-```C
-//********************Activer le module can***************************************************
-	HAL_StatusTypeDef start_can= HAL_CAN_Start(&hcan1);
-	if(start_can!= HAL_OK) {
-
-		// Gérer l'erreur de démarrage
-		printf("erreur start can_config CAN\r\n");
-
-	}
-	else{
-		printf("[enable_can] start  CAN OK\r\n");
-	}
-
-```
-
-
-
-Ensuite on initialise les variables utiles pour le CAN (pHeader et aData).
-
-```C
-
-	//*************************************déclaration du pHeader**********************************
-
-	//CAN_TxHeaderTypeDef pHeader;
-	//uint8_t aData[3];  // Tableau pour les données à transmettre
-
-	// Configuration du champ pHeader
-	pHeader.StdId = 0x61;          // Identifiant standard pour la commande "Angle"
-	pHeader.IDE = CAN_ID_STD;      //(0x00000000U)  !< Standard Id
-	pHeader.RTR = CAN_RTR_DATA;    //(0x00000000U)  !< Data frame
-	pHeader.DLC = 2;
-	pHeader.TransmitGlobalTime = DISABLE;
-
-	aData[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
-	aData[1] = 0x00;  // D1 : Angle positif
-
-```
-
-Enfin, on envoie cette configuration au moteur via le bus CAN grâce à la fonction `tx_can`
-
-```c
-HAL_StatusTypeDef tx_can(CAN_TxHeaderTypeDef pHeader2,uint8_t* aData2,uint32_t pTxMailbox2){
-
-	HAL_StatusTypeDef error_out;
-	//uint32_t pTxMailbox; // Variable pour stocker l'indice de la boîte aux lettres CAN
-
-	// Envoi du message CAN avec l'angle de 90°
-	HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(&hcan1, &pHeader2, aData2, &pTxMailbox2);
-	error_out=status;
-	// Vérification du statut d'envoi
-	if (status != HAL_OK) {
-		// Gérer l'erreur d'envoi
-		printf("erreur HAL_CAN_AddTxMessageCAN\r\n");
-	}
-	else{
-		printf("[tx_can]  envoi reussi\r\n");
-	}
-
-	return error_out;
-
-
-}
-```
-
-La fonction `tx_can()`sert à envoyer avec `HAL_CAN_AddTxMessage` au moteur les nouvelles données pour changer l'angle, par exemple, contenu dans la variable aData[].
-
-```C
-//*************************************transmission au can de la configuration**********************************
-	HAL_StatusTypeDef conf_errout=tx_can(pHeader, aData, pTxMailbox);
-	// Vérification du statut d'envoi
-	if (conf_errout != HAL_OK) {
-		// Gérer l'erreur d'envoi
-		printf("erreur config_base_ CAN\r\n");
-	}
-	else{
-		printf("config base  envoi reussi\r\n");
-	}
-
-```
-
-
-
-La fonction `can_setter()` sert à faire tourner le moteur dans le sens opposé. Ce qui est utilisé dans la boucle while pour faire bouger le moteur de +90° à -90 °.
-
-```c
-void can_setter(CAN_TxHeaderTypeDef pHeader, uint8_t* aData,uint32_t pTxMailbox){
-
-
-
-	// CAN part start  while loop
-	aData[0] = 90;  // D0 : 90° en hexadécimal (0x5A)
-	aData[1] = 1-aData[1];  //
-
-
-	HAL_StatusTypeDef rota_out=tx_can(pHeader, aData, pTxMailbox);
-	if (rota_out != HAL_OK) {
-		// Gérer l'erreur d'envoi
-		printf(" err rota CAN\r\n");
-	}
-	else {
-		printf("change rotation complete \r\n");
-
-	}
-
-}
-```
+Paramètre du CAN dans l'ioc :
 
 
 
 
+
+prescaler =10/2 = 5 
+
+segment1 : 13 
+
+segment : 2 
 
 
 
@@ -1898,82 +2159,15 @@ void can_setter(CAN_TxHeaderTypeDef pHeader, uint8_t* aData,uint32_t pTxMailbox)
 
 ### 5.2. Interfaçage avec le capteur
 
-On fait maintenant en sorte que lorsqu'une nouvelle valeur de température est renvoyée par le capteur, celle-ci soit utilisé pour établir un coefficient pour obtenir un angle de rotation du moteur. Cet angle est ensuite envoyé via le bus CAN au moteur pour que celui-ci tourne en fonction de la température. Le tout dans la fonction `can_change_temp()` qui sert à bouger le moteur en fonction de la variation de température, elle est appelée lors de la requête `GET_T` dans le code de `dial_pi()`
-
-```c
-void can_change_temp(BMP280_U32_t temp_comp){
-
-
-	enable_can();
-
-	//TP4 partie CAN d
-	//début *******************************************
-
-// récupérer temps****************************
-//	BMP280_S32_t temp_uncompen;
-//
-//	temp_comp=bmp280_compensate_T_int32(temp_uncompen); //récupérer la température compensé
-//	//déclaration des variables contenant la température non compensée
-//	temp_uncompen= BMP280_get_temperature(); //récupérer la température
-
-	//déclaration des variables contenant la température  compensée
-	BMP280_U32_t old_temp;
-
-
-//********temp_comp = temperature *******************************************
-
-
-	if(fabs(temp_comp-old_temp)>2){
-
-		if(temp_comp>old_temp){//On bouge dans le sens 0x00 +
-
-			aData[1]=0x00;
-			aData[0]=(int)(10*(temp_comp-old_temp));
-			HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
-			//printf("adata0= %d\r\n",aData[0]);
-
-			old_temp=temp_comp;
-		}
-		else{//On bouge dans le sens 0x01 -
-			aData[1]=0x01;
-			aData[0]=(int)((old_temp-temp_comp));
-			HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
-			//printf("adata0= %d\r\n",aData[0]);
-			old_temp=temp_comp;
-		}
-
-
-	}
-
-```
-
-
-
-5.TP5 : Mise en série de l'ensemble
-
-![image-20241123044021571](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123044021571.png)
-
-Comme visible sur la vidéo fournie, la température fait varier la position du moteur proportionnellement à son augmentation relative. 
-
-![image-20241123044236059](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123044236059.png)
-
-On récupère également la pression qui est stockée dans un tableau python. 
-
-La mesure de l'angle n'a pas pu être récupérée sur l'interface REST, même si elle est disponible depuis minicom.
-
-Les données sont ensuite compilés dans le dashboard qui permet de voir les évolutions au fur et à mesure des requêtes envoyées et d'avoir une vue d'ensemble.
-
-Nous avons donc l’ensemble du système qui fonctionne.
-
-
-
-**Vidéo finale disponible en annexe**
 
 
 
 
 
-[vidéo finale](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/vidéo fusion avecst.mp4)
+
+
+
+
 
 
 

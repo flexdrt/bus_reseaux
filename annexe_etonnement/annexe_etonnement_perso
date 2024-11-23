@@ -1,0 +1,253 @@
+## Annexe étonnement 
+
+
+
+
+
+Réseau 
+
+ssid: IPhone de vincent
+
+mot de passe : mdp
+
+![image-20241114141719716](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241114141719716.png)
+
+
+
+
+
+![image-20241114155717268](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241114155717268.png)
+
+makerspace wifi :
+
+user : vkuser
+
+mdp: mdp
+
+
+
+
+
+Modification de la configuration réseau de la PI zero :
+
+Afin de pouvoir me connecter en ssh sur mon réseau privé au lieu du réseau de la salle de TP, je ajouter le réseau dans le fichier `wpa_supplicant.conf` qui se trouve dans `rootfs/etc/wpa_supplicant` . Pour cela, je monte la carte sd sur ma machine linux pour accèder à la partition boot qui contient ce fichier 
+
+Une fois monté, deux partitions apparaissent : 
+
+- rootfs
+- bootfs 
+
+On peut soit uiliser l'interface graphique de l'explorateur de fichier qui va se charger de monter le volume dès que l'on clique sur la partition soit utiliser la commande mount 
+
+```bash
+mount	
+```
+
+![image-20241110184427471](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110184427471.png)
+
+
+
+
+
+La partition rootfs contient toute l'arborescence (à partir de sa racine \ ), du système (raspbian en l'occurence).
+
+
+
+
+
+Je ne peux pas ouvrir ce fichier sans sudo, grâce à Gedit je trouve le chemin complet depuis ma machine du fichier à ouvrir:
+
+![image-20241110185901711](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110185901711.png)
+
+Lorsque l'on monte une partition, elle est monté à partir du répertoire `/media/vincent/` comme on peut le voir en haut de la fenêtre.
+
+
+
+J'ouvre en mode édition le fichier avec la commande
+
+`sudo nano /media/vincent/bootfs/etc/wpa_supplicant/wpa_supplicant.conf`
+
+J'écris dans le fichier les lignes suivantes :
+
+```shell
+update_config=1
+
+#Ajout du réseau LAN pocket wifi
+network={
+ ssid="AIRBOX-69AE"
+ psk="6wRp2Fr366H4"
+}
+
+
+```
+
+![image-20241110185417222](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241110185417222.png)
+
+
+
+
+
+
+
+dans bootfs je créé un fichier ssh vide et je copie le fichier wpa_supplicant.conf et j
+
+```bash
+vincent@Warhawk:/media/vincent/bootfs$ touch ssh
+vincent@Warhawk:/media/vincent/bootfs$ sudo nano /media/vincent/rootfs/etc/wpa_supplicant/wpa_supplicant.conf
+[sudo] Mot de passe de vincent : 
+vincent@Warhawk:/media/vincent/bootfs$ pwd
+/media/vincent/bootfs
+vincent@Warhawk:/media/vincent/bootfs$ sudo cp /media/vincent/rootfs/etc/wpa_supplicant/wpa_supplicant.conf /media/vincent/bootfs
+
+```
+
+
+
+***
+
+Dans cmdline.txt, j'ajoute modules-load=dwc2,g_ether et je change regdom par FR
+
+
+
+fichier cmdline.txt
+
+```bash
+console=tty1 root=PARTUUID=31903f62-02 rootfstype=ext4 fsck.repair=yes rootwait modules-load=dwc2,gether cfg80211.ieee80211_regdom=FR
+```
+
+
+
+fichier config.txt
+
+```bash
+//contenu du fichier config.txt
+
+
+#ajout à la fin dernière ligne 
+dtoverlay=dwc2
+
+```
+
+
+
+
+
+
+
+voir les nouveaux périphériques détectés :
+
+
+
+```bash
+dmesg | tail -n 20
+```
+
+
+
+![image-20241111002913982](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241111002913982.png)
+
+D'après les messages `dmesg`, la Raspberry Pi Zero est détectée comme un périphérique USB Ethernet sous le nom **`enx02dae9f2d112`** (renommée automatiquement à partir de `usb0`). 
+
+Cela indique qu'une i**nterface réseau** a bien été créée pour la Raspberry Pi sur mon ordinateur, mais elle utilise le nom **`enx02dae9f2d112`** au lieu de `usb0`
+
+ip a pour voir le détail des interfaces réseau (l'usb ethernet devrait y figurer)
+![image-20241111002727638](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241111002727638.png)
+
+
+
+***
+
+
+
+Exécution de la commande suivante pour voir si une adresse IP est assignée à **`enx02dae9f2d112`** :
+
+```bash
+ip a show enx02dae9f2d112
+
+```
+
+![image-20241111003205857](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241111003205857.png)
+
+
+
+L'interface réseau usb0 n'a pas d'ip, je vais lui fixer l'ip 169.254.100.1
+
+```bash
+sudo ip addr add 169.254.100.1/16 dev enx02dae9f2d112
+
+```
+
+on observe que l'interface a bien récupérée son ip avec la commande `ip a`:
+![image-20241111003542856](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241111003542856.png)
+
+
+
+
+
+***
+
+
+
+POur se connecter en ssh :
+
+```bash
+ssh pi0@192.168.1.150
+```
+
+****
+
+***
+
+
+
+copier boot fs sur la 64 go a moi 
+
+sudo dump -0u -f /dev/sdc1 /dev/sda1
+
+
+
+copier rootfs 
+sudo dump -0u -f /dev/sdc2 /dev/sda2
+
+
+
+
+
+
+
+**Cloner la carte SD avec `dd` :** Utilisez la commande `dd` pour copier le contenu de la carte SD de 32 Go sur celle de 64 Go. Voici la commande de base pour cela :
+
+```bash
+sudo dd if=/dev/sda of=/dev/sdc bs=4M status=progress
+
+```
+
+`if=/dev/sda` : spécifie la carte SD source.
+
+`of=/dev/sdc` : spécifie la carte SD destination.
+
+`bs=4M` : définit la taille du bloc de lecture/écriture à 4 Mo pour une copie plus rapide.
+
+`status=progress` : affiche la progression de la commande `dd`.
+
+
+
+
+
+led pi zero informations 
+
+| Nombre de clignotements | Signification de l'erreur                                    |
+| ----------------------- | ------------------------------------------------------------ |
+| **3 clignotements**     | Erreur de démarrage : le fichier `boot.img` est introuvable. |
+| **4 clignotements**     | Erreur de démarrage : `start.elf` est introuvable.           |
+| **7 clignotements**     | Kernel introuvable (`kernel.img`).                           |
+| **8 clignotements**     | Erreur de mémoire SDRAM (souvent lié à une incompatibilité de matériel). |
+
+### 
+
+**Clignotements réguliers** : Fonctionnement normal, la Pi accède à la carte SD.
+
+**Clignotements spécifiques (ex. 4 ou 7)** : Erreurs de démarrage liées aux fichiers de démarrage.
+
+**LED fixe ou éteinte** : Problème d'alimentation, carte SD absente ou image corrompue.
+

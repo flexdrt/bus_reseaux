@@ -14,7 +14,7 @@ extern CAN_HandleTypeDef hcan1;
 
 
 HAL_StatusTypeDef retour; //Permet de verifier si les fonctions I2C s'exécutent correctement
-//int RX_BUFF_SIZE = 500;
+
 uint8_t RxBuff[RX_BUFF_SIZE]={0};
 
 
@@ -97,7 +97,7 @@ int BMP280_checkID(void) {
 	}
 	else{
 
-		//^printf("\n reception complete ...  : Register Id content : 0x%x\r\n", buf[0]);
+		//printf("\n reception complete ...  : Register Id content : 0x%x\r\n", buf[0]);
 	}
 
 }
@@ -143,7 +143,7 @@ void BMP280_config(void) {
 	}
 
 	else{
-		//%%printf("config : no problem during transmission ... transmission complete -> reception in progress\r\n");
+		printf("config : no problem during transmission ... transmission complete -> reception in progress\r\n");
 	}
 
 	retour = HAL_I2C_Master_Receive(&hi2c1, BMP280_ADDR, buf, 1, HAL_MAX_DELAY);
@@ -156,7 +156,7 @@ void BMP280_config(void) {
 	//^^^printf("config = %u\r\n",config);
 	if (buf[0] == config) {
 
-		//printf("\nconfig : well configured - configuration value = hexadecimal : 0x%x | decimal  : 0d%u\r\n", buf[0]);
+		printf("\nconfig : well configured - configuration value = hexadecimal : 0x%x | decimal  : 0d%u\r\n", buf[0]);
 
 
 
