@@ -108,7 +108,7 @@ Le points à contrôler sont :
 
 PHOTO du câblage sur la STM32 pour la connexion logicielle (pins) : 
 
-![image-20241123043425564](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123043425564.png)
+![image-20241123043425564](./docs_annexes/img/image-20241123043425564-1732392723980-1.png)
 
 
 
@@ -144,14 +144,6 @@ UART ? = usart 1 PA10 et PA9
 
 
 
-
-
-
-
-PHOTO du câblage sur la STM32 pour la connection matérielle :
-
-![Capture d’écran](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/Capture d’écran du 2024-10-11 09-05-37.png)
-
 Les pins PB9 et PB8 se trouvent à droite de la carte en haut comme on peut le voir sur la figure de la carte ci-dessus. 
 
 Attention le pin PB8 commence au deuxième pins sur les connecteurs morpho.
@@ -162,11 +154,7 @@ Tandis quel 3.3 V pour VCC et le GND sont à gauche de la carte( on peut utilise
 
 
 
-
-
 Pour la partie CAN, on doit utiliser les pins PB8 ET PB9  d'après le sujet de TP, il faudra donc penser à déplacer les connexions pour le CAN sur d'autres pins si on souhaite utiliser PB8 et PB9
-
-
 
 
 
@@ -274,12 +262,6 @@ Maintenant l'affichage est centré à gauche comme on peut le voir :
 
 ![test echo avec retour](./docs_annexes/img/test echo avec retour.png)
 
-****
-
-***
-
-***
-
 
 
 ### 2.3. Communication I²C
@@ -351,7 +333,7 @@ int BMP280_checkID(void) {
 
 
 
-![image-20241123035521252](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123035521252.png)
+![image-20241123035521252](./docs_annexes/img/image-20241123035521252-1732392937131-5.png)
 
 On peut lire comme contenu du registre : 0x58. C 'est bien la valeur attendue pour le registre 0xD0
 
@@ -399,8 +381,6 @@ Les paramètres binaires à mettre sont aussi décrits page 25 datasheet pour ch
 
 
 
-
-***
 
 
 
@@ -488,14 +468,6 @@ On va ajouter tout le code nécessaire pour configurer le composant dans une fon
 
 
 
-
-
-
-
-
-
-
-
 En I²C, l'écriture dans un registre se déroule de la manière suivante : 
 
 1. envoyer l'adresse du registre à écrire, suivi de la valeur du registre 
@@ -537,7 +509,7 @@ uint8_t config = (0b010<<5)|(0b101<<2)|(0b11);
 
 - `0b11` est `3` en décimal et n'est pas décalé.
 
-![image-20241123035632885](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123035632885.png)
+![image-20241123035632885](./docs_annexes/img/image-20241123035632885-1732393268258-10.png)
 
 La valeur de `config` est donc **0x87** en hexadécimal, soit **0d57** en décimal, et **0b01010111** en binaire.
 
@@ -1174,7 +1146,7 @@ On appelle les fonctions dans la boucle while dans le fichier main.c
 
 Ce qui affiche :
 
-![image-20241123040647748](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241123040647748.png)
+![image-20241123040647748](./docs_annexes/img/image-20241123040647748-1732393312140-12.png)
 
 La température est affiché au format T=22.72_C .
 
@@ -1225,13 +1197,13 @@ ssid: IPhone de vincent
 
 mot de passe : mdp
 
-![image-20241114141719716](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241114141719716.png)
+![image-20241114141719716](./docs_annexes/img/image-20241114141719716-1732393332902-14.png)
 
 
 
 
 
-![image-20241114155717268](/home/vincent/Documents/ese_3a/reseaux_bus_de_terrain/bus_reseaux/docs_annexes/img/23_oct_18h59/image-20241114155717268.png)
+![image-20241114155717268](./docs_annexes/img/image-20241114155717268-1732393345558-16.png)
 
 avec le réseau wifi du makerspace :
 
@@ -1536,21 +1508,6 @@ On reçoit bien la température et la pression.
 
 
 
-#### **Configurer le DMA dans STM32CubeMX**
-
-Activez le DMA pour la réception (`USARTx_RX`) et, si nécessaire, pour l’émission (`USARTx_TX`).
-
-Associez le DMA RX/TX aux canaux DMA appropriés.
-
-Configurez les paramètres suivants dans CubeMX :
-
-- **Mode DMA RX :** **Normal** ou **Circulaire** (souvent circulaire pour un tampon RX).
-- **Priorité :** Medium ou High.
-
-- Générer le code.
-
-
-
 ### 3.3 Commande depuis Python 
 
 Création de l'environnement à l'aide des commandes au tableau: voir photo pipenv 25/10
@@ -1850,7 +1807,6 @@ Nous avons donc l’ensemble du système qui fonctionne.
 
 
 **Vidéo finale disponible en annexe**
-
 
 
 
