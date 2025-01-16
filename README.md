@@ -8,7 +8,25 @@ Ceci est le compte-rendu du tp de bus et réseau de Vincent LAKHMECHE et Karim J
 
 Certaines images ne s'affichent pas dans ce readme, une version complète est disponible en pdf à la racine du repo.
 
-[TOC]
+
+Vidéos disponibles en haute définition en annexe.
+
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/9af4967f-7dbb-4031-a4d5-ade751fe747b"></video>
+</p>
+
+
+
+
+
+<p align="center">
+ <video src="https://github.com/user-attachments/assets/7757d12c-c4bc-47a1-8fb2-f3cbd6ec4d23" alt="image">
+</p>
+
+
+
+
+
 
 ------
 
