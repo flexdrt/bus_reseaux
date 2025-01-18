@@ -1,0 +1,189 @@
+\doxysection{Référence du fichier C\+:/\+Users/gfjk/\+STM32\+Cube\+IDE/workspace\+\_\+1.16.0/bus\+\_\+reseau\+\_\+tp1/\+Core/\+Src/main.c}
+\hypertarget{main_8c}{}\label{main_8c}\index{C:/Users/gfjk/STM32CubeIDE/workspace\_1.16.0/bus\_reseau\_tp1/Core/Src/main.c@{C:/Users/gfjk/STM32CubeIDE/workspace\_1.16.0/bus\_reseau\_tp1/Core/Src/main.c}}
+
+
+\+: Main program body  
+
+
+{\ttfamily \#include "{}main.\+h"{}}\newline
+{\ttfamily \#include "{}stdio.\+h"{}}\newline
+{\ttfamily \#include "{}BMP280\+\_\+vincent.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{main_8c_ada1e94d9a3049b793a19dcd88382c824}{BMP\+\_\+\+ADDR}}~(0x77 $<$$<$ 1)
+\item 
+\#define \mbox{\hyperlink{main_8c_a727d842d0b3695870223f22db2fca0e6}{BMP\+\_\+\+ID\+\_\+\+REG}}~0x\+D0
+\item 
+\#define \mbox{\hyperlink{main_8c_ac040eb6679fed6e591776425aa7abd9d}{PUTCHAR\+\_\+\+PROTOTYPE}}~int fputc(int \mbox{\hyperlink{stm32f4xx__hal__msp_8c_a0523c05685d59544dca911cb6a3db77d}{ch}}, FILE \texorpdfstring{$\ast$}{*}f)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Fonctions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{main_8c_a70af21c671abfcc773614a9a4f63d920}{System\+Clock\+\_\+\+Config}} (void)
+\begin{DoxyCompactList}\small\item\em System Clock Configuration. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{main_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
+\begin{DoxyCompactList}\small\item\em The application entry point. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a1730ffe1e560465665eb47d9264826f9}{Error\+\_\+\+Handler}} (void)
+\begin{DoxyCompactList}\small\item\em This function is executed in case of error occurrence. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+CAN\+\_\+\+Handle\+Type\+Def \mbox{\hyperlink{main_8c_a1618d731d18d69e906e8a357b7cd3c8d}{hcan1}}
+\item 
+I2\+C\+\_\+\+Handle\+Type\+Def \mbox{\hyperlink{main_8c_af7b2c26e44dadaaa798a5c3d82914ba7}{hi2c1}}
+\item 
+UART\+\_\+\+Handle\+Type\+Def \mbox{\hyperlink{main_8c_a2cf715bef37f7e8ef385a30974a5f0d5}{huart1}}
+\item 
+UART\+\_\+\+Handle\+Type\+Def \mbox{\hyperlink{main_8c_aa9479c261d65eecedd3d9582f7f0f89c}{huart2}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{main_8c_af0f69554857f12bd910cb7c9112b21dd}{Rx\+Buff}} \mbox{[}RX\+\_\+\+BUFF\+\_\+\+SIZE\mbox{]}
+\begin{DoxyCompactList}\small\item\em Buffer de réception pour les communications UART. \end{DoxyCompactList}\item 
+CAN\+\_\+\+Tx\+Header\+Type\+Def \mbox{\hyperlink{main_8c_acf93435153c14ecafb10f268aa91a760}{p\+Header}}
+\begin{DoxyCompactList}\small\item\em Déclaration des paramètres CAN. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{main_8c_a81b7e4375209e7f5f6f00d21a50d6ecc}{a\+Data}} \mbox{[}3\mbox{]}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{main_8c_afc149bf020dfedb829d8107f67ff3b07}{p\+Tx\+Mailbox}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+\+: Main program body 
+
+\begin{DoxyAttention}{Attention}
+
+\end{DoxyAttention}
+Copyright (c) 2024 STMicroelectronics. All rights reserved.
+
+This software is licensed under terms that can be found in the LICENSE file in the root directory of this software component. If no LICENSE file comes with this software, it is provided AS-\/\+IS. 
+
+\doxysubsection{Documentation des macros}
+\Hypertarget{main_8c_ada1e94d9a3049b793a19dcd88382c824}\index{main.c@{main.c}!BMP\_ADDR@{BMP\_ADDR}}
+\index{BMP\_ADDR@{BMP\_ADDR}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{BMP\_ADDR}{BMP\_ADDR}}
+{\footnotesize\ttfamily \label{main_8c_ada1e94d9a3049b793a19dcd88382c824} 
+\#define BMP\+\_\+\+ADDR~(0x77 $<$$<$ 1)}
+
+\Hypertarget{main_8c_a727d842d0b3695870223f22db2fca0e6}\index{main.c@{main.c}!BMP\_ID\_REG@{BMP\_ID\_REG}}
+\index{BMP\_ID\_REG@{BMP\_ID\_REG}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{BMP\_ID\_REG}{BMP\_ID\_REG}}
+{\footnotesize\ttfamily \label{main_8c_a727d842d0b3695870223f22db2fca0e6} 
+\#define BMP\+\_\+\+ID\+\_\+\+REG~0x\+D0}
+
+\Hypertarget{main_8c_ac040eb6679fed6e591776425aa7abd9d}\index{main.c@{main.c}!PUTCHAR\_PROTOTYPE@{PUTCHAR\_PROTOTYPE}}
+\index{PUTCHAR\_PROTOTYPE@{PUTCHAR\_PROTOTYPE}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{PUTCHAR\_PROTOTYPE}{PUTCHAR\_PROTOTYPE}}
+{\footnotesize\ttfamily \label{main_8c_ac040eb6679fed6e591776425aa7abd9d} 
+\#define PUTCHAR\+\_\+\+PROTOTYPE~int fputc(int \mbox{\hyperlink{stm32f4xx__hal__msp_8c_a0523c05685d59544dca911cb6a3db77d}{ch}}, FILE \texorpdfstring{$\ast$}{*}f)}
+
+
+
+\doxysubsection{Documentation des fonctions}
+\Hypertarget{main_8c_a1730ffe1e560465665eb47d9264826f9}\index{main.c@{main.c}!Error\_Handler@{Error\_Handler}}
+\index{Error\_Handler@{Error\_Handler}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{Error\_Handler()}{Error\_Handler()}}
+{\footnotesize\ttfamily \label{main_8c_a1730ffe1e560465665eb47d9264826f9} 
+void Error\+\_\+\+Handler (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+This function is executed in case of error occurrence. 
+
+
+\begin{DoxyRetVals}{Valeurs retournées}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+\Hypertarget{main_8c_a840291bc02cba5474a4cb46a9b9566fe}\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{main_8c_a840291bc02cba5474a4cb46a9b9566fe} 
+int main (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+The application entry point. 
+
+
+\begin{DoxyRetVals}{Valeurs retournées}
+{\em int} & \\
+\hline
+\end{DoxyRetVals}
+\Hypertarget{main_8c_a70af21c671abfcc773614a9a4f63d920}\index{main.c@{main.c}!SystemClock\_Config@{SystemClock\_Config}}
+\index{SystemClock\_Config@{SystemClock\_Config}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{SystemClock\_Config()}{SystemClock\_Config()}}
+{\footnotesize\ttfamily \label{main_8c_a70af21c671abfcc773614a9a4f63d920} 
+void System\+Clock\+\_\+\+Config (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+System Clock Configuration. 
+
+
+\begin{DoxyRetVals}{Valeurs retournées}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+Configure the main internal regulator output voltage
+
+Initializes the RCC Oscillators according to the specified parameters in the RCC\+\_\+\+Osc\+Init\+Type\+Def structure.
+
+Initializes the CPU, AHB and APB buses clocks
+
+\doxysubsection{Documentation des variables}
+\Hypertarget{main_8c_a81b7e4375209e7f5f6f00d21a50d6ecc}\index{main.c@{main.c}!aData@{aData}}
+\index{aData@{aData}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{aData}{aData}}
+{\footnotesize\ttfamily \label{main_8c_a81b7e4375209e7f5f6f00d21a50d6ecc} 
+uint8\+\_\+t a\+Data\mbox{[}3\mbox{]}\hspace{0.3cm}{\ttfamily [extern]}}
+
+Tableau pour les données à transmettre \Hypertarget{main_8c_a1618d731d18d69e906e8a357b7cd3c8d}\index{main.c@{main.c}!hcan1@{hcan1}}
+\index{hcan1@{hcan1}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{hcan1}{hcan1}}
+{\footnotesize\ttfamily \label{main_8c_a1618d731d18d69e906e8a357b7cd3c8d} 
+CAN\+\_\+\+Handle\+Type\+Def hcan1}
+
+\Hypertarget{main_8c_af7b2c26e44dadaaa798a5c3d82914ba7}\index{main.c@{main.c}!hi2c1@{hi2c1}}
+\index{hi2c1@{hi2c1}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{hi2c1}{hi2c1}}
+{\footnotesize\ttfamily \label{main_8c_af7b2c26e44dadaaa798a5c3d82914ba7} 
+I2\+C\+\_\+\+Handle\+Type\+Def hi2c1}
+
+\Hypertarget{main_8c_a2cf715bef37f7e8ef385a30974a5f0d5}\index{main.c@{main.c}!huart1@{huart1}}
+\index{huart1@{huart1}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{huart1}{huart1}}
+{\footnotesize\ttfamily \label{main_8c_a2cf715bef37f7e8ef385a30974a5f0d5} 
+UART\+\_\+\+Handle\+Type\+Def huart1}
+
+\Hypertarget{main_8c_aa9479c261d65eecedd3d9582f7f0f89c}\index{main.c@{main.c}!huart2@{huart2}}
+\index{huart2@{huart2}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{huart2}{huart2}}
+{\footnotesize\ttfamily \label{main_8c_aa9479c261d65eecedd3d9582f7f0f89c} 
+UART\+\_\+\+Handle\+Type\+Def huart2}
+
+\Hypertarget{main_8c_acf93435153c14ecafb10f268aa91a760}\index{main.c@{main.c}!pHeader@{pHeader}}
+\index{pHeader@{pHeader}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{pHeader}{pHeader}}
+{\footnotesize\ttfamily \label{main_8c_acf93435153c14ecafb10f268aa91a760} 
+CAN\+\_\+\+Tx\+Header\+Type\+Def p\+Header\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Déclaration des paramètres CAN. 
+
+Structure contenant les paramètres d\textquotesingle{}en-\/tête CAN \Hypertarget{main_8c_afc149bf020dfedb829d8107f67ff3b07}\index{main.c@{main.c}!pTxMailbox@{pTxMailbox}}
+\index{pTxMailbox@{pTxMailbox}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{pTxMailbox}{pTxMailbox}}
+{\footnotesize\ttfamily \label{main_8c_afc149bf020dfedb829d8107f67ff3b07} 
+uint32\+\_\+t p\+Tx\+Mailbox\hspace{0.3cm}{\ttfamily [extern]}}
+
+Variable pour la boîte aux lettres CAN \Hypertarget{main_8c_af0f69554857f12bd910cb7c9112b21dd}\index{main.c@{main.c}!RxBuff@{RxBuff}}
+\index{RxBuff@{RxBuff}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{RxBuff}{RxBuff}}
+{\footnotesize\ttfamily \label{main_8c_af0f69554857f12bd910cb7c9112b21dd} 
+uint8\+\_\+t Rx\+Buff\mbox{[}RX\+\_\+\+BUFF\+\_\+\+SIZE\mbox{]}\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Buffer de réception pour les communications UART. 
+

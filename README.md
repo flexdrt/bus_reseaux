@@ -1,9 +1,61 @@
 # 🚀TP de Bus_Réseaux
 
+ <img src="https://megabase.eduniversal.com/uploads/school/1155/logo.jpg?v=c7e3965d14625a3e4b5662bd550d93e0" alt="Logo ENSEA" width="30"/> ![STM32](https://img.shields.io/badge/STM32-Embedded-blue?style=for-the-badge&logo=stmicroelectronics)  
+ [![ENSEA](https://img.shields.io/badge/ENSEA-3A--ESE-green?style=for-the-badge&logo=https://upload.wikimedia.org/wikipedia/fr/8/82/Logo_ENSEA.svg)](https://www.ensea.fr)
+![Status](https://img.shields.io/badge/Status-Finished-orange?style=for-the-badge)  
+
 Ceci est le compte-rendu du TP de bus et réseau de Vincent LAKHMECHE et Karim JERJOUB
 
 Certaines images ne s'affichent pas dans ce readme, une version complète est disponible en pdf à la racine du repo.
 Vidéos disponibles en haute définition en annexe.
+
+<!-- TOC start -->
+
+
+- [🚌 2. TP1- Bus I2C](#-2-tp1--bus-i2c-1)
+   * [🛰️2.1 Capteur BMP280](#-21-capteur-bmp280)
+   * [💻2.2. Setup du STM32](#22-setup-du-stm32)
+
+     [Redirection du print](#redirection-du-print)
+
+     [Test de la chaîne de compilation et communication UART sur USB](#test-de-la-chaîne-de-compilation-et-communication-uart-sur-usb)
+   * [📡2.3. Communication I²C](#23-communication-ic)
+      + [🆔Identification du BMP280 : CheckID](#identification-du-bmp280--checkid)
+      + [⚙️Configuration du BMP280 ](#configuration-du-bmp280)
+         - [⚡Contrôle du mode d'alimentation](#contrôle-du-mode-dalimentation)
+         - [🌪️Contrôle de la mesure de pression ](#contrôle-de-la-mesure-de-pression)
+         - [🌡️Contrôle de la mesure de température](#contrôle-de-la-mesure-de-température)
+      + [📏Récupération de l'étalonnage de la température et de la pression ](#récupération-de-létalonnage-de-la-température-et-de-la-pression)
+         - [📉 Étalonnage du composant](#-étalonnage-du-composant)
+         - [🌡️ Récupération de la température et de la pression ](#-récupération-de-la-température-et-de-la-pression)
+      + [🔢 Calcul des températures et des pression compensées](#-calcul-des-températures-et-des-pression-compensées)
+- [🍓-🖥️ 3. TP2 - Interfaçage STM32 - Raspberry](#-3-tp2-interfaçage-stm32-raspberry-1)
+   * [🐧 3.1. Mise en route du Raspberry PI Zéro](#-31-mise-en-route-du-raspberry-pi-zéro)
+      + [Premier démarrage](#premier-démarrage)
+   * [3.2 Port série ](#32-port-série)
+      + [🔄 Loopback](#-loopback)
+         - [Activation de l'usart dans la PI ZERO](#activation-de-lusart-dans-la-pi-zero)
+      + [🖧 Communication avec le STM32	](#-communication-avec-le-stm32)
+         - [📱 Communication entre la PI zero et le STM32](#-communication-entre-la-pi-zero-et-le-stm32)
+         - [Test d'envoi des ordres à la STM32 ](#test-denvoi-des-ordres-à-la-stm32)
+   * [🐍 3.3 Commande depuis Python ](#-33-commande-depuis-python)
+- [🌐 4. TP3- Interface REST](#-4-tp3--interface-rest-1)
+   * [🐍 4.1. Installation du serveur Python](#-41-installation-du-serveur-python)
+   * [4.2 Première page REST](#42-première-page-rest)
+   * [4.3. Nouvelles métodes HTTP](#43-nouvelles-métodes-http)
+- [🛠️ 5.TP4 : CAN](#-5-tp4--can)
+   * [🚘 5.1 Pilotage du moteur ](#-51-pilotage-du-moteur)
+   * [📟 5.2. Interfaçage avec le capteur](#-52-interfaçage-avec-le-capteur)
+- [🚀 5.TP5 : Mise en série de l'ensemble](#-5tp5--mise-en-série-de-lensemble)
+
+	 [Conclusion](#conclusion-)
+
+<!-- TOC end -->
+
+
+
+
+### 🎥  [Accédez à la vidéo en Haute Définition ici.✨](./VidéoDémoChaineFonctionnelle)
 
 <p align="center">
   <video src="https://github.com/user-attachments/assets/9af4967f-7dbb-4031-a4d5-ade751fe747b"></video>
@@ -26,12 +78,50 @@ Vidéos disponibles en haute définition en annexe.
 
 
 
+## 🌐 2. TP1- Bus I2C ##
 
-[TOC]
+- 🔌 2.1 Capteur BMP280
+- 📱 2.2. Setup du STM32
+  - Redirection du print
+  - Test de la chaîne de compilation et communication UART sur USB
+- 🔄 2.3. Communication I²C
+  - 🆔 Identification du BMP280 : CheckID
+  - ⚙️ Configuration du BMP280
+  - ⚡ Contrôle du mode d'alimentation
+  - 📊 Contrôle de la mesure de pression
+  - 🌡️ Contrôle de la mesure de température
+  - 📈 Récupération de l'étalonnage de la température et de la pression
+  - 📋 Étalonnage du composant
+  - 🌡️ Récupération de la température et de la pression
+  - 🧮 Calcul des températures et des pression compensées
+
+## 🍓 💻 3. TP2 - Interfaçage STM32 - Raspberry
+
+- 👤 3.1. Mise en route du Raspberry PI Zéro
+  - Premier démarrage
+- 3.2 Port série
+  - 🔄 Loopback
+  - ⚡ Activation de l'usart dans la PI ZERO
+  - 🔌 Communication avec le STM32
+  - 🧪 Test d'envoi des ordres à la STM32
+- 🐍 3.3 Commande depuis Python
+
+## 🌐 4. TP3- Interface REST
+
+- 🐍 4.1. Installation du serveur Python
+- 📄 4.2 Première page REST
+- 🔄 4.3. Nouvelles méthodes HTTP
+
+## ⚡ 5. TP4 : CAN
+
+- 🎮 5.1 Pilotage du moteur
+- 📡 5.2. Interfaçage avec le capteur
+
+## 🚀 5. TP5 : Mise en série de l'ensemble
+
+- 📝 Conclusion
 
 ------
-
-***
 
 
 
@@ -420,7 +510,7 @@ ll faut placer le composant en mode normal, les configurations possibles et leur
 
 | Adresse registre ctrl_meas | Valeur à écrire                                              |
 | -------------------------- | ------------------------------------------------------------ |
-| 0xF4                       | Les bits mode[1:0] doivent être configurés à 11 pour le mode normal. |
+| 0xF4                       | Les bits mode[1:0] doivent être configurés à '11' pour le mode normal. |
 
 
 
@@ -566,7 +656,7 @@ uint8_t config = (0b010<<5)|(0b101<<2)|(0b11);
   
   
 
-La valeur de `config` est donc **0x87** en hexadécimal, soit **0d57** en décimal, et **0b01010111** en binaire.
+La valeur de `config` est donc **0x57** en hexadécimal, soit **0d87** en décimal, et **0b01010111** en binaire.
 
 
 
@@ -1625,8 +1715,7 @@ pip3 install pyserial
 
 **Configuration et Initialisation**
 
-- Configuration d'un serveur web avec Flask pour gérer les routes API.
-- Connexion au port série pour communiquer avec la STM32, permettant de recevoir et envoyer des données (température, pression, échelle).
+Il s'agit de configurer un serveur web avec Flask pour gérer les routes API et in fine piloter notre chaine depuis une interface web. Cette connexion au port série pour communiquer avec la STM32, permet de recevoir et envoyer des données (température, pression, échelle). C'est via pyserial que nous pourrons configurer cette connexion.
 
 **Quel est le rôle du décorateur `@app.route`?**
 
@@ -1709,7 +1798,7 @@ Ce dashboard est construit à l'aide d'un tableau composé des valeurs renvoyée
 
 ![image-20241122134801152](./assets/image-20241122134801152-1732347826627-1.png)
 
-
+🐍  [Accédez au code Python complet ici.✨](./serveur_python_tp3)
 
 
 

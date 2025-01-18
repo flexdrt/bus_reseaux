@@ -1,0 +1,525 @@
+\doxysection{Référence du fichier C\+:/\+Users/gfjk/\+STM32\+Cube\+IDE/workspace\+\_\+1.16.0/bus\+\_\+reseau\+\_\+tp1/\+Core/\+Src/\+BMP280\+\_\+vincent.c}
+\hypertarget{_b_m_p280__vincent_8c}{}\label{_b_m_p280__vincent_8c}\index{C:/Users/gfjk/STM32CubeIDE/workspace\_1.16.0/bus\_reseau\_tp1/Core/Src/BMP280\_vincent.c@{C:/Users/gfjk/STM32CubeIDE/workspace\_1.16.0/bus\_reseau\_tp1/Core/Src/BMP280\_vincent.c}}
+
+
+Implémentation du pilote pour le capteur de température et de pression BMP280.  
+
+
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include "{}main.\+h"{}}\newline
+{\ttfamily \#include "{}BMP280\+\_\+vincent.\+h"{}}\newline
+\doxysubsubsection*{Fonctions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{_b_m_p280__vincent_8c_a3463dee0cb200c4c612a33d97d874f99}{BMP280\+\_\+check\+ID}} (void)
+\begin{DoxyCompactList}\small\item\em Vérifie l\textquotesingle{}identité du capteur BMP280. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_m_p280__vincent_8c_acc34890771dd942060c10e81b0efa2a4}{BMP280\+\_\+config}} (void)
+\begin{DoxyCompactList}\small\item\em Configure le capteur BMP280 Configuration \+: mode normal, suréchantillonnage x16 pour la pression, x2 pour la température. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_m_p280__vincent_8c_a935bb739936b5643ef2daea1d97b8c69}{BMP280\+\_\+calib}} (void)
+\begin{DoxyCompactList}\small\item\em Lit les coefficients de calibration du capteur. \end{DoxyCompactList}\item 
+BMP280\+\_\+\+S32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a6f7c65571daf1e04ddc2f7e894b3cc65}{BMP280\+\_\+get\+\_\+temperature}} (void)
+\begin{DoxyCompactList}\small\item\em Lit la valeur de température brute. \end{DoxyCompactList}\item 
+BMP280\+\_\+\+S32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_af60ffaff0a7fa89cef551a7bca378b62}{BMP280\+\_\+get\+\_\+pressure}} (void)
+\begin{DoxyCompactList}\small\item\em Lit la valeur de pression brute. \end{DoxyCompactList}\item 
+BMP280\+\_\+\+S32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a4f1cbf09dc5f5a1eb1ea4ffba9b80e0e}{bmp280\+\_\+compensate\+\_\+\+T\+\_\+int32}} (BMP280\+\_\+\+S32\+\_\+t adc\+\_\+T)
+\begin{DoxyCompactList}\small\item\em Compense la valeur de température selon l\textquotesingle{}algorithme du fabricant. \end{DoxyCompactList}\item 
+BMP280\+\_\+\+U32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a7e91b30b0e26f8fe12e6d06a50bde967}{bmp280\+\_\+compensate\+\_\+\+P\+\_\+int64}} (BMP280\+\_\+\+S32\+\_\+t adc\+\_\+P)
+\begin{DoxyCompactList}\small\item\em Compense la valeur de pression selon l\textquotesingle{}algorithme du fabricant. \end{DoxyCompactList}\item 
+HAL\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{_b_m_p280__vincent_8c_ad16f0270296ecec99ceb3d397248417d}{tx\+\_\+can}} (CAN\+\_\+\+Tx\+Header\+Type\+Def p\+Header2, uint8\+\_\+t \texorpdfstring{$\ast$}{*}a\+Data2, uint32\+\_\+t p\+Tx\+Mailbox2)
+\begin{DoxyCompactList}\small\item\em Transmet un message via CAN. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_m_p280__vincent_8c_aec079398fce14ed83edce067e916e2a4}{enable\+\_\+can}} (void)
+\begin{DoxyCompactList}\small\item\em Active et configure le périphérique CAN. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_m_p280__vincent_8c_a870f45b537e04679783af9675103a00d}{can\+\_\+setter}} (CAN\+\_\+\+Tx\+Header\+Type\+Def \mbox{\hyperlink{_b_m_p280__vincent_8c_acf93435153c14ecafb10f268aa91a760}{p\+Header}}, uint8\+\_\+t \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{_b_m_p280__vincent_8c_a81b7e4375209e7f5f6f00d21a50d6ecc}{a\+Data}}, uint32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_afc149bf020dfedb829d8107f67ff3b07}{p\+Tx\+Mailbox}})
+\begin{DoxyCompactList}\small\item\em Modifie la position du moteur via CAN. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_m_p280__vincent_8c_a8197bb763773ba7e7fd21fa189f239fc}{can\+\_\+change\+\_\+temp}} (BMP280\+\_\+\+U32\+\_\+t temp\+\_\+comp)
+\begin{DoxyCompactList}\small\item\em Ajuste la position du moteur en fonction de la température. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_m_p280__vincent_8c_a448a57c5019a2e24e19bec4d0344dc5f}{dial\+\_\+pi}} (void)
+\begin{DoxyCompactList}\small\item\em Gère le dialogue avec le Raspberry Pi Traite les commandes reçues via UART. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_b_m_p280__vincent_8c_ae494a9643f29b87d6d81e5264e60e57b}{HAL\+\_\+\+UART\+\_\+\+Rx\+Cplt\+Callback}} (UART\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}huart)
+\begin{DoxyCompactList}\small\item\em Callback de réception UART. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+I2\+C\+\_\+\+Handle\+Type\+Def \mbox{\hyperlink{_b_m_p280__vincent_8c_af7b2c26e44dadaaa798a5c3d82914ba7}{hi2c1}}
+\item 
+UART\+\_\+\+Handle\+Type\+Def \mbox{\hyperlink{_b_m_p280__vincent_8c_a2cf715bef37f7e8ef385a30974a5f0d5}{huart1}}
+\item 
+UART\+\_\+\+Handle\+Type\+Def \mbox{\hyperlink{_b_m_p280__vincent_8c_aa9479c261d65eecedd3d9582f7f0f89c}{huart2}}
+\item 
+CAN\+\_\+\+Handle\+Type\+Def \mbox{\hyperlink{_b_m_p280__vincent_8c_a1618d731d18d69e906e8a357b7cd3c8d}{hcan1}}
+\item 
+HAL\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{_b_m_p280__vincent_8c_a410be46803f781e148b66354d8c219d8}{retour}}
+\begin{DoxyCompactList}\small\item\em Variable pour vérifier le statut des communications I2C. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_af0f69554857f12bd910cb7c9112b21dd}{Rx\+Buff}} \mbox{[}RX\+\_\+\+BUFF\+\_\+\+SIZE\mbox{]} =\{0\}
+\begin{DoxyCompactList}\small\item\em Buffer de réception pour les communications UART. \end{DoxyCompactList}\item 
+CAN\+\_\+\+Tx\+Header\+Type\+Def \mbox{\hyperlink{_b_m_p280__vincent_8c_acf93435153c14ecafb10f268aa91a760}{p\+Header}}
+\begin{DoxyCompactList}\small\item\em Déclaration des paramètres CAN. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a81b7e4375209e7f5f6f00d21a50d6ecc}{a\+Data}} \mbox{[}3\mbox{]}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_afc149bf020dfedb829d8107f67ff3b07}{p\+Tx\+Mailbox}}
+\item 
+int \mbox{\hyperlink{_b_m_p280__vincent_8c_af75baaa6a00e3b62dddfb2cd057fc7a3}{K\+\_\+pid}} = 0
+\begin{DoxyCompactList}\small\item\em Variables pour le contrôle PID. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_b_m_p280__vincent_8c_a2f6cf40f91947e70e44c6806e209565c}{a\+\_\+pid}} = 0
+\item 
+int \mbox{\hyperlink{_b_m_p280__vincent_8c_ae836b12da24866a03689d87a64a29ebd}{setK}} = 0
+\item 
+uint8\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a9d08e5acd397304490885dacdbc15674}{ctrl\+\_\+meas}} = 0x\+F4
+\begin{DoxyCompactList}\small\item\em Registre de contrôle des mesures. \end{DoxyCompactList}\item 
+BMP280\+\_\+\+S32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a755fe0fb02fb1db79715926a1be64cc5}{temp\+\_\+uncompen}}
+\begin{DoxyCompactList}\small\item\em Variables pour les mesures de température. \end{DoxyCompactList}\item 
+BMP280\+\_\+\+S32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a45944d9afd6c5a50b2c7a466cdaef22f}{temp\+\_\+compen}}
+\item 
+BMP280\+\_\+\+S32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_af445e2635ac7dfc0ce8588bde56bd5cd}{pres\+\_\+uncompen}}
+\begin{DoxyCompactList}\small\item\em Variables pour les mesures de pression. \end{DoxyCompactList}\item 
+BMP280\+\_\+\+S32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a9549210bef639fb138adc74c673939f2}{pres\+\_\+compen}}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a730ed166c629bded674b13faffe9cef7}{dig\+\_\+\+T1}}
+\begin{DoxyCompactList}\small\item\em Coefficients de calibration pour la température. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_ab5c023a004c0497ba616d916155c85bb}{dig\+\_\+\+T2}}
+\item 
+int16\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a9536e89c30bbd791153ac9e407b0752b}{dig\+\_\+\+T3}}
+\item 
+short \mbox{\hyperlink{_b_m_p280__vincent_8c_ad4fe96401a8ca290ce504a236e51d83b}{dig\+\_\+\+P1}} = 0
+\begin{DoxyCompactList}\small\item\em Coefficients de calibration pour la pression. \end{DoxyCompactList}\item 
+signed short \mbox{\hyperlink{_b_m_p280__vincent_8c_a6d7667e0986d0409dfdaa31d5f4ab05e}{dig\+\_\+\+P2}} = 0
+\item 
+signed short \mbox{\hyperlink{_b_m_p280__vincent_8c_a4778d0f9f9c5c231c472e6f9cc34bff7}{dig\+\_\+\+P3}} = 0
+\item 
+signed short \mbox{\hyperlink{_b_m_p280__vincent_8c_a60ff58d4f1f442387729c7f9a1942d63}{dig\+\_\+\+P4}} = 0
+\item 
+signed short \mbox{\hyperlink{_b_m_p280__vincent_8c_aab5995336960b6917304bca095d1f896}{dig\+\_\+\+P5}} = 0
+\item 
+signed short \mbox{\hyperlink{_b_m_p280__vincent_8c_ab40e5774b084a648dae55c161de91f66}{dig\+\_\+\+P6}} = 0
+\item 
+signed short \mbox{\hyperlink{_b_m_p280__vincent_8c_aeae4c61fa98974140b9694edd4799883}{dig\+\_\+\+P7}} = 0
+\item 
+signed short \mbox{\hyperlink{_b_m_p280__vincent_8c_af39515ecaa77e6b01544388fc7d44cfe}{dig\+\_\+\+P8}} = 0
+\item 
+signed short \mbox{\hyperlink{_b_m_p280__vincent_8c_ae808932e571d157081b847f311cec555}{dig\+\_\+\+P9}} = 0
+\item 
+BMP280\+\_\+\+S32\+\_\+t \mbox{\hyperlink{_b_m_p280__vincent_8c_a76976acd94b5aa6ded5c69ae13c1e4ee}{t\+\_\+fine}}
+\begin{DoxyCompactList}\small\item\em Variable globale pour la compensation de température. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+Implémentation du pilote pour le capteur de température et de pression BMP280. 
+
+\begin{DoxyAuthor}{Auteur}
+Vincent LAKHMECHE 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Documentation des fonctions}
+\Hypertarget{_b_m_p280__vincent_8c_a935bb739936b5643ef2daea1d97b8c69}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!BMP280\_calib@{BMP280\_calib}}
+\index{BMP280\_calib@{BMP280\_calib}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{BMP280\_calib()}{BMP280\_calib()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a935bb739936b5643ef2daea1d97b8c69} 
+void BMP280\+\_\+calib (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Lit les coefficients de calibration du capteur. 
+
+\Hypertarget{_b_m_p280__vincent_8c_a3463dee0cb200c4c612a33d97d874f99}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!BMP280\_checkID@{BMP280\_checkID}}
+\index{BMP280\_checkID@{BMP280\_checkID}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{BMP280\_checkID()}{BMP280\_checkID()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a3463dee0cb200c4c612a33d97d874f99} 
+int BMP280\+\_\+check\+ID (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Vérifie l\textquotesingle{}identité du capteur BMP280. 
+
+\begin{DoxyReturn}{Renvoie}
+1 en cas d\textquotesingle{}erreur, 0 sinon 
+\end{DoxyReturn}
+\Hypertarget{_b_m_p280__vincent_8c_a7e91b30b0e26f8fe12e6d06a50bde967}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!bmp280\_compensate\_P\_int64@{bmp280\_compensate\_P\_int64}}
+\index{bmp280\_compensate\_P\_int64@{bmp280\_compensate\_P\_int64}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{bmp280\_compensate\_P\_int64()}{bmp280\_compensate\_P\_int64()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a7e91b30b0e26f8fe12e6d06a50bde967} 
+BMP280\+\_\+\+U32\+\_\+t bmp280\+\_\+compensate\+\_\+\+P\+\_\+int64 (\begin{DoxyParamCaption}\item[{BMP280\+\_\+\+S32\+\_\+t}]{adc\+\_\+P}{}\end{DoxyParamCaption})}
+
+
+
+Compense la valeur de pression selon l\textquotesingle{}algorithme du fabricant. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em adc\+\_\+P} & Valeur brute de pression \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Renvoie}
+Pression en Pascal (format Q24.\+8) 
+\end{DoxyReturn}
+\Hypertarget{_b_m_p280__vincent_8c_a4f1cbf09dc5f5a1eb1ea4ffba9b80e0e}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!bmp280\_compensate\_T\_int32@{bmp280\_compensate\_T\_int32}}
+\index{bmp280\_compensate\_T\_int32@{bmp280\_compensate\_T\_int32}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{bmp280\_compensate\_T\_int32()}{bmp280\_compensate\_T\_int32()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a4f1cbf09dc5f5a1eb1ea4ffba9b80e0e} 
+BMP280\+\_\+\+S32\+\_\+t bmp280\+\_\+compensate\+\_\+\+T\+\_\+int32 (\begin{DoxyParamCaption}\item[{BMP280\+\_\+\+S32\+\_\+t}]{adc\+\_\+T}{}\end{DoxyParamCaption})}
+
+
+
+Compense la valeur de température selon l\textquotesingle{}algorithme du fabricant. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em adc\+\_\+T} & Valeur brute de température \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Renvoie}
+Température en degrés Celsius x100 
+\end{DoxyReturn}
+\Hypertarget{_b_m_p280__vincent_8c_acc34890771dd942060c10e81b0efa2a4}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!BMP280\_config@{BMP280\_config}}
+\index{BMP280\_config@{BMP280\_config}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{BMP280\_config()}{BMP280\_config()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_acc34890771dd942060c10e81b0efa2a4} 
+void BMP280\+\_\+config (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Configure le capteur BMP280 Configuration \+: mode normal, suréchantillonnage x16 pour la pression, x2 pour la température. 
+
+\Hypertarget{_b_m_p280__vincent_8c_af60ffaff0a7fa89cef551a7bca378b62}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!BMP280\_get\_pressure@{BMP280\_get\_pressure}}
+\index{BMP280\_get\_pressure@{BMP280\_get\_pressure}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{BMP280\_get\_pressure()}{BMP280\_get\_pressure()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_af60ffaff0a7fa89cef551a7bca378b62} 
+BMP280\+\_\+\+S32\+\_\+t BMP280\+\_\+get\+\_\+pressure (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Lit la valeur de pression brute. 
+
+\begin{DoxyReturn}{Renvoie}
+Valeur brute de pression sur 32 bits 
+\end{DoxyReturn}
+\Hypertarget{_b_m_p280__vincent_8c_a6f7c65571daf1e04ddc2f7e894b3cc65}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!BMP280\_get\_temperature@{BMP280\_get\_temperature}}
+\index{BMP280\_get\_temperature@{BMP280\_get\_temperature}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{BMP280\_get\_temperature()}{BMP280\_get\_temperature()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a6f7c65571daf1e04ddc2f7e894b3cc65} 
+BMP280\+\_\+\+S32\+\_\+t BMP280\+\_\+get\+\_\+temperature (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Lit la valeur de température brute. 
+
+\begin{DoxyReturn}{Renvoie}
+Valeur brute de température sur 32 bits 
+\end{DoxyReturn}
+\Hypertarget{_b_m_p280__vincent_8c_a8197bb763773ba7e7fd21fa189f239fc}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!can\_change\_temp@{can\_change\_temp}}
+\index{can\_change\_temp@{can\_change\_temp}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{can\_change\_temp()}{can\_change\_temp()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a8197bb763773ba7e7fd21fa189f239fc} 
+void can\+\_\+change\+\_\+temp (\begin{DoxyParamCaption}\item[{BMP280\+\_\+\+U32\+\_\+t}]{temp\+\_\+comp}{}\end{DoxyParamCaption})}
+
+
+
+Ajuste la position du moteur en fonction de la température. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em temp\+\_\+comp} & Température compensée \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_b_m_p280__vincent_8c_a870f45b537e04679783af9675103a00d}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!can\_setter@{can\_setter}}
+\index{can\_setter@{can\_setter}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{can\_setter()}{can\_setter()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a870f45b537e04679783af9675103a00d} 
+void can\+\_\+setter (\begin{DoxyParamCaption}\item[{CAN\+\_\+\+Tx\+Header\+Type\+Def}]{p\+Header}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{a\+Data}{, }\item[{uint32\+\_\+t}]{p\+Tx\+Mailbox}{}\end{DoxyParamCaption})}
+
+
+
+Modifie la position du moteur via CAN. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em p\+Header} & En-\/tête de la trame CAN \\
+\hline
+{\em a\+Data} & Données à transmettre \\
+\hline
+{\em p\+Tx\+Mailbox} & Boîte aux lettres utilisée \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_b_m_p280__vincent_8c_a448a57c5019a2e24e19bec4d0344dc5f}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dial\_pi@{dial\_pi}}
+\index{dial\_pi@{dial\_pi}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dial\_pi()}{dial\_pi()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a448a57c5019a2e24e19bec4d0344dc5f} 
+void dial\+\_\+pi (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Gère le dialogue avec le Raspberry Pi Traite les commandes reçues via UART. 
+
+\Hypertarget{_b_m_p280__vincent_8c_aec079398fce14ed83edce067e916e2a4}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!enable\_can@{enable\_can}}
+\index{enable\_can@{enable\_can}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{enable\_can()}{enable\_can()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_aec079398fce14ed83edce067e916e2a4} 
+void enable\+\_\+can (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Active et configure le périphérique CAN. 
+
+\Hypertarget{_b_m_p280__vincent_8c_ae494a9643f29b87d6d81e5264e60e57b}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!HAL\_UART\_RxCpltCallback@{HAL\_UART\_RxCpltCallback}}
+\index{HAL\_UART\_RxCpltCallback@{HAL\_UART\_RxCpltCallback}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{HAL\_UART\_RxCpltCallback()}{HAL\_UART\_RxCpltCallback()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_ae494a9643f29b87d6d81e5264e60e57b} 
+void HAL\+\_\+\+UART\+\_\+\+Rx\+Cplt\+Callback (\begin{DoxyParamCaption}\item[{UART\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{huart}{}\end{DoxyParamCaption})}
+
+
+
+Callback de réception UART. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em huart} & Pointeur vers la structure UART concernée \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_b_m_p280__vincent_8c_ad16f0270296ecec99ceb3d397248417d}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!tx\_can@{tx\_can}}
+\index{tx\_can@{tx\_can}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{tx\_can()}{tx\_can()}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_ad16f0270296ecec99ceb3d397248417d} 
+HAL\+\_\+\+Status\+Type\+Def tx\+\_\+can (\begin{DoxyParamCaption}\item[{CAN\+\_\+\+Tx\+Header\+Type\+Def}]{p\+Header2}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{a\+Data2}{, }\item[{uint32\+\_\+t}]{p\+Tx\+Mailbox2}{}\end{DoxyParamCaption})}
+
+
+
+Transmet un message via CAN. 
+
+
+\begin{DoxyParams}{Paramètres}
+{\em p\+Header2} & En-\/tête du message \\
+\hline
+{\em a\+Data2} & Données à transmettre \\
+\hline
+{\em p\+Tx\+Mailbox2} & Boîte aux lettres utilisée \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Renvoie}
+Statut de transmission 
+\end{DoxyReturn}
+
+
+\doxysubsection{Documentation des variables}
+\Hypertarget{_b_m_p280__vincent_8c_a2f6cf40f91947e70e44c6806e209565c}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!a\_pid@{a\_pid}}
+\index{a\_pid@{a\_pid}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{a\_pid}{a\_pid}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a2f6cf40f91947e70e44c6806e209565c} 
+int a\+\_\+pid = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_a81b7e4375209e7f5f6f00d21a50d6ecc}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!aData@{aData}}
+\index{aData@{aData}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{aData}{aData}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a81b7e4375209e7f5f6f00d21a50d6ecc} 
+uint8\+\_\+t a\+Data\mbox{[}3\mbox{]}}
+
+Tableau pour les données à transmettre \Hypertarget{_b_m_p280__vincent_8c_a9d08e5acd397304490885dacdbc15674}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!ctrl\_meas@{ctrl\_meas}}
+\index{ctrl\_meas@{ctrl\_meas}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{ctrl\_meas}{ctrl\_meas}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a9d08e5acd397304490885dacdbc15674} 
+uint8\+\_\+t ctrl\+\_\+meas = 0x\+F4}
+
+
+
+Registre de contrôle des mesures. 
+
+\Hypertarget{_b_m_p280__vincent_8c_ad4fe96401a8ca290ce504a236e51d83b}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_P1@{dig\_P1}}
+\index{dig\_P1@{dig\_P1}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_P1}{dig\_P1}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_ad4fe96401a8ca290ce504a236e51d83b} 
+short dig\+\_\+\+P1 = 0}
+
+
+
+Coefficients de calibration pour la pression. 
+
+\Hypertarget{_b_m_p280__vincent_8c_a6d7667e0986d0409dfdaa31d5f4ab05e}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_P2@{dig\_P2}}
+\index{dig\_P2@{dig\_P2}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_P2}{dig\_P2}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a6d7667e0986d0409dfdaa31d5f4ab05e} 
+signed short dig\+\_\+\+P2 = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_a4778d0f9f9c5c231c472e6f9cc34bff7}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_P3@{dig\_P3}}
+\index{dig\_P3@{dig\_P3}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_P3}{dig\_P3}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a4778d0f9f9c5c231c472e6f9cc34bff7} 
+signed short dig\+\_\+\+P3 = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_a60ff58d4f1f442387729c7f9a1942d63}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_P4@{dig\_P4}}
+\index{dig\_P4@{dig\_P4}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_P4}{dig\_P4}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a60ff58d4f1f442387729c7f9a1942d63} 
+signed short dig\+\_\+\+P4 = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_aab5995336960b6917304bca095d1f896}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_P5@{dig\_P5}}
+\index{dig\_P5@{dig\_P5}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_P5}{dig\_P5}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_aab5995336960b6917304bca095d1f896} 
+signed short dig\+\_\+\+P5 = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_ab40e5774b084a648dae55c161de91f66}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_P6@{dig\_P6}}
+\index{dig\_P6@{dig\_P6}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_P6}{dig\_P6}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_ab40e5774b084a648dae55c161de91f66} 
+signed short dig\+\_\+\+P6 = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_aeae4c61fa98974140b9694edd4799883}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_P7@{dig\_P7}}
+\index{dig\_P7@{dig\_P7}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_P7}{dig\_P7}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_aeae4c61fa98974140b9694edd4799883} 
+signed short dig\+\_\+\+P7 = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_af39515ecaa77e6b01544388fc7d44cfe}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_P8@{dig\_P8}}
+\index{dig\_P8@{dig\_P8}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_P8}{dig\_P8}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_af39515ecaa77e6b01544388fc7d44cfe} 
+signed short dig\+\_\+\+P8 = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_ae808932e571d157081b847f311cec555}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_P9@{dig\_P9}}
+\index{dig\_P9@{dig\_P9}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_P9}{dig\_P9}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_ae808932e571d157081b847f311cec555} 
+signed short dig\+\_\+\+P9 = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_a730ed166c629bded674b13faffe9cef7}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_T1@{dig\_T1}}
+\index{dig\_T1@{dig\_T1}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_T1}{dig\_T1}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a730ed166c629bded674b13faffe9cef7} 
+uint16\+\_\+t dig\+\_\+\+T1}
+
+
+
+Coefficients de calibration pour la température. 
+
+\Hypertarget{_b_m_p280__vincent_8c_ab5c023a004c0497ba616d916155c85bb}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_T2@{dig\_T2}}
+\index{dig\_T2@{dig\_T2}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_T2}{dig\_T2}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_ab5c023a004c0497ba616d916155c85bb} 
+int16\+\_\+t dig\+\_\+\+T2}
+
+\Hypertarget{_b_m_p280__vincent_8c_a9536e89c30bbd791153ac9e407b0752b}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!dig\_T3@{dig\_T3}}
+\index{dig\_T3@{dig\_T3}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{dig\_T3}{dig\_T3}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a9536e89c30bbd791153ac9e407b0752b} 
+int16\+\_\+t dig\+\_\+\+T3}
+
+\Hypertarget{_b_m_p280__vincent_8c_a1618d731d18d69e906e8a357b7cd3c8d}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!hcan1@{hcan1}}
+\index{hcan1@{hcan1}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{hcan1}{hcan1}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a1618d731d18d69e906e8a357b7cd3c8d} 
+CAN\+\_\+\+Handle\+Type\+Def hcan1\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{_b_m_p280__vincent_8c_af7b2c26e44dadaaa798a5c3d82914ba7}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!hi2c1@{hi2c1}}
+\index{hi2c1@{hi2c1}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{hi2c1}{hi2c1}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_af7b2c26e44dadaaa798a5c3d82914ba7} 
+I2\+C\+\_\+\+Handle\+Type\+Def hi2c1\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{_b_m_p280__vincent_8c_a2cf715bef37f7e8ef385a30974a5f0d5}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!huart1@{huart1}}
+\index{huart1@{huart1}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{huart1}{huart1}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a2cf715bef37f7e8ef385a30974a5f0d5} 
+UART\+\_\+\+Handle\+Type\+Def huart1\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{_b_m_p280__vincent_8c_aa9479c261d65eecedd3d9582f7f0f89c}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!huart2@{huart2}}
+\index{huart2@{huart2}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{huart2}{huart2}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_aa9479c261d65eecedd3d9582f7f0f89c} 
+UART\+\_\+\+Handle\+Type\+Def huart2\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{_b_m_p280__vincent_8c_af75baaa6a00e3b62dddfb2cd057fc7a3}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!K\_pid@{K\_pid}}
+\index{K\_pid@{K\_pid}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{K\_pid}{K\_pid}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_af75baaa6a00e3b62dddfb2cd057fc7a3} 
+int K\+\_\+pid = 0}
+
+
+
+Variables pour le contrôle PID. 
+
+\Hypertarget{_b_m_p280__vincent_8c_acf93435153c14ecafb10f268aa91a760}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!pHeader@{pHeader}}
+\index{pHeader@{pHeader}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{pHeader}{pHeader}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_acf93435153c14ecafb10f268aa91a760} 
+CAN\+\_\+\+Tx\+Header\+Type\+Def p\+Header}
+
+
+
+Déclaration des paramètres CAN. 
+
+Structure contenant les paramètres d\textquotesingle{}en-\/tête CAN \Hypertarget{_b_m_p280__vincent_8c_a9549210bef639fb138adc74c673939f2}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!pres\_compen@{pres\_compen}}
+\index{pres\_compen@{pres\_compen}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{pres\_compen}{pres\_compen}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a9549210bef639fb138adc74c673939f2} 
+BMP280\+\_\+\+S32\+\_\+t pres\+\_\+compen}
+
+Pression compensée \Hypertarget{_b_m_p280__vincent_8c_af445e2635ac7dfc0ce8588bde56bd5cd}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!pres\_uncompen@{pres\_uncompen}}
+\index{pres\_uncompen@{pres\_uncompen}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{pres\_uncompen}{pres\_uncompen}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_af445e2635ac7dfc0ce8588bde56bd5cd} 
+BMP280\+\_\+\+S32\+\_\+t pres\+\_\+uncompen}
+
+
+
+Variables pour les mesures de pression. 
+
+Pression non compensée \Hypertarget{_b_m_p280__vincent_8c_afc149bf020dfedb829d8107f67ff3b07}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!pTxMailbox@{pTxMailbox}}
+\index{pTxMailbox@{pTxMailbox}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{pTxMailbox}{pTxMailbox}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_afc149bf020dfedb829d8107f67ff3b07} 
+uint32\+\_\+t p\+Tx\+Mailbox}
+
+Variable pour la boîte aux lettres CAN \Hypertarget{_b_m_p280__vincent_8c_a410be46803f781e148b66354d8c219d8}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!retour@{retour}}
+\index{retour@{retour}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{retour}{retour}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a410be46803f781e148b66354d8c219d8} 
+HAL\+\_\+\+Status\+Type\+Def retour}
+
+
+
+Variable pour vérifier le statut des communications I2C. 
+
+\Hypertarget{_b_m_p280__vincent_8c_af0f69554857f12bd910cb7c9112b21dd}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!RxBuff@{RxBuff}}
+\index{RxBuff@{RxBuff}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{RxBuff}{RxBuff}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_af0f69554857f12bd910cb7c9112b21dd} 
+uint8\+\_\+t Rx\+Buff\mbox{[}RX\+\_\+\+BUFF\+\_\+\+SIZE\mbox{]} =\{0\}}
+
+
+
+Buffer de réception pour les communications UART. 
+
+\Hypertarget{_b_m_p280__vincent_8c_ae836b12da24866a03689d87a64a29ebd}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!setK@{setK}}
+\index{setK@{setK}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{setK}{setK}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_ae836b12da24866a03689d87a64a29ebd} 
+int setK = 0}
+
+\Hypertarget{_b_m_p280__vincent_8c_a76976acd94b5aa6ded5c69ae13c1e4ee}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!t\_fine@{t\_fine}}
+\index{t\_fine@{t\_fine}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{t\_fine}{t\_fine}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a76976acd94b5aa6ded5c69ae13c1e4ee} 
+BMP280\+\_\+\+S32\+\_\+t t\+\_\+fine}
+
+
+
+Variable globale pour la compensation de température. 
+
+\Hypertarget{_b_m_p280__vincent_8c_a45944d9afd6c5a50b2c7a466cdaef22f}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!temp\_compen@{temp\_compen}}
+\index{temp\_compen@{temp\_compen}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{temp\_compen}{temp\_compen}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a45944d9afd6c5a50b2c7a466cdaef22f} 
+BMP280\+\_\+\+S32\+\_\+t temp\+\_\+compen}
+
+Température compensée \Hypertarget{_b_m_p280__vincent_8c_a755fe0fb02fb1db79715926a1be64cc5}\index{BMP280\_vincent.c@{BMP280\_vincent.c}!temp\_uncompen@{temp\_uncompen}}
+\index{temp\_uncompen@{temp\_uncompen}!BMP280\_vincent.c@{BMP280\_vincent.c}}
+\doxysubsubsection{\texorpdfstring{temp\_uncompen}{temp\_uncompen}}
+{\footnotesize\ttfamily \label{_b_m_p280__vincent_8c_a755fe0fb02fb1db79715926a1be64cc5} 
+BMP280\+\_\+\+S32\+\_\+t temp\+\_\+uncompen}
+
+
+
+Variables pour les mesures de température. 
+
+Température non compensée 
