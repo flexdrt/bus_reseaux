@@ -12,7 +12,7 @@ Vidéos disponibles en haute définition en annexe.
 <!-- TOC start -->
 
 
-- [🚌 2. TP1- Bus I2C](#-2-tp1--bus-i2c-1)
+- [🚌🛰️ 2. TP1- Bus I2C](#-2-tp1--bus-i2c-1)
    * [🛰️2.1 Capteur BMP280](#-21-capteur-bmp280)
    * [💻2.2. Setup du STM32](#22-setup-du-stm32)
 
@@ -54,7 +54,7 @@ Vidéos disponibles en haute définition en annexe.
 
 
 
-
+### 📚   [Accédez au Doxygen ici.✨](./Doxygen)
 ### 🎥  [Accédez à la vidéo en Haute Définition ici.✨](./VidéoDémoChaineFonctionnelle)
 
 <p align="center">
@@ -78,56 +78,9 @@ Vidéos disponibles en haute définition en annexe.
 
 
 
-## 🌐 2. TP1- Bus I2C ##
-
-- 🔌 2.1 Capteur BMP280
-- 📱 2.2. Setup du STM32
-  - Redirection du print
-  - Test de la chaîne de compilation et communication UART sur USB
-- 🔄 2.3. Communication I²C
-  - 🆔 Identification du BMP280 : CheckID
-  - ⚙️ Configuration du BMP280
-  - ⚡ Contrôle du mode d'alimentation
-  - 📊 Contrôle de la mesure de pression
-  - 🌡️ Contrôle de la mesure de température
-  - 📈 Récupération de l'étalonnage de la température et de la pression
-  - 📋 Étalonnage du composant
-  - 🌡️ Récupération de la température et de la pression
-  - 🧮 Calcul des températures et des pression compensées
-
-## 🍓 💻 3. TP2 - Interfaçage STM32 - Raspberry
-
-- 👤 3.1. Mise en route du Raspberry PI Zéro
-  - Premier démarrage
-- 3.2 Port série
-  - 🔄 Loopback
-  - ⚡ Activation de l'usart dans la PI ZERO
-  - 🔌 Communication avec le STM32
-  - 🧪 Test d'envoi des ordres à la STM32
-- 🐍 3.3 Commande depuis Python
-
-## 🌐 4. TP3- Interface REST
-
-- 🐍 4.1. Installation du serveur Python
-- 📄 4.2 Première page REST
-- 🔄 4.3. Nouvelles méthodes HTTP
-
-## ⚡ 5. TP4 : CAN
-
-- 🎮 5.1 Pilotage du moteur
-- 📡 5.2. Interfaçage avec le capteur
-
-## 🚀 5. TP5 : Mise en série de l'ensemble
-
-- 📝 Conclusion
-
-------
-
-
-
 ## 🚌 2. TP1- Bus I2C
 
-🎯 L' objectif de cette partie est de mettre en place la communication entre le microcontrôleur et les capteurs (température, pression, accéléromètre...) via le bus I²C
+🎯 L' objectif de cette partie est de mettre en place la communication entre le microcontrôleur et les capteurs (température, pression, accéléromètre...) via le bus I²C.
 
 
 
@@ -261,45 +214,7 @@ MAJ du TP4 : Il faut déplacer l'I²C de ces pins afin de les libérer pour le b
 | ------------ | ------------ |
 
 
-
-D'un CAN 
-
-*****************Problèmes cube ide****************************
-
-```bash
-sudo apt-get install libncurses5
-Lecture des listes de paquets... Fait
-Construction de l'arbre des dépendances... Fait
-Lecture des informations d'état... Fait      
-Les paquets supplémentaires suivants seront installés : 
-  libtinfo5
-Les NOUVEAUX paquets suivants seront installés :
-  libncurses5 libtinfo5
-0 mis à jour, 2 nouvellement installés, 0 à enlever et 6 non mis à jour.
-Il est nécessaire de prendre 207 ko dans les archives.
-Après cette opération, 883 ko d'espace disque supplémentaires seront utilisés.
-Souhaitez-vous continuer ? [O/n] o
-Réception de :1 http://fr.archive.ubuntu.com/ubuntu jammy-updates/universe amd64 libtinfo5 amd64 6.3-2ubuntu0.1 [100 kB]
-Réception de :2 http://fr.archive.ubuntu.com/ubuntu jammy-updates/universe amd64 libncurses5 amd64 6.3-2ubuntu0.1 [107 kB]
-207 ko réceptionnés en 0s (974 ko/s)   
-Sélection du paquet libtinfo5:amd64 précédemment désélectionné.
-(Lecture de la base de données... 283299 fichiers et répertoires déjà installés.)
-Préparation du dépaquetage de .../libtinfo5_6.3-2ubuntu0.1_amd64.deb ...
-Dépaquetage de libtinfo5:amd64 (6.3-2ubuntu0.1) ...
-Sélection du paquet libncurses5:amd64 précédemment désélectionné.
-Préparation du dépaquetage de .../libncurses5_6.3-2ubuntu0.1_amd64.deb ...
-Dépaquetage de libncurses5:amd64 (6.3-2ubuntu0.1) ...
-Paramétrage de libtinfo5:amd64 (6.3-2ubuntu0.1) ...
-Paramétrage de libncurses5:amd64 (6.3-2ubuntu0.1) ...
-Traitement des actions différées (« triggers ») pour libc-bin (2.35-0ubuntu3.8) ...
-
-```
-
-
-
-*************************************
-
-##### Redirection du print
+##### Redirection du printf
 
 Afin de pouvoir facilement déboguer votre programme STM32, faites en sorte que la fonction printf renvoie bien ses chaînes de caractères sur  la liaison UART sur USB, en ajoutant le code suivant au fichier  stm32f4xx_hal_msp.c :
 
@@ -392,7 +307,7 @@ On obtient sa réponse avec la fonction HAL_Receive (). Le buffer passé en argu
 
 **Nous avons donc implémenté la fonction checkID().** 
 
-**code de la fonction checkID() :** 
+**Code de la fonction checkID() :** 
 
 ```c
 int BMP280_checkID(void) {
